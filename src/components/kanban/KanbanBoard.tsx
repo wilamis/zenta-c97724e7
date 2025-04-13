@@ -1,318 +1,84 @@
 
-import { useState, useEffect } from "react";
-import { Plus, MoreVertical } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import KanbanColumn from "./KanbanColumn";
 import AddColumnDialog from "./AddColumnDialog";
-import { Task } from "../tasks/TaskItem";
 import TaskModal from "../tasks/TaskModal";
-
-export interface KanbanColumn {
-  id: string;
-  title: string;
-  tasks: Task[];
-}
+import { useKanbanBoard } from "@/hooks/useKanbanBoard";
+import { useKanbanColumns } from "./useKanbanColumns";
+import { useKanbanTasks } from "./useKanbanTasks";
+import { useKanbanDragDrop } from "./useKanbanDragDrop";
 
 const KanbanBoard = () => {
-  const [columns, setColumns] = useState<KanbanColumn[]>([]);
-  const [isAddColumnOpen, setIsAddColumnOpen] = useState(false);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [activeColumn, setActiveColumn] = useState<string | null>(null);
-  const [draggedTaskInfo, setDraggedTaskInfo] = useState<{taskId: string, sourceColumnId: string} | null>(null);
-  const [draggedColumnId, setDraggedColumnId] = useState<string | null>(null);
-  const { toast } = useToast();
+  const {
+    columns,
+    setColumns,
+    isAddColumnOpen,
+    setIsAddColumnOpen,
+    isTaskModalOpen,
+    setIsTaskModalOpen,
+    editingTask,
+    setEditingTask,
+    activeColumn,
+    setActiveColumn,
+    draggedTaskInfo,
+    setDraggedTaskInfo,
+    draggedColumnId,
+    setDraggedColumnId,
+    toast
+  } = useKanbanBoard();
 
-  // Initialize with default columns if none exist
-  useEffect(() => {
-    const savedColumns = localStorage.getItem("kanban-columns");
-    if (savedColumns) {
-      setColumns(JSON.parse(savedColumns));
-    } else {
-      const defaultColumns: KanbanColumn[] = [
-        { id: "todo", title: "To Do", tasks: [] },
-        { id: "in-progress", title: "In Progress", tasks: [] },
-        { id: "done", title: "Done", tasks: [] },
-      ];
-      setColumns(defaultColumns);
-      localStorage.setItem("kanban-columns", JSON.stringify(defaultColumns));
-    }
-  }, []);
+  // Initialize column operations
+  const {
+    handleAddColumn,
+    handleDeleteColumn,
+    handleRenameColumn,
+    handleColumnDragStart,
+    handleColumnDragOver,
+    handleColumnDrop
+  } = useKanbanColumns({ columns, setColumns, toast });
 
-  // Save columns to localStorage whenever they change
-  useEffect(() => {
-    if (columns.length > 0) {
-      localStorage.setItem("kanban-columns", JSON.stringify(columns));
-    }
-  }, [columns]);
+  // Initialize task operations
+  const {
+    handleAddTask,
+    handleEditTask,
+    handleTaskSave,
+    handleTaskDelete,
+    handleTaskComplete
+  } = useKanbanTasks({ 
+    columns, 
+    setColumns, 
+    setActiveColumn, 
+    setEditingTask, 
+    setIsTaskModalOpen,
+    toast,
+    activeColumn,
+    editingTask
+  });
 
-  const handleAddColumn = (title: string) => {
-    const newColumn: KanbanColumn = {
-      id: Date.now().toString(),
-      title,
-      tasks: [],
-    };
-    
-    const updatedColumns = [...columns, newColumn];
-    setColumns(updatedColumns);
-    setIsAddColumnOpen(false);
-    
-    toast({
-      title: "Column added",
-      description: `${title} column has been added to the board`,
-    });
-  };
+  // Initialize drag and drop operations
+  const {
+    handleDragStart,
+    handleDragOver,
+    handleDrop
+  } = useKanbanDragDrop({
+    columns,
+    setColumns,
+    draggedTaskInfo,
+    setDraggedTaskInfo,
+    toast
+  });
 
-  const handleDeleteColumn = (columnId: string) => {
-    const updatedColumns = columns.filter(column => column.id !== columnId);
-    setColumns(updatedColumns);
-    
-    toast({
-      title: "Column deleted",
-      description: "The column has been removed from the board",
-    });
-  };
-
-  const handleRenameColumn = (columnId: string, newTitle: string) => {
-    const updatedColumns = columns.map(column => 
-      column.id === columnId ? { ...column, title: newTitle } : column
-    );
-    setColumns(updatedColumns);
-    
-    toast({
-      title: "Column renamed",
-      description: `Column renamed to ${newTitle}`,
-    });
-  };
-
-  const handleAddTask = (columnId: string) => {
-    setActiveColumn(columnId);
-    setEditingTask(null);
-    setIsTaskModalOpen(true);
-  };
-
-  const handleEditTask = (task: Task, columnId: string) => {
-    setActiveColumn(columnId);
-    setEditingTask(task);
-    setIsTaskModalOpen(true);
-  };
-
-  const handleTaskSave = (task: Task) => {
-    if (!activeColumn) return;
-    
-    let updatedColumns = [...columns];
-    const columnIndex = updatedColumns.findIndex(col => col.id === activeColumn);
-    
-    if (columnIndex === -1) return;
-    
-    if (editingTask) {
-      // Edit existing task
-      updatedColumns[columnIndex].tasks = updatedColumns[columnIndex].tasks.map(t => 
-        t.id === task.id ? task : t
-      );
-    } else {
-      // Add new task with generated ID
-      const newTask = {
-        ...task,
-        id: Date.now().toString()
-      };
-      updatedColumns[columnIndex].tasks = [...updatedColumns[columnIndex].tasks, newTask];
-    }
-    
-    setColumns(updatedColumns);
-    setIsTaskModalOpen(false);
-    setActiveColumn(null);
-    
-    toast({
-      title: editingTask ? "Task updated" : "Task added",
-      description: editingTask ? "Your task has been updated" : "New task has been added to the board",
-    });
-  };
-
-  const handleTaskDelete = (taskId: string, columnId: string) => {
-    const updatedColumns = columns.map(column => {
-      if (column.id === columnId) {
-        return {
-          ...column,
-          tasks: column.tasks.filter(task => task.id !== taskId)
-        };
-      }
-      return column;
-    });
-    
-    setColumns(updatedColumns);
-    
-    toast({
-      title: "Task deleted",
-      description: "The task has been removed from the board",
-    });
-  };
-
-  const handleTaskComplete = (taskId: string, completed: boolean, columnId: string) => {
-    const updatedColumns = columns.map(column => {
-      if (column.id === columnId) {
-        return {
-          ...column,
-          tasks: column.tasks.map(task => 
-            task.id === taskId ? { ...task, completed } : task
-          )
-        };
-      }
-      return column;
-    });
-    
-    setColumns(updatedColumns);
-  };
-
-  const handleDragStart = (e: React.DragEvent, taskId: string, columnId: string) => {
-    // Store task and source column information in state for better reliability
-    setDraggedTaskInfo({ taskId, sourceColumnId: columnId });
-    
-    // Set data on the drag event for compatibility
-    e.dataTransfer.setData("taskId", taskId);
-    e.dataTransfer.setData("sourceColumnId", columnId);
-    
-    // Set drag image and effects
-    if (e.dataTransfer.setDragImage) {
-      const element = document.getElementById(`task-${taskId}`);
-      if (element) {
-        e.dataTransfer.setDragImage(element, 20, 20);
-      }
-    }
-    e.dataTransfer.effectAllowed = "move";
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-  };
-
-  const handleDrop = (e: React.DragEvent, targetColumnId: string) => {
-    e.preventDefault();
-    
-    // Try to get data from draggedTaskInfo state first (more reliable)
-    let taskId = draggedTaskInfo?.taskId;
-    let sourceColumnId = draggedTaskInfo?.sourceColumnId;
-    
-    // Fall back to dataTransfer if state isn't available
-    if (!taskId) {
-      taskId = e.dataTransfer.getData("taskId");
-    }
-    
-    if (!sourceColumnId) {
-      sourceColumnId = e.dataTransfer.getData("sourceColumnId");
-    }
-    
-    // Clear dragged task info
-    setDraggedTaskInfo(null);
-    
-    // Validation
-    if (!taskId || !sourceColumnId || sourceColumnId === targetColumnId) {
-      return;
-    }
-    
-    // Find the task in the source column
-    const sourceColumn = columns.find(col => col.id === sourceColumnId);
-    if (!sourceColumn) return;
-    
-    const task = sourceColumn.tasks.find(t => t.id === taskId);
-    if (!task) return;
-    
-    // Auto-complete task if dropped in "Done" column
-    const targetColumn = columns.find(col => col.id === targetColumnId);
-    const shouldAutoComplete = targetColumn?.title === "Done" && !task.completed;
-    
-    const updatedTask = shouldAutoComplete 
-      ? { ...task, completed: true }
-      : task;
-    
-    console.log("Moving task:", task.title, "from", sourceColumnId, "to", targetColumnId);
-    
-    // Create a new array of columns to avoid mutation
-    const updatedColumns = columns.map(column => {
-      // Remove from source column
-      if (column.id === sourceColumnId) {
-        return {
-          ...column,
-          tasks: column.tasks.filter(t => t.id !== taskId)
-        };
-      }
-      // Add to target column
-      if (column.id === targetColumnId) {
-        return {
-          ...column,
-          tasks: [...column.tasks, updatedTask]
-        };
-      }
-      return column;
-    });
-    
-    setColumns(updatedColumns);
-    
-    if (shouldAutoComplete) {
-      toast({
-        title: "Task completed",
-        description: `Task "${task.title}" was automatically marked as complete`,
-      });
-    } else {
-      const targetColumn = columns.find(col => col.id === targetColumnId);
-      if (targetColumn) {
-        toast({
-          title: "Task moved",
-          description: `Task moved to ${targetColumn.title}`,
-        });
-      }
-    }
-  };
-
-  // Column drag handlers
-  const handleColumnDragStart = (e: React.DragEvent, columnId: string) => {
+  // Column drag start with state update
+  const onColumnDragStart = (e: React.DragEvent, columnId: string) => {
     setDraggedColumnId(columnId);
-    e.dataTransfer.setData("columnId", columnId);
-    e.dataTransfer.effectAllowed = "move";
+    handleColumnDragStart(e, columnId);
   };
 
-  const handleColumnDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    if (draggedColumnId) {
-      e.dataTransfer.dropEffect = "move";
-    }
-  };
-
-  const handleColumnDrop = (e: React.DragEvent, targetColumnId: string) => {
-    e.preventDefault();
-    
-    // Get the dragged column ID
-    const sourceColumnId = draggedColumnId || e.dataTransfer.getData("columnId");
-    
-    // Clear dragged column ID
+  // Column drop with draggedColumnId state clearing
+  const onColumnDrop = (e: React.DragEvent, targetColumnId: string) => {
+    handleColumnDrop(e, targetColumnId, draggedColumnId);
     setDraggedColumnId(null);
-    
-    // Validation
-    if (!sourceColumnId || sourceColumnId === targetColumnId) {
-      return;
-    }
-    
-    // Find the indices of the source and target columns
-    const sourceIndex = columns.findIndex(col => col.id === sourceColumnId);
-    const targetIndex = columns.findIndex(col => col.id === targetColumnId);
-    
-    if (sourceIndex === -1 || targetIndex === -1) {
-      return;
-    }
-    
-    // Create a new array with the columns in the new order
-    const updatedColumns = [...columns];
-    const [movedColumn] = updatedColumns.splice(sourceIndex, 1);
-    updatedColumns.splice(targetIndex, 0, movedColumn);
-    
-    setColumns(updatedColumns);
-    
-    toast({
-      title: "Column moved",
-      description: `Column "${movedColumn.title}" has been repositioned`,
-    });
   };
 
   return (
@@ -342,9 +108,9 @@ const KanbanBoard = () => {
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            onColumnDragStart={handleColumnDragStart}
+            onColumnDragStart={onColumnDragStart}
             onColumnDragOver={handleColumnDragOver}
-            onColumnDrop={handleColumnDrop}
+            onColumnDrop={onColumnDrop}
             isDraggingColumn={!!draggedColumnId}
           />
         ))}
@@ -361,7 +127,10 @@ const KanbanBoard = () => {
       {isTaskModalOpen && (
         <TaskModal
           isOpen={isTaskModalOpen}
-          onClose={() => setIsTaskModalOpen(false)}
+          onClose={() => {
+            setIsTaskModalOpen(false);
+            setActiveColumn(null);
+          }}
           onSave={handleTaskSave}
           task={editingTask || undefined}
         />
