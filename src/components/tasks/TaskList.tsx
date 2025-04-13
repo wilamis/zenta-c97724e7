@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "../ui/button";
 import TaskItem, { Task } from "./TaskItem";
@@ -81,7 +80,10 @@ const TaskList = ({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold">{title}</h2>
+          <h2 className="text-xl font-bold flex">
+            <span className="tracking-normal">B</span>
+            <span className="tracking-normal">acklog</span>
+          </h2>
           {(completedCount !== undefined && totalCount !== undefined) && (
             <div className="text-sm text-muted-foreground">
               {completedCount}/{totalCount} done
