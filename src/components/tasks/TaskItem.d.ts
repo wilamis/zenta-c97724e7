@@ -10,4 +10,5 @@ export interface Task {
   category: TaskCategory;
   estimatedTime: number;
   description?: string;
+  dueDate?: string;
 }

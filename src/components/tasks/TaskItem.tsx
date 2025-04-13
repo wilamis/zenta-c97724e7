@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Clock, Edit, Trash } from "lucide-react";
 import { useState } from "react";
@@ -16,6 +15,7 @@ export interface Task {
   category: TaskCategory;
   estimatedTime: number; // in minutes
   description?: string;  // Added to match the .d.ts file
+  dueDate?: string;     // Added to fix TaskPlanner references
 }
 
 interface TaskItemProps {
