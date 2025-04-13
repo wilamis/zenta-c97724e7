@@ -9,7 +9,8 @@ import {
   ListTodo, 
   Menu, 
   Settings, 
-  Timer, 
+  Timer,
+  LayoutGrid,
   X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -31,6 +32,11 @@ const navItems: NavItem[] = [
     title: "Tasks",
     icon: ListTodo,
     path: "/tasks"
+  },
+  {
+    title: "Kanban",
+    icon: LayoutGrid,
+    path: "/kanban"
   },
   {
     title: "Focus",
@@ -117,7 +123,7 @@ const Sidebar = () => {
                     ? "text-primary"
                     : "text-muted-foreground"
                 )} />
-                <span>{item.title}</span>
+                <span className="tracking-normal">{item.title}</span>
               </Link>
             ))}
           </nav>
