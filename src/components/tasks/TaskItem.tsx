@@ -14,9 +14,8 @@ export interface Task {
   completed: boolean;
   priority: TaskPriority;
   category: TaskCategory;
-  estimatedTime?: number; // in minutes
-  dueDate?: string;
-  notes?: string;
+  estimatedTime: number; // in minutes
+  description?: string;  // Added to match the .d.ts file
 }
 
 interface TaskItemProps {
