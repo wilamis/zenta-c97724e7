@@ -24,6 +24,11 @@ interface KanbanColumnProps {
   onDragStart: (e: React.DragEvent, taskId: string, columnId: string) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, columnId: string) => void;
+  // New column drag props
+  onColumnDragStart: (e: React.DragEvent, columnId: string) => void;
+  onColumnDragOver: (e: React.DragEvent) => void;
+  onColumnDrop: (e: React.DragEvent, columnId: string) => void;
+  isDraggingColumn: boolean;
 }
 
 const KanbanColumn = ({
@@ -37,6 +42,10 @@ const KanbanColumn = ({
   onDragStart,
   onDragOver,
   onDrop,
+  onColumnDragStart,
+  onColumnDragOver,
+  onColumnDrop,
+  isDraggingColumn,
 }: KanbanColumnProps) => {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   
@@ -47,6 +56,7 @@ const KanbanColumn = ({
 
   // Add highlight state for drop target indication
   const [isDropTarget, setIsDropTarget] = useState(false);
+  const [isColumnDropTarget, setIsColumnDropTarget] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -64,15 +74,45 @@ const KanbanColumn = ({
     onDrop(e, column.id);
   };
 
+  // Column drag handlers
+  const handleColumnDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (isDraggingColumn) {
+      setIsColumnDropTarget(true);
+      onColumnDragOver(e);
+    }
+  };
+
+  const handleColumnDragLeave = () => {
+    setIsColumnDropTarget(false);
+  };
+
+  const handleColumnDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsColumnDropTarget(false);
+    if (isDraggingColumn) {
+      onColumnDrop(e, column.id);
+    }
+  };
+
   return (
     <div 
-      className={`kanban-column ${isDropTarget ? 'bg-secondary/50' : 'bg-secondary/30'} rounded-md p-4 w-80 flex-shrink-0 flex flex-col max-h-[70vh] transition-colors duration-200`}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+      className={`kanban-column ${isDropTarget ? 'bg-secondary/50' : isColumnDropTarget ? 'bg-primary/20' : 'bg-secondary/30'} 
+        rounded-md p-4 w-80 flex-shrink-0 flex flex-col max-h-[70vh] transition-colors duration-200
+        ${isDraggingColumn ? 'cursor-grabbing' : ''}`}
+      onDragOver={isDraggingColumn ? handleColumnDragOver : handleDragOver}
+      onDragLeave={isDraggingColumn ? handleColumnDragLeave : handleDragLeave}
+      onDrop={isDraggingColumn ? handleColumnDrop : handleDrop}
     >
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-medium text-lg tracking-normal">{column.title}</h3>
+      <div 
+        className="flex items-center justify-between mb-4 cursor-grab active:cursor-grabbing"
+        draggable="true"
+        onDragStart={(e) => onColumnDragStart(e, column.id)}
+      >
+        <div className="flex items-center gap-2">
+          <Menu className="h-4 w-4 text-muted-foreground" />
+          <h3 className="font-medium text-lg tracking-normal">{column.title}</h3>
+        </div>
         <div className="flex items-center gap-1">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -106,6 +146,7 @@ const KanbanColumn = ({
           column.tasks.map(task => (
             <div 
               key={task.id}
+              id={`task-${task.id}`}
               draggable="true"
               onDragStart={(e) => onDragStart(e, task.id, column.id)}
               className="cursor-grab active:cursor-grabbing"

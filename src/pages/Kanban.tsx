@@ -9,15 +9,28 @@ const Kanban = () => {
     // Prevent default touch behavior that might interfere with drag operations
     const preventDefaultTouchBehavior = (e: TouchEvent) => {
       if (e.target instanceof Element && 
-          e.target.closest('[draggable="true"]')) {
+          (e.target.closest('[draggable="true"]') || 
+           e.target.closest('.kanban-column'))) {
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      // This helps browsers understand that we're intentionally handling touch events
+      // for drag and drop operations
+      if (e.target instanceof Element && 
+          (e.target.closest('[draggable="true"]') || 
+           e.target.closest('.kanban-column'))) {
         e.preventDefault();
       }
     };
 
     document.addEventListener('touchmove', preventDefaultTouchBehavior, { passive: false });
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
     
     return () => {
       document.removeEventListener('touchmove', preventDefaultTouchBehavior);
+      document.removeEventListener('touchstart', handleTouchStart);
     };
   }, []);
 

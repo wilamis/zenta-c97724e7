@@ -21,6 +21,7 @@ const KanbanBoard = () => {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [draggedTaskInfo, setDraggedTaskInfo] = useState<{taskId: string, sourceColumnId: string} | null>(null);
+  const [draggedColumnId, setDraggedColumnId] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Initialize with default columns if none exist
@@ -218,6 +219,14 @@ const KanbanBoard = () => {
     const task = sourceColumn.tasks.find(t => t.id === taskId);
     if (!task) return;
     
+    // Auto-complete task if dropped in "Done" column
+    const targetColumn = columns.find(col => col.id === targetColumnId);
+    const shouldAutoComplete = targetColumn?.title === "Done" && !task.completed;
+    
+    const updatedTask = shouldAutoComplete 
+      ? { ...task, completed: true }
+      : task;
+    
     console.log("Moving task:", task.title, "from", sourceColumnId, "to", targetColumnId);
     
     // Create a new array of columns to avoid mutation
@@ -233,7 +242,7 @@ const KanbanBoard = () => {
       if (column.id === targetColumnId) {
         return {
           ...column,
-          tasks: [...column.tasks, task]
+          tasks: [...column.tasks, updatedTask]
         };
       }
       return column;
@@ -241,13 +250,69 @@ const KanbanBoard = () => {
     
     setColumns(updatedColumns);
     
-    const targetColumn = columns.find(col => col.id === targetColumnId);
-    if (targetColumn) {
+    if (shouldAutoComplete) {
       toast({
-        title: "Task moved",
-        description: `Task moved to ${targetColumn.title}`,
+        title: "Task completed",
+        description: `Task "${task.title}" was automatically marked as complete`,
       });
+    } else {
+      const targetColumn = columns.find(col => col.id === targetColumnId);
+      if (targetColumn) {
+        toast({
+          title: "Task moved",
+          description: `Task moved to ${targetColumn.title}`,
+        });
+      }
     }
+  };
+
+  // Column drag handlers
+  const handleColumnDragStart = (e: React.DragEvent, columnId: string) => {
+    setDraggedColumnId(columnId);
+    e.dataTransfer.setData("columnId", columnId);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleColumnDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (draggedColumnId) {
+      e.dataTransfer.dropEffect = "move";
+    }
+  };
+
+  const handleColumnDrop = (e: React.DragEvent, targetColumnId: string) => {
+    e.preventDefault();
+    
+    // Get the dragged column ID
+    const sourceColumnId = draggedColumnId || e.dataTransfer.getData("columnId");
+    
+    // Clear dragged column ID
+    setDraggedColumnId(null);
+    
+    // Validation
+    if (!sourceColumnId || sourceColumnId === targetColumnId) {
+      return;
+    }
+    
+    // Find the indices of the source and target columns
+    const sourceIndex = columns.findIndex(col => col.id === sourceColumnId);
+    const targetIndex = columns.findIndex(col => col.id === targetColumnId);
+    
+    if (sourceIndex === -1 || targetIndex === -1) {
+      return;
+    }
+    
+    // Create a new array with the columns in the new order
+    const updatedColumns = [...columns];
+    const [movedColumn] = updatedColumns.splice(sourceIndex, 1);
+    updatedColumns.splice(targetIndex, 0, movedColumn);
+    
+    setColumns(updatedColumns);
+    
+    toast({
+      title: "Column moved",
+      description: `Column "${movedColumn.title}" has been repositioned`,
+    });
   };
 
   return (
@@ -277,6 +342,10 @@ const KanbanBoard = () => {
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
+            onColumnDragStart={handleColumnDragStart}
+            onColumnDragOver={handleColumnDragOver}
+            onColumnDrop={handleColumnDrop}
+            isDraggingColumn={!!draggedColumnId}
           />
         ))}
       </div>
