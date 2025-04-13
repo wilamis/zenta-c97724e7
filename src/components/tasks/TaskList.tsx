@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "../ui/button";
 import TaskItem, { Task } from "./TaskItem";
@@ -42,10 +41,8 @@ const TaskList = ({
     let updatedTasks: Task[];
     
     if (editingTask) {
-      // Edit existing task
       updatedTasks = tasks.map(t => t.id === task.id ? task : t);
     } else {
-      // Add new task with generated ID
       const newTask = {
         ...task,
         id: Date.now().toString()
@@ -82,7 +79,8 @@ const TaskList = ({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold">
-            Backlog
+            <span className="align-super text-sm">B</span>
+            <span>acklog</span>
           </h2>
           {(completedCount !== undefined && totalCount !== undefined) && (
             <div className="text-sm text-muted-foreground">

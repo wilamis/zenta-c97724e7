@@ -189,7 +189,16 @@ const CategoryManager = ({
                       <span
                         className={cn("w-3 h-3 rounded-full", category.color)}
                       />
-                      <span className="tracking-normal">{category.name}</span>
+                      <span className="tracking-normal">
+                        {category.name === "Business" ? (
+                          <>
+                            <span className="align-super text-sm">B</span>
+                            <span>usiness</span>
+                          </>
+                        ) : (
+                          category.name
+                        )}
+                      </span>
                     </div>
                   </div>
                 ))}
