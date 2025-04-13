@@ -91,14 +91,18 @@ const TaskModal = ({ isOpen, onClose, onSave, task }: TaskModalProps) => {
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select 
-                value={category || ""} 
-                onValueChange={(value) => setCategory((value || null) as TaskCategory)}
+                value={category || "none"} 
+                onValueChange={(value) => setCategory(value === "none" ? null : (value as TaskCategory))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No category</SelectItem>
+                  <SelectItem value="none">
+                    <div className="flex items-center">
+                      No category
+                    </div>
+                  </SelectItem>
                   <SelectItem value="p">
                     <div className="flex items-center">
                       <span className="w-2 h-2 rounded-full bg-zenta-purple mr-2"></span>
