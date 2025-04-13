@@ -45,11 +45,31 @@ const KanbanColumn = ({
     setIsRenameOpen(false);
   };
 
+  // Add highlight state for drop target indication
+  const [isDropTarget, setIsDropTarget] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDropTarget(true);
+    onDragOver(e);
+  };
+
+  const handleDragLeave = () => {
+    setIsDropTarget(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDropTarget(false);
+    onDrop(e, column.id);
+  };
+
   return (
     <div 
-      className="kanban-column bg-secondary/30 rounded-md p-4 w-80 flex-shrink-0 flex flex-col max-h-[70vh]"
-      onDragOver={onDragOver}
-      onDrop={(e) => onDrop(e, column.id)}
+      className={`kanban-column ${isDropTarget ? 'bg-secondary/50' : 'bg-secondary/30'} rounded-md p-4 w-80 flex-shrink-0 flex flex-col max-h-[70vh] transition-colors duration-200`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
     >
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium text-lg tracking-normal">{column.title}</h3>
@@ -86,7 +106,7 @@ const KanbanColumn = ({
           column.tasks.map(task => (
             <div 
               key={task.id}
-              draggable
+              draggable="true"
               onDragStart={(e) => onDragStart(e, task.id, column.id)}
               className="cursor-grab active:cursor-grabbing"
             >

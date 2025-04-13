@@ -20,6 +20,7 @@ const KanbanBoard = () => {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
+  const [draggedTaskInfo, setDraggedTaskInfo] = useState<{taskId: string, sourceColumnId: string} | null>(null);
   const { toast } = useToast();
 
   // Initialize with default columns if none exist
@@ -164,21 +165,51 @@ const KanbanBoard = () => {
   };
 
   const handleDragStart = (e: React.DragEvent, taskId: string, columnId: string) => {
+    // Store task and source column information in state for better reliability
+    setDraggedTaskInfo({ taskId, sourceColumnId: columnId });
+    
+    // Set data on the drag event for compatibility
     e.dataTransfer.setData("taskId", taskId);
     e.dataTransfer.setData("sourceColumnId", columnId);
+    
+    // Set drag image and effects
+    if (e.dataTransfer.setDragImage) {
+      const element = document.getElementById(`task-${taskId}`);
+      if (element) {
+        e.dataTransfer.setDragImage(element, 20, 20);
+      }
+    }
+    e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
   };
 
   const handleDrop = (e: React.DragEvent, targetColumnId: string) => {
     e.preventDefault();
     
-    const taskId = e.dataTransfer.getData("taskId");
-    const sourceColumnId = e.dataTransfer.getData("sourceColumnId");
+    // Try to get data from draggedTaskInfo state first (more reliable)
+    let taskId = draggedTaskInfo?.taskId;
+    let sourceColumnId = draggedTaskInfo?.sourceColumnId;
     
-    if (sourceColumnId === targetColumnId) return;
+    // Fall back to dataTransfer if state isn't available
+    if (!taskId) {
+      taskId = e.dataTransfer.getData("taskId");
+    }
+    
+    if (!sourceColumnId) {
+      sourceColumnId = e.dataTransfer.getData("sourceColumnId");
+    }
+    
+    // Clear dragged task info
+    setDraggedTaskInfo(null);
+    
+    // Validation
+    if (!taskId || !sourceColumnId || sourceColumnId === targetColumnId) {
+      return;
+    }
     
     // Find the task in the source column
     const sourceColumn = columns.find(col => col.id === sourceColumnId);
@@ -187,19 +218,18 @@ const KanbanBoard = () => {
     const task = sourceColumn.tasks.find(t => t.id === taskId);
     if (!task) return;
     
-    // Remove the task from the source column
+    console.log("Moving task:", task.title, "from", sourceColumnId, "to", targetColumnId);
+    
+    // Create a new array of columns to avoid mutation
     const updatedColumns = columns.map(column => {
+      // Remove from source column
       if (column.id === sourceColumnId) {
         return {
           ...column,
           tasks: column.tasks.filter(t => t.id !== taskId)
         };
       }
-      return column;
-    });
-    
-    // Add the task to the target column
-    const finalColumns = updatedColumns.map(column => {
+      // Add to target column
       if (column.id === targetColumnId) {
         return {
           ...column,
@@ -209,12 +239,15 @@ const KanbanBoard = () => {
       return column;
     });
     
-    setColumns(finalColumns);
+    setColumns(updatedColumns);
     
-    toast({
-      title: "Task moved",
-      description: `Task moved to ${columns.find(col => col.id === targetColumnId)?.title}`,
-    });
+    const targetColumn = columns.find(col => col.id === targetColumnId);
+    if (targetColumn) {
+      toast({
+        title: "Task moved",
+        description: `Task moved to ${targetColumn.title}`,
+      });
+    }
   };
 
   return (
