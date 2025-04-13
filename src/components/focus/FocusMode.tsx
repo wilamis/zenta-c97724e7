@@ -11,7 +11,8 @@ import {
   Play, 
   Square, 
   Volume2, 
-  VolumeX 
+  VolumeX,
+  Settings
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from '../ui/progress';
