@@ -16,8 +16,8 @@ export interface Task {
   priority: TaskPriority;
   category: TaskCategory;
   estimatedTime: number; // in minutes
-  description?: string;  // Added to match the .d.ts file
-  dueDate?: string;     // Added to fix TaskPlanner references
+  description?: string;  
+  dueDate?: string;    
 }
 
 interface TaskItemProps {
@@ -98,7 +98,7 @@ const TaskItem = ({
             </h3>
           </div>
           
-          {task.estimatedTime && (
+          {task.estimatedTime > 0 && (
             <div className="flex items-center text-xs text-muted-foreground mt-1">
               <Clock className="h-3 w-3 mr-1 inline" />
               {formatTime(task.estimatedTime)}

@@ -117,7 +117,7 @@ const Sidebar = () => {
                     ? "text-primary"
                     : "text-muted-foreground"
                 )} />
-                {item.title}
+                <span>{item.title}</span>
               </Link>
             ))}
           </nav>

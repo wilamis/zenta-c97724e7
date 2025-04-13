@@ -102,7 +102,7 @@ const TaskList = ({
             onClick={handleManageCategories}
           >
             <Tag className="w-4 h-4" />
-            CATEGORIES
+            <span>CATEGORIES</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -111,7 +111,7 @@ const TaskList = ({
             onClick={handleAddTask}
           >
             <Plus className="w-4 h-4" />
-            ADD TASK
+            <span>ADD TASK</span>
           </Button>
         </div>
       </div>
@@ -129,6 +129,7 @@ const TaskList = ({
               onComplete={handleTaskComplete}
               onDelete={handleTaskDelete}
               onEdit={handleEditTask}
+              categories={categories}
             />
           ))
         )}
