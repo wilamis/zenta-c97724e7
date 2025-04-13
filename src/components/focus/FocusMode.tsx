@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
@@ -10,8 +9,7 @@ import {
   Clock, 
   FileText, 
   Play, 
-  Settings, 
-  Stop, 
+  Square, 
   Volume2, 
   VolumeX 
 } from 'lucide-react';
@@ -46,7 +44,6 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
   
   const { toast } = useToast();
   
-  // Calculate total focused time for today
   useEffect(() => {
     const today = new Date().setHours(0, 0, 0, 0);
     const todayFocus = focusHistory
@@ -56,7 +53,6 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
     setTotalFocusedToday(todayFocus);
   }, [focusHistory]);
 
-  // Handle timer for focus session
   useEffect(() => {
     let interval: number | null = null;
     
@@ -71,7 +67,6 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
     };
   }, [isFocusing]);
 
-  // Handle fullscreen mode
   useEffect(() => {
     const handleEscKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
@@ -104,7 +99,6 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
 
   const stopFocus = () => {
     if (isFocusing) {
-      // Save focus session
       setFocusHistory(prev => [
         ...prev,
         { date: new Date(), duration: elapsedTime }
@@ -226,7 +220,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                 className="rounded-full px-8" 
                 onClick={stopFocus}
               >
-                <Stop className="w-5 h-5 mr-2" />
+                <Square className="w-5 h-5 mr-2" />
                 End Focus
               </Button>
               <Button 
