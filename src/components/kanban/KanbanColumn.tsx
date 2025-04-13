@@ -3,7 +3,7 @@ import { useState } from "react";
 import { MoreVertical, Plus, Edit, Trash, Menu } from "lucide-react";
 import { Task } from "../tasks/TaskItem";
 import { Button } from "@/components/ui/button";
-import { KanbanColumn as KanbanColumnType } from "./KanbanBoard";
+import { KanbanColumn as KanbanColumnType } from "@/hooks/useKanbanBoard";
 import TaskItem from "../tasks/TaskItem";
 import {
   DropdownMenu,
