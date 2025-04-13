@@ -9,15 +9,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Badge } from "../ui/badge";
 import { Clock, AlignLeft } from "lucide-react";
 import { Textarea } from "../ui/textarea";
+import { Category, defaultCategories } from "./CategoryManager";
 
 interface TaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (task: Task) => void;
   task?: Task;
+  categories?: Category[];
 }
 
-const TaskModal = ({ isOpen, onClose, onSave, task }: TaskModalProps) => {
+const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategories }: TaskModalProps) => {
   const [title, setTitle] = useState(task?.title || "");
   const [priority, setPriority] = useState<TaskPriority>(task?.priority || "medium");
   const [category, setCategory] = useState<TaskCategory>(task?.category || null);
@@ -35,8 +37,21 @@ const TaskModal = ({ isOpen, onClose, onSave, task }: TaskModalProps) => {
       priority,
       category,
       estimatedTime,
-      description
+      description,
+      dueDate: task?.dueDate
     });
+  };
+
+  const getCategoryColor = (code: TaskCategory) => {
+    if (!code) return "";
+    const category = categories.find(cat => cat.code === code);
+    return category ? category.color : "";
+  };
+
+  const getCategoryName = (code: TaskCategory) => {
+    if (!code) return "No category";
+    const category = categories.find(cat => cat.code === code);
+    return category ? category.name : code;
   };
 
   return (
@@ -121,24 +136,14 @@ const TaskModal = ({ isOpen, onClose, onSave, task }: TaskModalProps) => {
                       No category
                     </div>
                   </SelectItem>
-                  <SelectItem value="p">
-                    <div className="flex items-center">
-                      <span className="w-2 h-2 rounded-full bg-zenta-purple mr-2"></span>
-                      Personal
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="b">
-                    <div className="flex items-center">
-                      <span className="w-2 h-2 rounded-full bg-zenta-blue mr-2"></span>
-                      Business
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="g">
-                    <div className="flex items-center">
-                      <span className="w-2 h-2 rounded-full bg-zenta-green mr-2"></span>
-                      Growth
-                    </div>
-                  </SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.code}>
+                      <div className="flex items-center">
+                        <span className={`w-2 h-2 rounded-full ${cat.color} mr-2`}></span>
+                        {cat.name}
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

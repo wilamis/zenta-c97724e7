@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import TaskItem, { Task } from "./TaskItem";
 import TaskModal from "./TaskModal";
-import { Plus } from "lucide-react";
+import { Plus, Tag } from "lucide-react";
+import CategoryManager, { Category, defaultCategories } from "./CategoryManager";
 
 interface TaskListProps {
   tasks: Task[];
@@ -23,7 +24,9 @@ const TaskList = ({
   totalCount
 }: TaskListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [categories, setCategories] = useState<Category[]>([...defaultCategories]);
 
   const handleAddTask = () => {
     setEditingTask(null);
@@ -66,6 +69,14 @@ const TaskList = ({
     onTaskChange(updatedTasks);
   };
 
+  const handleManageCategories = () => {
+    setIsCategoryManagerOpen(true);
+  };
+
+  const handleCategoriesChange = (updatedCategories: Category[]) => {
+    setCategories(updatedCategories);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -83,15 +94,26 @@ const TaskList = ({
             </div>
           )}
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="flex items-center gap-1"
-          onClick={handleAddTask}
-        >
-          <Plus className="w-4 h-4" />
-          ADD TASK
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="flex items-center gap-1"
+            onClick={handleManageCategories}
+          >
+            <Tag className="w-4 h-4" />
+            CATEGORIES
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="flex items-center gap-1"
+            onClick={handleAddTask}
+          >
+            <Plus className="w-4 h-4" />
+            ADD TASK
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -118,6 +140,16 @@ const TaskList = ({
           onClose={() => setIsModalOpen(false)}
           onSave={handleTaskSave}
           task={editingTask || undefined}
+          categories={categories}
+        />
+      )}
+
+      {isCategoryManagerOpen && (
+        <CategoryManager
+          isOpen={isCategoryManagerOpen}
+          onClose={() => setIsCategoryManagerOpen(false)}
+          categories={categories}
+          onCategoriesChange={handleCategoriesChange}
         />
       )}
     </div>

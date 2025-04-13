@@ -1,8 +1,10 @@
+
 import { cn } from "@/lib/utils";
 import { Clock, Edit, Trash } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
+import { Category, defaultCategories } from "./CategoryManager";
 
 export type TaskPriority = "low" | "medium" | "high";
 export type TaskCategory = "p" | "b" | "g" | null;
@@ -23,9 +25,16 @@ interface TaskItemProps {
   onComplete: (id: string, completed: boolean) => void;
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
+  categories?: Category[];
 }
 
-const TaskItem = ({ task, onComplete, onDelete, onEdit }: TaskItemProps) => {
+const TaskItem = ({ 
+  task, 
+  onComplete, 
+  onDelete, 
+  onEdit,
+  categories = defaultCategories 
+}: TaskItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   // Format estimated time as "1hr 30min" or "30min"
@@ -40,6 +49,18 @@ const TaskItem = ({ task, onComplete, onDelete, onEdit }: TaskItemProps) => {
     }
     
     return `${mins}min`;
+  };
+
+  const getCategoryColor = (code: TaskCategory) => {
+    if (!code) return "";
+    const category = categories.find(cat => cat.code === code);
+    return category ? category.color : "";
+  };
+
+  const getCategoryName = (code: TaskCategory) => {
+    if (!code) return "";
+    const category = categories.find(cat => cat.code === code);
+    return category ? category.name : "";
   };
 
   return (
@@ -60,7 +81,15 @@ const TaskItem = ({ task, onComplete, onDelete, onEdit }: TaskItemProps) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className={`priority-dot priority-${task.priority}`} />
-            {task.category && <span className={`priority-dot priority-${task.category}`} />}
+            {task.category && (
+              <span 
+                className={cn(
+                  "w-2 h-2 rounded-full",
+                  getCategoryColor(task.category)
+                )}
+                title={getCategoryName(task.category)}
+              />
+            )}
             <h3 className={cn(
               "text-base font-medium flex-1 truncate",
               task.completed && "line-through text-muted-foreground"
