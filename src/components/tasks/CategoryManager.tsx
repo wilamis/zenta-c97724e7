@@ -2,5 +2,7 @@
 import CategoryManager from "./categories/CategoryManager";
 import { Category, defaultCategories } from "./categories/types";
 
-export { Category, defaultCategories };
+export type { Category };
+export { defaultCategories };
 export default CategoryManager;
+
