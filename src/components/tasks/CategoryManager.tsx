@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
@@ -15,7 +14,6 @@ export interface Category {
   color: string;
 }
 
-// Default categories that are always available
 export const defaultCategories: Category[] = [
   { id: "personal", name: "Personal", code: "p", color: "bg-zenta-purple" },
   { id: "business", name: "Business", code: "b", color: "bg-zenta-blue" },
@@ -42,10 +40,8 @@ const CategoryManager = ({
   const handleAddCategory = () => {
     if (!newCategoryName.trim()) return;
 
-    // Generate a unique code
     const code = newCategoryName.trim().substring(0, 1).toLowerCase() as TaskCategory;
     
-    // Create new category
     const newCategory: Category = {
       id: Date.now().toString(),
       name: newCategoryName.trim(),
@@ -187,13 +183,13 @@ const CategoryManager = ({
                 {defaultCategories.map((category) => (
                   <div
                     key={category.id}
-                    className="flex items-center justify-between p-3"
+                    className="flex items-center justify-between p-3 tracking-normal"
                   >
                     <div className="flex items-center gap-2">
                       <span
                         className={cn("w-3 h-3 rounded-full", category.color)}
                       />
-                      <span>{category.name}</span>
+                      <span className="tracking-normal">{category.name}</span>
                     </div>
                   </div>
                 ))}

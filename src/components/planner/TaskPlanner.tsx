@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
@@ -160,19 +159,6 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
           </div>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <Card className="glass-morphism border-zenta-purple/20">
-              <CardContent className="pt-6">
-                <TaskList
-                  title="Today"
-                  tasks={todayTasks}
-                  onTaskChange={onTaskChange}
-                  emptyStateMessage="No tasks scheduled for today"
-                  completedCount={countCompletedTasks(todayTasks)}
-                  totalCount={todayTasks.length}
-                />
-              </CardContent>
-            </Card>
-            
             <Card className="glass-morphism border-zenta-purple/20">
               <CardContent className="pt-6">
                 <TaskList
