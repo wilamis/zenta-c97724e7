@@ -7,7 +7,8 @@ import { Label } from "../ui/label";
 import { Task, TaskCategory, TaskPriority } from "./TaskItem";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Badge } from "../ui/badge";
-import { Clock } from "lucide-react";
+import { Clock, AlignLeft } from "lucide-react";
+import { Textarea } from "../ui/textarea";
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const TaskModal = ({ isOpen, onClose, onSave, task }: TaskModalProps) => {
   const [priority, setPriority] = useState<TaskPriority>(task?.priority || "medium");
   const [category, setCategory] = useState<TaskCategory>(task?.category || null);
   const [estimatedTime, setEstimatedTime] = useState<number>(task?.estimatedTime || 30);
+  const [description, setDescription] = useState(task?.description || "");
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +34,8 @@ const TaskModal = ({ isOpen, onClose, onSave, task }: TaskModalProps) => {
       completed: task?.completed || false,
       priority,
       category,
-      estimatedTime
+      estimatedTime,
+      description
     });
   };
 
@@ -52,6 +55,21 @@ const TaskModal = ({ isOpen, onClose, onSave, task }: TaskModalProps) => {
               placeholder="What needs to be done?"
               className="w-full"
               autoFocus
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description" className="flex items-center gap-1">
+              <AlignLeft className="h-4 w-4 text-muted-foreground" />
+              Description
+            </Label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Add notes or details about this task..."
+              className="resize-none"
+              rows={3}
             />
           </div>
 
