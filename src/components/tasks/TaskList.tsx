@@ -79,8 +79,7 @@ const TaskList = ({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold">
-            <span className="align-super text-sm">B</span>
-            <span>acklog</span>
+            Backlog
           </h2>
           {(completedCount !== undefined && totalCount !== undefined) && (
             <div className="text-sm text-muted-foreground">
