@@ -4,7 +4,7 @@ import { Clock, Edit, Trash } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
-import { Category, defaultCategories } from "./CategoryManager";
+import { Category, defaultCategories } from "./categories/types";
 
 export type TaskPriority = "low" | "medium" | "high";
 export type TaskCategory = "p" | "b" | "g" | null;
