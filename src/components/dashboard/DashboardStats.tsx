@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Clock, FlameIcon, Star, Target, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Task } from "../tasks/TaskItem";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface DashboardStatsProps {
   tasks: Task[];
@@ -14,6 +15,8 @@ interface DashboardStatsProps {
 }
 
 const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardStatsProps) => {
+  const { t } = useLanguage();
+  
   // Calculate task completion rate
   const completedTasks = tasks.filter(task => task.completed).length;
   const totalTasks = tasks.length;
@@ -36,11 +39,11 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
   
   // Achievements
   const achievements = [
-    { id: 1, name: "Early Bird", description: "Complete a task before 9 AM", earned: true, icon: "🌅" },
-    { id: 2, name: "Focus Master", description: "Focus for 2 hours in a day", earned: true, icon: "🧠" },
-    { id: 3, name: "Task Warrior", description: "Complete 10 tasks in a day", earned: false, icon: "⚔️" },
-    { id: 4, name: "Pomodoro Pro", description: "Complete 8 pomodoros in a day", earned: false, icon: "🍅" },
-    { id: 5, name: "Planning Wizard", description: "Plan a full week ahead", earned: true, icon: "📅" },
+    { id: 1, name: t("dashboard.achievements.earlyBird"), description: t("dashboard.achievements.earlyBirdDesc"), earned: true, icon: "🌅" },
+    { id: 2, name: t("dashboard.achievements.focusMaster"), description: t("dashboard.achievements.focusMasterDesc"), earned: true, icon: "🧠" },
+    { id: 3, name: t("dashboard.achievements.taskWarrior"), description: t("dashboard.achievements.taskWarriorDesc"), earned: false, icon: "⚔️" },
+    { id: 4, name: t("dashboard.achievements.pomodoroPro"), description: t("dashboard.achievements.pomodoroProDesc"), earned: false, icon: "🍅" },
+    { id: 5, name: t("dashboard.achievements.planningWizard"), description: t("dashboard.achievements.planningWizardDesc"), earned: true, icon: "📅" },
   ];
   
   const earnedAchievements = achievements.filter(a => a.earned);
@@ -50,7 +53,7 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="glass-morphism border-zenta-purple/20">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Focus Time</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("dashboard.focusTime")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-end justify-between">
@@ -60,14 +63,14 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
               <Clock className="h-4 w-4 text-muted-foreground" />
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Today's focused work
+              {t("dashboard.todaysFocusedWork")}
             </p>
           </CardContent>
         </Card>
         
         <Card className="glass-morphism border-zenta-purple/20">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Pomodoros</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("dashboard.pomodoros")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-end justify-between">
@@ -77,14 +80,14 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
               <Target className="h-4 w-4 text-muted-foreground" />
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Completed sessions
+              {t("dashboard.completedSessions")}
             </p>
           </CardContent>
         </Card>
         
         <Card className="glass-morphism border-zenta-purple/20">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Task Completion</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("dashboard.taskCompletion")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-end justify-between">
@@ -107,7 +110,7 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
         <CardHeader>
           <CardTitle className="flex items-center">
             <Trophy className="h-5 w-5 text-zenta-purple mr-2" />
-            Your Progress
+            {t("dashboard.yourProgress")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -117,7 +120,7 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
-                <div className="font-semibold">Level {level}</div>
+                <div className="font-semibold">{t("dashboard.level")} {level}</div>
                 <div className="text-sm text-muted-foreground">
                   {currentLevelXP}/{xpForNextLevel} XP
                 </div>
@@ -131,32 +134,32 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
           
           <Tabs defaultValue="stats">
             <TabsList className="w-full grid grid-cols-3">
-              <TabsTrigger value="stats">Stats</TabsTrigger>
-              <TabsTrigger value="streaks">Streaks</TabsTrigger>
-              <TabsTrigger value="achievements">Achievements</TabsTrigger>
+              <TabsTrigger value="stats">{t("dashboard.stats")}</TabsTrigger>
+              <TabsTrigger value="streaks">{t("dashboard.streaks")}</TabsTrigger>
+              <TabsTrigger value="achievements">{t("dashboard.achievements.title")}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="stats" className="space-y-4 pt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">Total XP</div>
+                  <div className="text-sm text-muted-foreground">{t("dashboard.totalXP")}</div>
                   <div className="text-lg font-bold">{totalXP} XP</div>
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">Total tasks completed</div>
+                  <div className="text-sm text-muted-foreground">{t("dashboard.totalTasksCompleted")}</div>
                   <div className="text-lg font-bold">{completedTasks}</div>
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">Focus time</div>
+                  <div className="text-sm text-muted-foreground">{t("dashboard.focusTime")}</div>
                   <div className="text-lg font-bold">
                     {Math.floor(focusMinutes / 60)}h {focusMinutes % 60}m
                   </div>
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">Completed pomodoros</div>
+                  <div className="text-sm text-muted-foreground">{t("dashboard.completedPomodoros")}</div>
                   <div className="text-lg font-bold">{completedPomodoros}</div>
                 </div>
               </div>
@@ -165,18 +168,18 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
             <TabsContent value="streaks" className="pt-4">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <div className="text-sm text-muted-foreground">Current streak</div>
+                  <div className="text-sm text-muted-foreground">{t("dashboard.currentStreak")}</div>
                   <div className="flex items-center">
                     <FlameIcon className="h-5 w-5 text-zenta-orange mr-2" />
-                    <span className="text-lg font-bold">{currentStreak} days</span>
+                    <span className="text-lg font-bold">{currentStreak} {t("dashboard.days")}</span>
                   </div>
                 </div>
                 
                 <div>
-                  <div className="text-sm text-muted-foreground">Longest streak</div>
+                  <div className="text-sm text-muted-foreground">{t("dashboard.longestStreak")}</div>
                   <div className="flex items-center">
                     <Star className="h-5 w-5 text-zenta-purple mr-2" />
-                    <span className="text-lg font-bold">{longestStreak} days</span>
+                    <span className="text-lg font-bold">{longestStreak} {t("dashboard.days")}</span>
                   </div>
                 </div>
               </div>
@@ -193,19 +196,19 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
                 ))}
               </div>
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>Mon</span>
-                <span>Tue</span>
-                <span>Wed</span>
-                <span>Thu</span>
-                <span>Fri</span>
-                <span>Sat</span>
-                <span>Sun</span>
+                <span>{t("dashboard.weekdays.mon")}</span>
+                <span>{t("dashboard.weekdays.tue")}</span>
+                <span>{t("dashboard.weekdays.wed")}</span>
+                <span>{t("dashboard.weekdays.thu")}</span>
+                <span>{t("dashboard.weekdays.fri")}</span>
+                <span>{t("dashboard.weekdays.sat")}</span>
+                <span>{t("dashboard.weekdays.sun")}</span>
               </div>
             </TabsContent>
             
             <TabsContent value="achievements" className="pt-4">
               <div className="text-sm text-muted-foreground mb-4">
-                {earnedAchievements.length}/{achievements.length} achievements unlocked
+                {earnedAchievements.length}/{achievements.length} {t("dashboard.achievements.unlocked")}
               </div>
               
               <div className="space-y-2">
@@ -225,7 +228,7 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
                         {achievement.name}
                         {achievement.earned && (
                           <Badge variant="secondary" className="ml-2 bg-zenta-purple text-white">
-                            Earned
+                            {t("dashboard.achievements.earned")}
                           </Badge>
                         )}
                       </div>

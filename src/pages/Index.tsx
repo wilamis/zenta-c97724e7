@@ -8,8 +8,10 @@ import TaskList from "../components/tasks/TaskList";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import { Badge } from "../components/ui/badge";
 import { Bell, Calendar, ListTodo, PlayCircle, Timer, Zap } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 const Index = () => {
+  const { t } = useLanguage();
   const [tasks, setTasks] = useState<Task[]>(() => {
     // Load tasks from localStorage or use sample data
     const savedTasks = localStorage.getItem("zenta-tasks");
@@ -81,8 +83,9 @@ const Index = () => {
     setTasks(updatedTasks);
   };
   
-  // Get today's date formatted as "Monday, April 13"
-  const formattedDate = new Date().toLocaleDateString("en-US", {
+  // Get today's date formatted based on current language
+  const { language } = useLanguage();
+  const formattedDate = new Date().toLocaleDateString(language === "pt-BR" ? "pt-BR" : "en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -98,11 +101,11 @@ const Index = () => {
     <Layout>
       <div className="space-y-8">
         <header className="space-y-2">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <h1 className="text-3xl font-bold">{t("dashboard.title")}</h1>
           <div className="flex items-center gap-2">
             <p className="text-muted-foreground">{formattedDate}</p>
             <Badge variant="outline" className="ml-2 bg-zenta-purple text-white">
-              Level 3
+              {t("dashboard.level")} 3
             </Badge>
           </div>
         </header>
@@ -113,7 +116,7 @@ const Index = () => {
               <CardHeader className="pb-0">
                 <CardTitle className="flex items-center">
                   <ListTodo className="h-5 w-5 text-zenta-purple mr-2" />
-                  Today's Tasks
+                  {t("dashboard.todaysTasks")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -121,7 +124,7 @@ const Index = () => {
                   title=""
                   tasks={todayTasks}
                   onTaskChange={handleTasksChange}
-                  emptyStateMessage="No tasks for today. Add some tasks to get started!"
+                  emptyStateMessage={t("dashboard.noTasksForToday")}
                   completedCount={completedTasks}
                   totalCount={tasks.length}
                 />
@@ -135,15 +138,15 @@ const Index = () => {
                     <div className="space-y-1">
                       <h3 className="font-semibold flex items-center">
                         <Timer className="h-4 w-4 mr-2 text-zenta-purple" />
-                        Pomodoro
+                        {t("dashboard.pomodoro")}
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        Stay focused with timed sessions
+                        {t("dashboard.pomodoroDescription")}
                       </p>
                     </div>
                   </div>
                   <Button variant="outline" className="w-full" asChild>
-                    <a href="/pomodoro">Start a Session</a>
+                    <a href="/pomodoro">{t("dashboard.startSession")}</a>
                   </Button>
                 </CardContent>
               </Card>
@@ -154,15 +157,15 @@ const Index = () => {
                     <div className="space-y-1">
                       <h3 className="font-semibold flex items-center">
                         <PlayCircle className="h-4 w-4 mr-2 text-zenta-purple" />
-                        Focus Mode
+                        {t("dashboard.focusMode")}
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        Eliminate distractions and focus
+                        {t("dashboard.focusModeDescription")}
                       </p>
                     </div>
                   </div>
                   <Button variant="outline" className="w-full" asChild>
-                    <a href="/focus">Enter Focus Mode</a>
+                    <a href="/focus">{t("dashboard.enterFocusMode")}</a>
                   </Button>
                 </CardContent>
               </Card>
@@ -174,7 +177,7 @@ const Index = () => {
                   <div className="space-y-1">
                     <h3 className="font-semibold flex items-center">
                       <Zap className="h-4 w-4 mr-2 text-zenta-orange" />
-                      Quick Actions
+                      {t("dashboard.quickActions")}
                     </h3>
                   </div>
                 </div>
@@ -182,19 +185,19 @@ const Index = () => {
                   <Button asChild>
                     <a href="/tasks">
                       <ListTodo className="h-4 w-4 mr-2" />
-                      New Task
+                      {t("dashboard.newTask")}
                     </a>
                   </Button>
                   <Button variant="outline" asChild>
                     <a href="/focus">
                       <PlayCircle className="h-4 w-4 mr-2" />
-                      Start Focus
+                      {t("dashboard.startFocus")}
                     </a>
                   </Button>
                   <Button variant="outline" asChild>
                     <a href="/planner">
                       <Calendar className="h-4 w-4 mr-2" />
-                      Plan Week
+                      {t("dashboard.planWeek")}
                     </a>
                   </Button>
                 </div>
@@ -213,18 +216,18 @@ const Index = () => {
               <CardHeader className="pb-0">
                 <CardTitle className="flex items-center">
                   <Bell className="h-5 w-5 text-zenta-purple mr-2" />
-                  Reminders
+                  {t("dashboard.reminders")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 pt-2">
                   <div className="bg-secondary rounded-lg p-3">
-                    <div className="font-medium">Team meeting</div>
-                    <div className="text-sm text-muted-foreground">Tomorrow at 10:00 AM</div>
+                    <div className="font-medium">{t("dashboard.teamMeeting")}</div>
+                    <div className="text-sm text-muted-foreground">{t("dashboard.tomorrowAt")}</div>
                   </div>
                   <div className="bg-secondary rounded-lg p-3">
-                    <div className="font-medium">Project deadline</div>
-                    <div className="text-sm text-muted-foreground">Friday at 5:00 PM</div>
+                    <div className="font-medium">{t("dashboard.projectDeadline")}</div>
+                    <div className="text-sm text-muted-foreground">{t("dashboard.fridayAt")}</div>
                   </div>
                 </div>
               </CardContent>
