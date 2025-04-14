@@ -1,9 +1,12 @@
+
 import { useState } from "react";
 import { Button } from "../ui/button";
 import TaskItem, { Task } from "./TaskItem";
 import TaskModal from "./TaskModal";
 import { Plus, Tag } from "lucide-react";
-import CategoryManager, { Category, defaultCategories } from "./CategoryManager";
+import CategoryManager from "./CategoryManager";
+import { Category, defaultCategories } from "./categories/types";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface TaskListProps {
   tasks: Task[];
@@ -18,10 +21,11 @@ const TaskList = ({
   tasks, 
   title, 
   onTaskChange, 
-  emptyStateMessage = "No tasks yet",
+  emptyStateMessage,
   completedCount,
   totalCount
 }: TaskListProps) => {
+  const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -79,7 +83,7 @@ const TaskList = ({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold">
-            Backlog
+            {t("tasks.backlog")}
           </h2>
           {(completedCount !== undefined && totalCount !== undefined) && (
             <div className="text-sm text-muted-foreground">
@@ -101,7 +105,7 @@ const TaskList = ({
             onClick={handleManageCategories}
           >
             <Tag className="w-4 h-4" />
-            <span className="tracking-normal">CATEGORIES</span>
+            <span className="tracking-normal">{t("tasks.categories")}</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -110,7 +114,7 @@ const TaskList = ({
             onClick={handleAddTask}
           >
             <Plus className="w-4 h-4" />
-            <span className="tracking-normal">ADD TASK</span>
+            <span className="tracking-normal">{t("tasks.addTask")}</span>
           </Button>
         </div>
       </div>

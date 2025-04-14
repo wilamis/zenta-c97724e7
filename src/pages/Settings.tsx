@@ -7,8 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Button } from "../components/ui/button";
 import { useState } from "react";
 import { BellRing, Clock, CloudOff, Moon, Volume2 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Settings = () => {
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState(true);
   const [soundEffects, setSoundEffects] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
@@ -20,9 +22,9 @@ const Settings = () => {
     <Layout>
       <div className="space-y-6 max-w-3xl mx-auto">
         <header className="space-y-2">
-          <h1 className="text-3xl font-bold">Settings</h1>
+          <h1 className="text-3xl font-bold">{t("settings.title")}</h1>
           <p className="text-muted-foreground">
-            Configure your ZenTa experience
+            {t("settings.subtitle")}
           </p>
         </header>
         
@@ -31,12 +33,12 @@ const Settings = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <BellRing className="h-5 w-5 mr-2 text-zenta-purple" />
-                Notifications
+                {t("settings.notifications")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="notifications">Enable notifications</Label>
+                <Label htmlFor="notifications">{t("settings.enableNotifications")}</Label>
                 <Switch
                   id="notifications"
                   checked={notifications}
@@ -47,7 +49,7 @@ const Settings = () => {
               <div className="flex items-center justify-between">
                 <Label htmlFor="soundEffects" className="flex items-center">
                   <Volume2 className="h-4 w-4 mr-2 text-muted-foreground" />
-                  Sound effects
+                  {t("settings.soundEffects")}
                 </Label>
                 <Switch
                   id="soundEffects"
@@ -62,12 +64,12 @@ const Settings = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Clock className="h-5 w-5 mr-2 text-zenta-purple" />
-                Productivity
+                {t("settings.productivity")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="pomodoroPreset">Default Pomodoro cycle</Label>
+                <Label htmlFor="pomodoroPreset">{t("settings.defaultPomodoroCycle")}</Label>
                 <Select value={pomodoroPreset} onValueChange={setPomodoroPreset}>
                   <SelectTrigger id="pomodoroPreset">
                     <SelectValue placeholder="Select Pomodoro preset" />
@@ -82,7 +84,7 @@ const Settings = () => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="focusGoal">Daily focus goal</Label>
+                <Label htmlFor="focusGoal">{t("settings.dailyFocusGoal")}</Label>
                 <Select value={focusGoal} onValueChange={setFocusGoal}>
                   <SelectTrigger id="focusGoal">
                     <SelectValue placeholder="Select a goal" />
@@ -102,12 +104,12 @@ const Settings = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Moon className="h-5 w-5 mr-2 text-zenta-purple" />
-                Appearance
+                {t("settings.appearance")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="darkMode">Dark mode</Label>
+                <Label htmlFor="darkMode">{t("settings.darkMode")}</Label>
                 <Switch
                   id="darkMode"
                   checked={darkMode}
@@ -121,12 +123,12 @@ const Settings = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <CloudOff className="h-5 w-5 mr-2 text-zenta-purple" />
-                Data & Sync
+                {t("settings.dataAndSync")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="offline">Offline mode</Label>
+                <Label htmlFor="offline">{t("settings.offlineMode")}</Label>
                 <Switch
                   id="offline"
                   checked={offline}
@@ -135,15 +137,15 @@ const Settings = () => {
               </div>
               
               <div className="pt-2 space-y-2">
-                <Button variant="outline" className="w-full">Export Data</Button>
-                <Button variant="outline" className="w-full">Clear All Data</Button>
+                <Button variant="outline" className="w-full">{t("settings.exportData")}</Button>
+                <Button variant="outline" className="w-full">{t("settings.clearAllData")}</Button>
               </div>
             </CardContent>
           </Card>
           
           <div className="text-center text-sm text-muted-foreground pt-4">
             <p>ZenTa v1.0.0</p>
-            <p>©2025 ZenTa Productivity</p>
+            <p>{t("settings.copyright")}</p>
           </div>
         </div>
       </div>

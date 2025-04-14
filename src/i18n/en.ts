@@ -1,0 +1,78 @@
+
+export const englishTranslations = {
+  sidebar: {
+    dashboard: "Dashboard",
+    tasks: "Tasks",
+    kanban: "Kanban",
+    focus: "Focus",
+    pomodoro: "Pomodoro",
+    planner: "Planner",
+    settings: "Settings",
+    freePlan: "Free Plan",
+    upgradeText: "Upgrade for more features"
+  },
+  tasks: {
+    title: "Tasks",
+    subtitle: "Organize, prioritize, and complete your tasks",
+    activeTasks: "Active Tasks",
+    completedTasks: "Completed Tasks",
+    completionRate: "Completion Rate",
+    tasksToBeCompleted: "Tasks to be completed",
+    wellDone: "Well done!",
+    overallTaskCompletion: "Overall task completion",
+    active: "Active",
+    completed: "Completed",
+    noActiveTasks: "No active tasks. Add a new task to get started!",
+    noCompletedTasks: "No completed tasks yet. Start completing tasks to see them here!",
+    addTask: "ADD TASK",
+    categories: "CATEGORIES",
+    backlog: "Backlog"
+  },
+  taskModal: {
+    addNewTask: "Add New Task",
+    editTask: "Edit Task",
+    taskName: "Task name",
+    whatNeedsToBeDone: "What needs to be done?",
+    description: "Description",
+    addNotes: "Add notes or details about this task...",
+    priority: "Priority",
+    category: "Category",
+    estimatedTime: "Estimated time",
+    low: "Low",
+    medium: "Medium",
+    high: "High",
+    noCategory: "No category",
+    cancel: "Cancel",
+    addTask: "Add Task",
+    saveChanges: "Save Changes"
+  },
+  categoryManager: {
+    title: "Manage Categories",
+    yourCategories: "Your Categories",
+    defaultCategories: "Default Categories",
+    noCustomCategories: "No custom categories yet",
+    categoryName: "Category name",
+    categoryColor: "Category color",
+    add: "Add",
+    update: "Update",
+    cancel: "Cancel",
+    close: "Close"
+  },
+  settings: {
+    title: "Settings",
+    subtitle: "Configure your ZenTa experience",
+    notifications: "Notifications",
+    enableNotifications: "Enable notifications",
+    soundEffects: "Sound effects",
+    productivity: "Productivity",
+    defaultPomodoroCycle: "Default Pomodoro cycle",
+    dailyFocusGoal: "Daily focus goal",
+    appearance: "Appearance",
+    darkMode: "Dark mode",
+    dataAndSync: "Data & Sync",
+    offlineMode: "Offline mode",
+    exportData: "Export Data",
+    clearAllData: "Clear All Data",
+    copyright: "©2025 ZenTa Productivity"
+  }
+};

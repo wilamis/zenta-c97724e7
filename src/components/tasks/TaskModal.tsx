@@ -6,10 +6,10 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Task, TaskCategory, TaskPriority } from "./TaskItem";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Badge } from "../ui/badge";
 import { Clock, AlignLeft } from "lucide-react";
 import { Textarea } from "../ui/textarea";
-import { Category, defaultCategories } from "./CategoryManager";
+import { Category, defaultCategories } from "./categories/types";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -20,6 +20,7 @@ interface TaskModalProps {
 }
 
 const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategories }: TaskModalProps) => {
+  const { t } = useLanguage();
   const [title, setTitle] = useState(task?.title || "");
   const [priority, setPriority] = useState<TaskPriority>(task?.priority || "medium");
   const [category, setCategory] = useState<TaskCategory>(task?.category || null);
@@ -49,7 +50,7 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
   };
 
   const getCategoryName = (code: TaskCategory) => {
-    if (!code) return "No category";
+    if (!code) return t("taskModal.noCategory");
     const category = categories.find(cat => cat.code === code);
     return category ? category.name : code;
   };
@@ -58,16 +59,16 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{task ? "Edit Task" : "Add New Task"}</DialogTitle>
+          <DialogTitle>{task ? t("taskModal.editTask") : t("taskModal.addNewTask")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Task name</Label>
+            <Label htmlFor="title">{t("taskModal.taskName")}</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="What needs to be done?"
+              placeholder={t("taskModal.whatNeedsToBeDone")}
               className="w-full"
               autoFocus
             />
@@ -76,13 +77,13 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
           <div className="space-y-2">
             <Label htmlFor="description" className="flex items-center gap-1">
               <AlignLeft className="h-4 w-4 text-muted-foreground" />
-              Description
+              {t("taskModal.description")}
             </Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add notes or details about this task..."
+              placeholder={t("taskModal.addNotes")}
               className="resize-none"
               rows={3}
             />
@@ -90,7 +91,7 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="priority">Priority</Label>
+              <Label htmlFor="priority">{t("taskModal.priority")}</Label>
               <Select 
                 value={priority} 
                 onValueChange={(value) => setPriority(value as TaskPriority)}
@@ -102,19 +103,19 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
                   <SelectItem value="low">
                     <div className="flex items-center">
                       <span className="w-2 h-2 rounded-full bg-zenta-green mr-2"></span>
-                      Low
+                      {t("taskModal.low")}
                     </div>
                   </SelectItem>
                   <SelectItem value="medium">
                     <div className="flex items-center">
                       <span className="w-2 h-2 rounded-full bg-zenta-blue mr-2"></span>
-                      Medium
+                      {t("taskModal.medium")}
                     </div>
                   </SelectItem>
                   <SelectItem value="high">
                     <div className="flex items-center">
                       <span className="w-2 h-2 rounded-full bg-zenta-red mr-2"></span>
-                      High
+                      {t("taskModal.high")}
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -122,7 +123,7 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">{t("taskModal.category")}</Label>
               <Select 
                 value={category || "none"} 
                 onValueChange={(value) => setCategory(value === "none" ? null : (value as TaskCategory))}
@@ -133,7 +134,7 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
                 <SelectContent>
                   <SelectItem value="none">
                     <div className="flex items-center">
-                      No category
+                      {t("taskModal.noCategory")}
                     </div>
                   </SelectItem>
                   {categories.map((cat) => (
@@ -150,7 +151,7 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="estimatedTime">Estimated time</Label>
+            <Label htmlFor="estimatedTime">{t("taskModal.estimatedTime")}</Label>
             <div className="flex items-center space-x-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
               <Select 
@@ -176,10 +177,10 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
 
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" type="button" onClick={onClose}>
-              Cancel
+              {t("taskModal.cancel")}
             </Button>
             <Button type="submit" disabled={!title.trim()}>
-              {task ? "Save Changes" : "Add Task"}
+              {task ? t("taskModal.saveChanges") : t("taskModal.addTask")}
             </Button>
           </div>
         </form>

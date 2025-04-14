@@ -1,20 +1,21 @@
 
-import React from "react";
-import { Button } from "../../ui/button";
-import { Input } from "../../ui/input";
-import { Label } from "../../ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface CategoryFormProps {
   categoryName: string;
   categoryColor: string;
   isEditing: boolean;
-  onNameChange: (value: string) => void;
-  onColorChange: (value: string) => void;
+  onNameChange: (name: string) => void;
+  onColorChange: (color: string) => void;
   onSubmit: () => void;
-  onCancel?: () => void;
+  onCancel: () => void;
 }
 
-const CategoryForm: React.FC<CategoryFormProps> = ({
+const CategoryForm = ({
   categoryName,
   categoryColor,
   isEditing,
@@ -22,36 +23,50 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   onColorChange,
   onSubmit,
   onCancel,
-}) => {
+}: CategoryFormProps) => {
+  const { t } = useLanguage();
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit();
+  };
+
   return (
-    <div className="space-y-2">
-      <Label htmlFor="category-name">
-        {isEditing ? "Update Category" : "Add New Category"}
-      </Label>
-      <div className="flex gap-2">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="category-name">{t("categoryManager.categoryName")}</Label>
         <Input
           id="category-name"
           value={categoryName}
           onChange={(e) => onNameChange(e.target.value)}
-          placeholder="Category name"
-          className="flex-1"
+          placeholder="Work, Personal, etc."
+          className="w-full"
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="category-color">{t("categoryManager.categoryColor")}</Label>
         <Input
+          id="category-color"
           type="color"
           value={categoryColor}
           onChange={(e) => onColorChange(e.target.value)}
-          className="w-12 p-1 h-10"
+          className="h-10 p-1 cursor-pointer"
         />
-        <Button onClick={onSubmit} disabled={!categoryName.trim()}>
-          {isEditing ? "Update" : "Add"}
-        </Button>
-        {isEditing && onCancel && (
-          <Button variant="outline" onClick={onCancel}>
-            Cancel
+      </div>
+
+      <div className="flex justify-end space-x-2">
+        {isEditing && (
+          <Button type="button" variant="outline" onClick={onCancel}>
+            {t("categoryManager.cancel")}
           </Button>
         )}
+        <Button type="submit" disabled={!categoryName.trim()}>
+          {isEditing ? t("categoryManager.update") : t("categoryManager.add")}
+        </Button>
       </div>
-    </div>
+    </form>
   );
 };
 

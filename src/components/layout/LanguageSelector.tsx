@@ -1,6 +1,5 @@
 
-import { useState } from "react";
-import { Flag } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,29 +10,23 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Language = {
-  code: string;
+  code: "en" | "pt-BR";
   name: string;
   flag: string;
-  active: boolean;
 };
 
+const languages: Language[] = [
+  { code: "en", name: "English", flag: "🇺🇸" },
+  { code: "pt-BR", name: "Português (Brasil)", flag: "🇧🇷" },
+];
+
 const LanguageSelector = () => {
-  const [languages, setLanguages] = useState<Language[]>([
-    { code: "en", name: "English", flag: "🇺🇸", active: true },
-    { code: "pt-BR", name: "Português (Brasil)", flag: "🇧🇷", active: false },
-  ]);
+  const { language, setLanguage } = useLanguage();
 
-  const activeLanguage = languages.find((lang) => lang.active) || languages[0];
+  const activeLanguage = languages.find(lang => lang.code === language) || languages[0];
 
-  const handleLanguageChange = (code: string) => {
-    setLanguages(
-      languages.map((lang) => ({
-        ...lang,
-        active: lang.code === code,
-      }))
-    );
-    // Here you would typically handle actual language change in your app
-    console.log(`Language changed to: ${code}`);
+  const handleLanguageChange = (code: "en" | "pt-BR") => {
+    setLanguage(code);
   };
 
   return (
@@ -49,17 +42,17 @@ const LanguageSelector = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        {languages.map((language) => (
+        {languages.map((lang) => (
           <DropdownMenuItem
-            key={language.code}
+            key={lang.code}
             className={cn(
               "cursor-pointer gap-2",
-              language.active && "font-medium bg-secondary"
+              lang.code === language && "font-medium bg-secondary"
             )}
-            onClick={() => handleLanguageChange(language.code)}
+            onClick={() => handleLanguageChange(lang.code)}
           >
-            <span className="text-lg">{language.flag}</span>
-            <span>{language.name}</span>
+            <span className="text-lg">{lang.flag}</span>
+            <span>{lang.name}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

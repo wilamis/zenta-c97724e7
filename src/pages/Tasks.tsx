@@ -6,8 +6,10 @@ import { Task } from "../components/tasks/TaskItem";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { CheckSquare, ListTodo } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Tasks = () => {
+  const { t } = useLanguage();
   const [tasks, setTasks] = useState<Task[]>(() => {
     // Load tasks from localStorage or use sample data
     const savedTasks = localStorage.getItem("zenta-tasks");
@@ -40,45 +42,45 @@ const Tasks = () => {
     <Layout>
       <div className="space-y-6">
         <header className="space-y-2">
-          <h1 className="text-3xl font-bold">Tasks</h1>
+          <h1 className="text-3xl font-bold">{t("tasks.title")}</h1>
           <p className="text-muted-foreground">
-            Organize, prioritize, and complete your tasks
+            {t("tasks.subtitle")}
           </p>
         </header>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="glass-morphism border-zenta-purple/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Active Tasks</CardTitle>
+              <CardTitle className="text-sm font-medium">{t("tasks.activeTasks")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalActiveTasks}</div>
               <p className="text-xs text-muted-foreground">
-                Tasks to be completed
+                {t("tasks.tasksToBeCompleted")}
               </p>
             </CardContent>
           </Card>
           
           <Card className="glass-morphism border-zenta-purple/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Completed Tasks</CardTitle>
+              <CardTitle className="text-sm font-medium">{t("tasks.completedTasks")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalCompletedTasks}</div>
               <p className="text-xs text-muted-foreground">
-                Well done!
+                {t("tasks.wellDone")}
               </p>
             </CardContent>
           </Card>
           
           <Card className="glass-morphism border-zenta-purple/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
+              <CardTitle className="text-sm font-medium">{t("tasks.completionRate")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{completionRate}%</div>
               <p className="text-xs text-muted-foreground">
-                Overall task completion
+                {t("tasks.overallTaskCompletion")}
               </p>
             </CardContent>
           </Card>
@@ -89,11 +91,11 @@ const Tasks = () => {
             <TabsList>
               <TabsTrigger value="active" className="flex items-center gap-2">
                 <ListTodo className="h-4 w-4" />
-                Active
+                {t("tasks.active")}
               </TabsTrigger>
               <TabsTrigger value="completed" className="flex items-center gap-2">
                 <CheckSquare className="h-4 w-4" />
-                Completed
+                {t("tasks.completed")}
               </TabsTrigger>
             </TabsList>
             
@@ -101,10 +103,10 @@ const Tasks = () => {
               <Card className="glass-morphism border-zenta-purple/20">
                 <CardContent className="pt-6">
                   <TaskList
-                    title="Active Tasks"
+                    title={t("tasks.activeTasks")}
                     tasks={activeTasks}
                     onTaskChange={handleTasksChange}
-                    emptyStateMessage="No active tasks. Add a new task to get started!"
+                    emptyStateMessage={t("tasks.noActiveTasks")}
                   />
                 </CardContent>
               </Card>
@@ -114,10 +116,10 @@ const Tasks = () => {
               <Card className="glass-morphism border-zenta-purple/20">
                 <CardContent className="pt-6">
                   <TaskList
-                    title="Completed Tasks"
+                    title={t("tasks.completedTasks")}
                     tasks={completedTasks}
                     onTaskChange={handleTasksChange}
-                    emptyStateMessage="No completed tasks yet. Start completing tasks to see them here!"
+                    emptyStateMessage={t("tasks.noCompletedTasks")}
                   />
                 </CardContent>
               </Card>

@@ -16,46 +16,47 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import LanguageSelector from "./LanguageSelector";
+import { useLanguage } from "@/context/LanguageContext";
 
 type NavItem = {
-  title: string;
+  titleKey: string;
   icon: React.ElementType;
   path: string;
 };
 
 const navItems: NavItem[] = [
   {
-    title: "Dashboard",
+    titleKey: "sidebar.dashboard",
     icon: Home,
     path: "/"
   },
   {
-    title: "Tasks",
+    titleKey: "sidebar.tasks",
     icon: ListTodo,
     path: "/tasks"
   },
   {
-    title: "Kanban",
+    titleKey: "sidebar.kanban",
     icon: LayoutGrid,
     path: "/kanban"
   },
   {
-    title: "Focus",
+    titleKey: "sidebar.focus",
     icon: Clock,
     path: "/focus"
   },
   {
-    title: "Pomodoro",
+    titleKey: "sidebar.pomodoro",
     icon: Timer,
     path: "/pomodoro"
   },
   {
-    title: "Planner",
+    titleKey: "sidebar.planner",
     icon: Calendar,
     path: "/planner"
   },
   {
-    title: "Settings",
+    titleKey: "sidebar.settings",
     icon: Settings,
     path: "/settings"
   }
@@ -64,6 +65,7 @@ const navItems: NavItem[] = [
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { t } = useLanguage();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -124,7 +126,7 @@ const Sidebar = () => {
                     ? "text-primary"
                     : "text-muted-foreground"
                 )} />
-                <span className="tracking-normal">{item.title}</span>
+                <span className="tracking-normal">{t(item.titleKey)}</span>
               </Link>
             ))}
           </nav>
@@ -138,8 +140,8 @@ const Sidebar = () => {
                   <CheckSquare className="h-4 w-4 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">Free Plan</p>
-                  <p className="text-xs text-muted-foreground">Upgrade for more features</p>
+                  <p className="text-sm font-medium">{t("sidebar.freePlan")}</p>
+                  <p className="text-xs text-muted-foreground">{t("sidebar.upgradeText")}</p>
                 </div>
               </div>
             </div>

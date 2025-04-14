@@ -1,6 +1,5 @@
 
-import React from "react";
-import { Label } from "../../ui/label";
+import { useLanguage } from "@/context/LanguageContext";
 import { Category } from "./types";
 import CategoryItem from "./CategoryItem";
 
@@ -8,41 +7,39 @@ interface CategoryListProps {
   title: string;
   categories: Category[];
   emptyMessage?: string;
+  readonly?: boolean;
   onEdit?: (category: Category) => void;
   onDelete?: (id: string) => void;
-  readonly?: boolean;
 }
 
-const CategoryList: React.FC<CategoryListProps> = ({
+const CategoryList = ({
   title,
   categories,
-  emptyMessage = "No categories yet",
+  emptyMessage,
+  readonly = false,
   onEdit,
   onDelete,
-  readonly = false,
-}) => {
+}: CategoryListProps) => {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-2">
-      <Label>{title}</Label>
-      <div className="rounded-md border">
-        {categories.length > 0 ? (
-          <div className="divide-y">
-            {categories.map((category) => (
-              <CategoryItem
-                key={category.id}
-                category={category}
-                onEdit={onEdit || (() => {})}
-                onDelete={onDelete}
-                readonly={readonly}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="p-4 text-center text-muted-foreground">
-            {emptyMessage}
-          </div>
-        )}
-      </div>
+      <h3 className="text-sm font-medium">{title}</h3>
+      {categories.length === 0 ? (
+        <p className="text-sm text-muted-foreground py-2">{emptyMessage}</p>
+      ) : (
+        <div className="space-y-1">
+          {categories.map((category) => (
+            <CategoryItem
+              key={category.id}
+              category={category}
+              readonly={readonly}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

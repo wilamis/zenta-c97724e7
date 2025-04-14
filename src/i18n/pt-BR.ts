@@ -1,0 +1,78 @@
+
+export const portugueseTranslations = {
+  sidebar: {
+    dashboard: "Painel",
+    tasks: "Tarefas",
+    kanban: "Kanban",
+    focus: "Foco",
+    pomodoro: "Pomodoro",
+    planner: "Planejador",
+    settings: "Configurações",
+    freePlan: "Plano Gratuito",
+    upgradeText: "Atualize para mais recursos"
+  },
+  tasks: {
+    title: "Tarefas",
+    subtitle: "Organize, priorize e complete suas tarefas",
+    activeTasks: "Tarefas Ativas",
+    completedTasks: "Tarefas Concluídas",
+    completionRate: "Taxa de Conclusão",
+    tasksToBeCompleted: "Tarefas a serem concluídas",
+    wellDone: "Muito bem!",
+    overallTaskCompletion: "Conclusão geral de tarefas",
+    active: "Ativas",
+    completed: "Concluídas",
+    noActiveTasks: "Sem tarefas ativas. Adicione uma nova tarefa para começar!",
+    noCompletedTasks: "Ainda não há tarefas concluídas. Comece a completar tarefas para vê-las aqui!",
+    addTask: "ADICIONAR TAREFA",
+    categories: "CATEGORIAS",
+    backlog: "Pendentes"
+  },
+  taskModal: {
+    addNewTask: "Adicionar Nova Tarefa",
+    editTask: "Editar Tarefa",
+    taskName: "Nome da tarefa",
+    whatNeedsToBeDone: "O que precisa ser feito?",
+    description: "Descrição",
+    addNotes: "Adicione notas ou detalhes sobre esta tarefa...",
+    priority: "Prioridade",
+    category: "Categoria",
+    estimatedTime: "Tempo estimado",
+    low: "Baixa",
+    medium: "Média",
+    high: "Alta",
+    noCategory: "Sem categoria",
+    cancel: "Cancelar",
+    addTask: "Adicionar Tarefa",
+    saveChanges: "Salvar Alterações"
+  },
+  categoryManager: {
+    title: "Gerenciar Categorias",
+    yourCategories: "Suas Categorias",
+    defaultCategories: "Categorias Padrão",
+    noCustomCategories: "Ainda não há categorias personalizadas",
+    categoryName: "Nome da categoria",
+    categoryColor: "Cor da categoria",
+    add: "Adicionar",
+    update: "Atualizar",
+    cancel: "Cancelar",
+    close: "Fechar"
+  },
+  settings: {
+    title: "Configurações",
+    subtitle: "Configure sua experiência ZenTa",
+    notifications: "Notificações",
+    enableNotifications: "Ativar notificações",
+    soundEffects: "Efeitos sonoros",
+    productivity: "Produtividade",
+    defaultPomodoroCycle: "Ciclo Pomodoro padrão",
+    dailyFocusGoal: "Meta diária de foco",
+    appearance: "Aparência",
+    darkMode: "Modo escuro",
+    dataAndSync: "Dados & Sincronização",
+    offlineMode: "Modo offline",
+    exportData: "Exportar Dados",
+    clearAllData: "Limpar Todos os Dados",
+    copyright: "©2025 ZenTa Produtividade"
+  }
+};
