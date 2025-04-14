@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import LanguageSelector from "./LanguageSelector";
 
 type NavItem = {
   title: string;
@@ -128,14 +129,18 @@ const Sidebar = () => {
             ))}
           </nav>
 
-          <div className="rounded-lg bg-secondary p-4 mt-auto">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-zenta-purple flex items-center justify-center">
-                <CheckSquare className="h-4 w-4 text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Free Plan</p>
-                <p className="text-xs text-muted-foreground">Upgrade for more features</p>
+          <div className="space-y-4 mt-auto">
+            <LanguageSelector />
+            
+            <div className="rounded-lg bg-secondary p-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-full bg-zenta-purple flex items-center justify-center">
+                  <CheckSquare className="h-4 w-4 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Free Plan</p>
+                  <p className="text-xs text-muted-foreground">Upgrade for more features</p>
+                </div>
               </div>
             </div>
           </div>
