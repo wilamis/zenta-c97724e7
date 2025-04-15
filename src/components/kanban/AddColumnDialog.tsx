@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AddColumnDialogProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface AddColumnDialogProps {
 
 const AddColumnDialog = ({ isOpen, onClose, onAddColumn }: AddColumnDialogProps) => {
   const [title, setTitle] = useState("");
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,16 +28,16 @@ const AddColumnDialog = ({ isOpen, onClose, onAddColumn }: AddColumnDialogProps)
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Column</DialogTitle>
+          <DialogTitle>{t('kanban.newColumn')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="columnTitle">Column Title</Label>
+            <Label htmlFor="columnTitle">{t('kanban.columnTitle')}</Label>
             <Input
               id="columnTitle"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter column title..."
+              placeholder={t('kanban.columnTitle')}
               className="w-full"
               autoFocus
             />
@@ -43,10 +45,10 @@ const AddColumnDialog = ({ isOpen, onClose, onAddColumn }: AddColumnDialogProps)
           
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" type="button" onClick={onClose}>
-              Cancel
+              {t('kanban.cancel')}
             </Button>
             <Button type="submit" disabled={!title.trim()}>
-              Add Column
+              {t('kanban.add')}
             </Button>
           </div>
         </form>

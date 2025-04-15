@@ -8,8 +8,11 @@ import { useKanbanBoard } from "@/hooks/useKanbanBoard";
 import { useKanbanColumns } from "./useKanbanColumns";
 import { useKanbanTasks } from "./useKanbanTasks";
 import { useKanbanDragDrop } from "./useKanbanDragDrop";
+import { useLanguage } from "@/context/LanguageContext";
 
 const KanbanBoard = () => {
+  const { t } = useLanguage();
+  
   const {
     columns,
     setColumns,
@@ -84,13 +87,13 @@ const KanbanBoard = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-medium">Manage Columns</h2>
+        <h2 className="text-xl font-medium">{t('kanban.manageColumns')}</h2>
         <Button 
           onClick={() => setIsAddColumnOpen(true)}
           className="flex items-center gap-1"
         >
           <Plus className="h-4 w-4" />
-          <span className="tracking-normal">Add Column</span>
+          <span className="tracking-normal">{t('kanban.addColumn')}</span>
         </Button>
       </div>
       

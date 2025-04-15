@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import Layout from "../components/layout/Layout";
 import FocusMode from "../components/focus/FocusMode";
 import { Task } from "../components/tasks/TaskItem";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Focus = () => {
+  const { t } = useLanguage();
   const [tasks, setTasks] = useState<Task[]>(() => {
     // Load tasks from localStorage or use sample data
     const savedTasks = localStorage.getItem("zenta-tasks");

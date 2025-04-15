@@ -6,8 +6,10 @@ import { Label } from '../ui/label';
 import { SheetHeader, SheetTitle } from '../ui/sheet';
 import { Slider } from '../ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { useLanguage } from '@/context/LanguageContext';
 
 const FocusSettings = () => {
+  const { t } = useLanguage();
   const [blockNotifications, setBlockNotifications] = useState(true);
   const [enableSoundEffects, setEnableSoundEffects] = useState(true);
   const [soundVolume, setSoundVolume] = useState([60]);
@@ -17,12 +19,12 @@ const FocusSettings = () => {
   return (
     <div className="space-y-6">
       <SheetHeader>
-        <SheetTitle>Focus Settings</SheetTitle>
+        <SheetTitle>{t('focusSettings.title')}</SheetTitle>
       </SheetHeader>
       
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label htmlFor="blockNotifications">Block notifications</Label>
+          <Label htmlFor="blockNotifications">{t('focusSettings.blockNotifications')}</Label>
           <Switch
             id="blockNotifications"
             checked={blockNotifications}
@@ -31,7 +33,7 @@ const FocusSettings = () => {
         </div>
         
         <div className="flex items-center justify-between">
-          <Label htmlFor="enableSoundEffects">Sound effects</Label>
+          <Label htmlFor="enableSoundEffects">{t('focusSettings.soundEffects')}</Label>
           <Switch
             id="enableSoundEffects"
             checked={enableSoundEffects}
@@ -40,7 +42,7 @@ const FocusSettings = () => {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="soundVolume">Sound volume</Label>
+          <Label htmlFor="soundVolume">{t('focusSettings.soundVolume')}</Label>
           <Slider
             id="soundVolume"
             value={soundVolume}
@@ -57,7 +59,7 @@ const FocusSettings = () => {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="focusGoal">Daily focus goal</Label>
+          <Label htmlFor="focusGoal">{t('focusSettings.dailyFocusGoal')}</Label>
           <Select value={focusGoal} onValueChange={setFocusGoal}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a goal" />
@@ -72,7 +74,7 @@ const FocusSettings = () => {
         </div>
         
         <div className="flex items-center justify-between">
-          <Label htmlFor="autoBreak">Auto-schedule breaks</Label>
+          <Label htmlFor="autoBreak">{t('focusSettings.autoScheduleBreaks')}</Label>
           <Switch
             id="autoBreak"
             checked={autoBreak}
@@ -81,7 +83,7 @@ const FocusSettings = () => {
         </div>
       </div>
       
-      <Button className="w-full">Save Settings</Button>
+      <Button className="w-full">{t('focusSettings.saveSettings')}</Button>
     </div>
   );
 };

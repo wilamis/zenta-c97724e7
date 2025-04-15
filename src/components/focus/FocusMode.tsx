@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
@@ -19,6 +20,7 @@ import { Progress } from '../ui/progress';
 import { Task } from '../tasks/TaskItem';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import FocusSettings from './FocusSettings';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface FocusModeProps {
   tasks?: Task[];
@@ -26,14 +28,15 @@ interface FocusModeProps {
 }
 
 const AMBIENT_SOUNDS = [
-  { id: 'rain', name: 'Rainfall' },
-  { id: 'forest', name: 'Forest' },
-  { id: 'cafe', name: 'Cafe' },
-  { id: 'lofi', name: 'Lo-Fi' },
-  { id: 'white-noise', name: 'White Noise' },
+  { id: 'rain', name: 'rainfall' },
+  { id: 'forest', name: 'forest' },
+  { id: 'cafe', name: 'cafe' },
+  { id: 'lofi', name: 'lofi' },
+  { id: 'white-noise', name: 'whiteNoise' },
 ];
 
 const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
+  const { t } = useLanguage();
   const [isFocusing, setIsFocusing] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -82,8 +85,8 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
   const startFocus = () => {
     if (!selectedTask) {
       toast({
-        title: "No task selected",
-        description: "Please select a task to focus on",
+        title: t('focus.noTaskSelected'),
+        description: t('focus.selectTaskToFocus'),
         variant: "destructive",
       });
       return;
@@ -93,8 +96,8 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
     setElapsedTime(0);
     
     toast({
-      title: "Focus session started",
-      description: `Focusing on: ${selectedTask.title}`,
+      title: t('focus.focusSessionStarted'),
+      description: `${t('focus.focusingOn')} ${selectedTask.title}`,
     });
   };
 
@@ -106,8 +109,8 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
       ]);
       
       toast({
-        title: "Focus session completed!",
-        description: `You focused for ${formatTime(elapsedTime)}`,
+        title: t('focus.focusSessionCompleted'),
+        description: `${t('focus.youFocusedFor')} ${formatTime(elapsedTime)}`,
       });
       
       setIsFocusing(false);
@@ -118,8 +121,8 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
     if (selectedTask && onTaskComplete) {
       onTaskComplete(selectedTask.id);
       toast({
-        title: "Task completed!",
-        description: "Well done on completing your task",
+        title: t('focus.taskCompleted'),
+        description: t('focus.wellDoneCompleting'),
       });
       setSelectedTask(null);
     }
@@ -172,15 +175,15 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
           <div className="text-center space-y-10">
             <div className="space-y-4">
               <h1 className="text-3xl font-bold text-zenta-purple animate-fade-in">
-                Focus Mode
+                {t('focus.focusMode')}
               </h1>
               <p className="text-muted-foreground animate-fade-in delay-100">
-                Stay present and complete your task
+                {t('focus.stayPresent')}
               </p>
             </div>
             
             <div className="bg-secondary/50 rounded-xl p-6 space-y-4 mx-auto max-w-md glass-morphism animate-fade-in delay-200">
-              <h2 className="text-xl font-semibold">Currently focusing on:</h2>
+              <h2 className="text-xl font-semibold">{t('focus.currentlyFocusing')}</h2>
               <p className="text-2xl font-bold text-zenta-purple">
                 {selectedTask?.title}
               </p>
@@ -209,7 +212,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                   ) : (
                     <VolumeX className="w-4 h-4 mr-2" />
                   )}
-                  {sound.name}
+                  {t(`focusSettings.ambientSounds.${sound.name}`)}
                 </Button>
               ))}
             </div>
@@ -222,7 +225,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                 onClick={stopFocus}
               >
                 <Square className="w-5 h-5 mr-2" />
-                End Focus
+                {t('focus.endFocus')}
               </Button>
               <Button 
                 variant="outline" 
@@ -230,23 +233,23 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                 className="rounded-full" 
                 onClick={completeTask}
               >
-                Complete Task
+                {t('focus.completeTask')}
               </Button>
             </div>
           </div>
         ) : (
           <div className="space-y-8">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold">Focus Mode</h1>
+              <h1 className="text-3xl font-bold">{t('focus.title')}</h1>
               <p className="text-muted-foreground">
-                Eliminate distractions and enter a state of flow
+                {t('focus.subtitle')}
               </p>
             </div>
             
             <div className="flex flex-col md:flex-row gap-6 items-stretch">
               <Card className="flex-1 glass-morphism border-zenta-purple/20">
                 <CardContent className="pt-6 h-full flex flex-col">
-                  <h2 className="text-xl font-semibold mb-4">Task Selection</h2>
+                  <h2 className="text-xl font-semibold mb-4">{t('focus.taskSelection')}</h2>
                   
                   {selectedTask ? (
                     <div className="task-card !bg-secondary border-zenta-purple">
@@ -278,12 +281,12 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                          onClick={() => setTaskListOpen(!taskListOpen)}
                     >
                       <p className="text-muted-foreground">
-                        Select a task to focus on
+                        {t('focus.selectTask')}
                       </p>
                       <div className="mt-2">
                         <Button variant="outline" size="sm">
                           <FileText className="w-4 h-4 mr-2" />
-                          Browse Tasks
+                          {t('focus.browseTasks')}
                         </Button>
                       </div>
                     </div>
@@ -292,7 +295,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                   {taskListOpen && (
                     <div className="mt-4 max-h-[200px] overflow-y-auto scrollbar-none">
                       <div className="text-sm font-medium text-muted-foreground mb-2">
-                        Available Tasks
+                        {t('focus.availableTasks')}
                       </div>
                       {incompleteTasks.length > 0 ? (
                         incompleteTasks.map(task => (
@@ -312,7 +315,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                         ))
                       ) : (
                         <div className="text-center py-4 text-muted-foreground">
-                          No tasks available
+                          {t('focus.noTasksAvailable')}
                         </div>
                       )}
                     </div>
@@ -326,7 +329,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                       disabled={!selectedTask}
                     >
                       <Play className="w-5 h-5 mr-2" />
-                      Start Focusing
+                      {t('focus.startFocusing')}
                     </Button>
                   </div>
                 </CardContent>
@@ -335,7 +338,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
               <Card className="flex-1 glass-morphism border-zenta-purple/20">
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold">Focus Stats</h2>
+                    <h2 className="text-xl font-semibold">{t('focus.focusStats')}</h2>
                     <Sheet>
                       <SheetTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -351,7 +354,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Today's focus time</span>
+                        <span className="text-sm text-muted-foreground">{t('focus.todayFocusTime')}</span>
                         <span className="text-sm font-medium">{formatTime(totalFocusedToday)}</span>
                       </div>
                       <Progress value={Math.min((totalFocusedToday / (4 * 3600)) * 100, 100)} />
@@ -359,7 +362,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                     
                     <div className="border border-border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-medium">Recent sessions</h3>
+                        <h3 className="font-medium">{t('focus.recentSessions')}</h3>
                       </div>
                       
                       <div className="space-y-2 max-h-[150px] overflow-y-auto scrollbar-none">
@@ -377,7 +380,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                             ))
                         ) : (
                           <div className="text-center py-2 text-muted-foreground text-sm">
-                            No focus sessions recorded
+                            {t('focus.noFocusSessions')}
                           </div>
                         )}
                       </div>
@@ -389,7 +392,7 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                       className="w-full"
                       onClick={enterFullscreen}
                     >
-                      Enable Distraction-Free Mode
+                      {t('focus.enableDistraction')}
                     </Button>
                   </div>
                 </CardContent>
