@@ -26,9 +26,10 @@ export function useKanbanBoard() {
       setColumns(JSON.parse(savedColumns));
     } else {
       const defaultColumns: KanbanColumn[] = [
-        { id: "todo", title: "To Do", tasks: [] },
-        { id: "in-progress", title: "In Progress", tasks: [] },
-        { id: "done", title: "Done", tasks: [] },
+        { id: "backlog", title: "Pendentes", tasks: [] },
+        { id: "this-week", title: "Esta Semana", tasks: [] },
+        { id: "today", title: "Hoje", tasks: [] },
+        { id: "done", title: "Concluído", tasks: [] },
       ];
       setColumns(defaultColumns);
       localStorage.setItem("kanban-columns", JSON.stringify(defaultColumns));

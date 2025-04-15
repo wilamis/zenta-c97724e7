@@ -86,7 +86,7 @@ const KanbanBoard = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-medium">{t('kanban.manageColumns')}</h2>
         <Button 
           onClick={() => setIsAddColumnOpen(true)}

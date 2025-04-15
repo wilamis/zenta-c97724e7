@@ -1,3 +1,4 @@
+
 export const portugueseTranslations = {
   sidebar: {
     dashboard: "Painel",
@@ -84,7 +85,30 @@ export const portugueseTranslations = {
     noCompletedTasks: "Ainda não há tarefas concluídas. Comece a completar tarefas para vê-las aqui!",
     addTask: "ADICIONAR TAREFA",
     categories: "CATEGORIAS",
-    backlog: "Pendentes"
+    backlog: "Pendentes",
+    yourLists: "Suas Listas",
+    createList: "Criar Lista",
+    noLists: "Sem listas",
+    createFirstList: "Crie sua primeira lista para começar a organizar suas tarefas",
+    createFirstListButton: "Criar Primeira Lista",
+    createNewList: "Criar Nova Lista",
+    newList: "Nova Lista",
+    listTitle: "Título da Lista",
+    listTitlePlaceholder: "Minha Nova Lista",
+    createListButton: "Criar Lista",
+    pendingTasks: "tarefas pendentes",
+    viewTasks: "Ver Tarefas",
+    defaultList: "Lista Padrão",
+    rename: "Renomear",
+    delete: "Excluir",
+    noTasksInList: "Sem tarefas nesta lista",
+    moreTasks: "mais tarefas",
+    listCreated: "Lista criada",
+    wasCreated: "foi criada com sucesso",
+    listDeleted: "Lista excluída",
+    listDeletedDescription: "A lista foi excluída com sucesso",
+    listRenamed: "Lista renomeada",
+    listRenamedTo: "Lista renomeada para"
   },
   taskModal: {
     addNewTask: "Adicionar Nova Tarefa",

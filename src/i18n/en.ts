@@ -1,3 +1,4 @@
+
 export const englishTranslations = {
   sidebar: {
     dashboard: "Dashboard",
@@ -84,7 +85,30 @@ export const englishTranslations = {
     noCompletedTasks: "No completed tasks yet. Start completing tasks to see them here!",
     addTask: "ADD TASK",
     categories: "CATEGORIES",
-    backlog: "Backlog"
+    backlog: "Backlog",
+    yourLists: "Your Lists",
+    createList: "Create List",
+    noLists: "No lists",
+    createFirstList: "Create your first list to start organizing your tasks",
+    createFirstListButton: "Create First List",
+    createNewList: "Create New List",
+    newList: "New List",
+    listTitle: "List Title",
+    listTitlePlaceholder: "My New List",
+    createListButton: "Create List",
+    pendingTasks: "pending tasks",
+    viewTasks: "View Tasks",
+    defaultList: "Default List",
+    rename: "Rename",
+    delete: "Delete",
+    noTasksInList: "No tasks in this list",
+    moreTasks: "more tasks",
+    listCreated: "List created",
+    wasCreated: "was created successfully",
+    listDeleted: "List deleted",
+    listDeletedDescription: "The list was deleted successfully",
+    listRenamed: "List renamed",
+    listRenamedTo: "List renamed to"
   },
   taskModal: {
     addNewTask: "Add New Task",

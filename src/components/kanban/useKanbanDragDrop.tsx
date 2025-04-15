@@ -73,13 +73,13 @@ export function useKanbanDragDrop({
     
     // Auto-complete task if dropped in "Done" column
     const targetColumn = columns.find(col => col.id === targetColumnId);
-    const shouldAutoComplete = targetColumn?.title === "Done" && !task.completed;
+    const shouldAutoComplete = targetColumn?.title === "Concluído" && !task.completed;
     
     const updatedTask = shouldAutoComplete 
       ? { ...task, completed: true }
-      : task;
-    
-    console.log("Moving task:", task.title, "from", sourceColumnId, "to", targetColumnId);
+      : (targetColumn?.title !== "Concluído" && task.completed)
+        ? { ...task, completed: false } // Re-open task if moved from "Done" to another column
+        : task;
     
     // Create a new array of columns to avoid mutation
     const updatedColumns = columns.map(column => {
@@ -104,15 +104,20 @@ export function useKanbanDragDrop({
     
     if (shouldAutoComplete) {
       toast({
-        title: "Task completed",
-        description: `Task "${task.title}" was automatically marked as complete`,
+        title: "Tarefa concluída",
+        description: `Tarefa "${task.title}" foi automaticamente marcada como concluída`,
+      });
+    } else if (targetColumn?.title !== "Concluído" && task.completed) {
+      toast({
+        title: "Tarefa reaberta",
+        description: `Tarefa "${task.title}" foi reaberta`,
       });
     } else {
       const targetColumn = columns.find(col => col.id === targetColumnId);
       if (targetColumn) {
         toast({
-          title: "Task moved",
-          description: `Task moved to ${targetColumn.title}`,
+          title: "Tarefa movida",
+          description: `Tarefa movida para ${targetColumn.title}`,
         });
       }
     }

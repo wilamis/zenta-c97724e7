@@ -1,12 +1,39 @@
 
 import Layout from "@/components/layout/Layout";
 import KanbanBoard from "@/components/kanban/KanbanBoard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { LayoutGrid } from "lucide-react";
+import { LayoutGrid, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link, useLocation } from "react-router-dom";
 
 const Kanban = () => {
   const { t } = useLanguage();
+  const location = useLocation();
+  const [listTitle, setListTitle] = useState<string | null>(null);
+  
+  // Extract list ID from URL query params
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const listId = queryParams.get('list');
+    
+    if (listId) {
+      // Store the current list ID in localStorage
+      localStorage.setItem("current-list-id", listId);
+      
+      // Get list title from localStorage
+      const savedLists = localStorage.getItem("task-lists");
+      if (savedLists) {
+        const lists = JSON.parse(savedLists);
+        const list = lists.find((l: any) => l.id === listId);
+        if (list) {
+          setListTitle(list.title);
+        }
+      }
+    } else {
+      localStorage.removeItem("current-list-id");
+    }
+  }, [location.search]);
   
   // Add touch event polyfill for mobile drag and drop support
   useEffect(() => {
@@ -41,9 +68,21 @@ const Kanban = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto py-6">
-        <header className="flex items-center gap-2 mb-6">
-          <LayoutGrid className="h-7 w-7 text-zenta-purple" />
-          <h1 className="text-3xl font-bold">{t('kanban.title')}</h1>
+        <header className="flex items-center justify-between gap-2 mb-6">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/">
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+            </Button>
+            <LayoutGrid className="h-7 w-7 text-zenta-purple" />
+            <div>
+              <h1 className="text-3xl font-bold">{t('kanban.title')}</h1>
+              {listTitle && (
+                <p className="text-muted-foreground">{listTitle}</p>
+              )}
+            </div>
+          </div>
         </header>
         <KanbanBoard />
       </div>

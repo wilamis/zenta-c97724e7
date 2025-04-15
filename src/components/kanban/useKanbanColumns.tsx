@@ -19,8 +19,8 @@ export function useKanbanColumns({ columns, setColumns, toast }: UseKanbanColumn
     setColumns(updatedColumns);
     
     toast({
-      title: "Column added",
-      description: `${title} column has been added to the board`,
+      title: "Coluna adicionada",
+      description: `Coluna ${title} foi adicionada ao quadro`,
     });
   };
 
@@ -29,8 +29,8 @@ export function useKanbanColumns({ columns, setColumns, toast }: UseKanbanColumn
     setColumns(updatedColumns);
     
     toast({
-      title: "Column deleted",
-      description: "The column has been removed from the board",
+      title: "Coluna excluída",
+      description: "A coluna foi removida do quadro",
     });
   };
 
@@ -41,8 +41,8 @@ export function useKanbanColumns({ columns, setColumns, toast }: UseKanbanColumn
     setColumns(updatedColumns);
     
     toast({
-      title: "Column renamed",
-      description: `Column renamed to ${newTitle}`,
+      title: "Coluna renomeada",
+      description: `Coluna renomeada para ${newTitle}`,
     });
   };
 
@@ -85,8 +85,8 @@ export function useKanbanColumns({ columns, setColumns, toast }: UseKanbanColumn
     setColumns(updatedColumns);
     
     toast({
-      title: "Column moved",
-      description: `Column "${movedColumn.title}" has been repositioned`,
+      title: "Coluna movida",
+      description: `Coluna "${movedColumn.title}" foi reposicionada`,
     });
   };
 

@@ -1,139 +1,76 @@
 
 import { useState, useEffect } from "react";
 import Layout from "../components/layout/Layout";
-import { Task } from "../components/tasks/TaskItem";
 import { useLanguage } from "../context/LanguageContext";
-
-// Import our new components
-import DashboardHeader from "../components/dashboard/DashboardHeader";
-import TasksCard from "../components/dashboard/TasksCard";
-import FocusCard from "../components/dashboard/FocusCard";
-import PomodoroCard from "../components/dashboard/PomodoroCard";
-import QuickActions from "../components/dashboard/QuickActions";
-import Sidebar from "../components/dashboard/Sidebar";
+import { Clock } from "lucide-react";
+import TaskLists from "../components/home/TaskLists";
 
 const Index = () => {
   const { language } = useLanguage();
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    // Load tasks from localStorage or use sample data
-    const savedTasks = localStorage.getItem("zenta-tasks");
-    if (savedTasks) {
-      return JSON.parse(savedTasks);
+  const [greeting, setGreeting] = useState("");
+  const [userName, setUserName] = useState("Usuário");
+  
+  // Get the appropriate greeting based on time of day
+  useEffect(() => {
+    const date = new Date();
+    const hours = date.getHours();
+    
+    let greetingKey = "";
+    if (hours >= 5 && hours < 12) {
+      greetingKey = "goodMorning";
+    } else if (hours >= 12 && hours < 18) {
+      greetingKey = "goodAfternoon";
+    } else {
+      greetingKey = "goodEvening";
     }
     
-    // Sample tasks
-    return [
-      {
-        id: "1",
-        title: "Create project plan",
-        completed: false,
-        priority: "high",
-        category: "b",
-        estimatedTime: 60
-      },
-      {
-        id: "2",
-        title: "Research competitors",
-        completed: false,
-        priority: "medium",
-        category: "b",
-        estimatedTime: 45
-      },
-      {
-        id: "3",
-        title: "Update portfolio",
-        completed: true,
-        priority: "low",
-        category: "p",
-        estimatedTime: 30
-      },
-      {
-        id: "4",
-        title: "Learn React hooks",
-        completed: false,
-        priority: "medium",
-        category: "g",
-        estimatedTime: 90
-      },
-      {
-        id: "5",
-        title: "Weekly team meeting",
-        completed: false,
-        priority: "high",
-        category: "b",
-        estimatedTime: 60
-      }
-    ];
-  });
+    // Get saved username from localStorage
+    const savedName = localStorage.getItem("user-name");
+    if (savedName) {
+      setUserName(savedName);
+    }
+    
+    // Update greeting based on language
+    if (language === "pt-BR") {
+      const ptBRGreetings: Record<string, string> = {
+        goodMorning: "Bom dia",
+        goodAfternoon: "Boa tarde",
+        goodEvening: "Boa noite"
+      };
+      setGreeting(ptBRGreetings[greetingKey]);
+    } else {
+      const enGreetings: Record<string, string> = {
+        goodMorning: "Good morning",
+        goodAfternoon: "Good afternoon",
+        goodEvening: "Good evening"
+      };
+      setGreeting(enGreetings[greetingKey]);
+    }
+  }, [language]);
   
-  const [focusMinutes, setFocusMinutes] = useState<number>(() => {
-    const savedMinutes = localStorage.getItem("zenta-focus-minutes");
-    return savedMinutes ? parseInt(savedMinutes) : 125;
-  });
-  
-  const [completedPomodoros, setCompletedPomodoros] = useState<number>(() => {
-    const savedPomodoros = localStorage.getItem("zenta-completed-pomodoros");
-    return savedPomodoros ? parseInt(savedPomodoros) : 3;
-  });
-  
-  // Save tasks to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("zenta-tasks", JSON.stringify(tasks));
-  }, [tasks]);
-  
-  const handleTasksChange = (updatedTasks: Task[]) => {
-    setTasks(updatedTasks);
-  };
-  
-  // Get today's date formatted based on current language
+  // Get formatted date
   const formattedDate = new Date().toLocaleDateString(language === "pt-BR" ? "pt-BR" : "en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
   });
   
-  // Filter tasks for today (those that are not completed)
-  const todayTasks = tasks.filter(task => !task.completed);
-  
-  // Count completed tasks
-  const completedTasks = tasks.filter(task => task.completed).length;
-
   return (
     <Layout>
-      <div className="space-y-6">
-        <DashboardHeader formattedDate={formattedDate} />
+      <div className="space-y-8">
+        <header className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">
+              {greeting}, {userName}
+            </h1>
+            <p className="text-muted-foreground flex items-center gap-1">
+              <Clock className="h-4 w-4" />
+              {formattedDate}
+            </p>
+          </div>
+        </header>
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Main content area */}
-          <div className="lg:col-span-8 space-y-6">
-            {/* Today's Tasks card */}
-            <TasksCard 
-              todayTasks={todayTasks} 
-              handleTasksChange={handleTasksChange}
-              completedTasks={completedTasks}
-              totalTasks={tasks.length}
-            />
-            
-            {/* Focus & Pomodoro quick access */}
-            <div className="grid grid-cols-2 gap-4">
-              <FocusCard />
-              <PomodoroCard />
-            </div>
-            
-            {/* Quick Actions */}
-            <QuickActions />
-          </div>
-          
-          {/* Sidebar/stats area */}
-          <div className="lg:col-span-4">
-            <Sidebar 
-              focusMinutes={focusMinutes}
-              completedPomodoros={completedPomodoros}
-              completedTasks={completedTasks}
-              totalTasks={tasks.length}
-            />
-          </div>
-        </div>
+        <TaskLists />
       </div>
     </Layout>
   );
