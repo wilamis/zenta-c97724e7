@@ -17,7 +17,8 @@ export interface Task {
   category: TaskCategory;
   estimatedTime: number; // in minutes
   description?: string;  
-  dueDate?: string;    
+  dueDate?: string;
+  listId?: string; // Added listId property
 }
 
 interface TaskItemProps {
