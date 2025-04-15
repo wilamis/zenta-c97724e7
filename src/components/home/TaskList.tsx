@@ -38,7 +38,8 @@ const TaskList = ({ list, onDelete, onRename }: TaskListProps) => {
     }
   };
 
-  const pendingTasks = list.tasks.filter(task => !task.completed);
+  // Make sure we're properly filtering and counting tasks
+  const pendingTasks = Array.isArray(list.tasks) ? list.tasks.filter(task => !task.completed) : [];
   const totalTime = pendingTasks.reduce((acc, task) => acc + (task.estimatedTime || 0), 0);
   
   return (
@@ -96,7 +97,7 @@ const TaskList = ({ list, onDelete, onRename }: TaskListProps) => {
                   {idx + 1}
                 </div>
                 <span className="text-sm truncate">{task.title}</span>
-                {task.estimatedTime && (
+                {task.estimatedTime > 0 && (
                   <Badge variant="outline" className="ml-auto text-xs">
                     {task.estimatedTime} min
                   </Badge>

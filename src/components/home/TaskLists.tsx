@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, ListTodo } from "lucide-react";
 import { useToast } from "@/hooks/use-toast"; 
@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/context/LanguageContext";
+import { Task } from "@/components/tasks/TaskItem";
 
 const TaskLists = () => {
   const { t } = useLanguage();
@@ -15,7 +16,24 @@ const TaskLists = () => {
   const [lists, setLists] = useState<ListData[]>(() => {
     const savedLists = localStorage.getItem("task-lists");
     if (savedLists) {
-      return JSON.parse(savedLists);
+      try {
+        const parsedLists = JSON.parse(savedLists);
+        
+        // Ensure each list has a tasks array
+        return parsedLists.map((list: any) => ({
+          ...list,
+          tasks: Array.isArray(list.tasks) ? list.tasks : []
+        }));
+      } catch (e) {
+        console.error("Error parsing task lists:", e);
+        return [
+          {
+            id: "default",
+            title: t('tasks.defaultList'),
+            tasks: []
+          }
+        ];
+      }
     }
     
     // Default list
@@ -30,6 +48,33 @@ const TaskLists = () => {
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newListTitle, setNewListTitle] = useState("");
+  
+  // Load all tasks from kanban board storage to ensure sync
+  useEffect(() => {
+    const kanbanColumns = localStorage.getItem("kanban-columns");
+    if (kanbanColumns) {
+      try {
+        const columns = JSON.parse(kanbanColumns);
+        const allTasks: Task[] = columns.flatMap((col: any) => col.tasks || []);
+        
+        // Update lists with their associated tasks
+        if (allTasks.length > 0) {
+          const listsWithTasks = lists.map(list => {
+            // Find tasks for this list
+            const listTasks = allTasks.filter(task => task.listId === list.id);
+            return {
+              ...list,
+              tasks: listTasks
+            };
+          });
+          
+          setLists(listsWithTasks);
+        }
+      } catch (e) {
+        console.error("Error synchronizing tasks:", e);
+      }
+    }
+  }, []);
   
   // Save lists to localStorage whenever they change
   const saveLists = (updatedLists: ListData[]) => {
