@@ -50,72 +50,17 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="glass-morphism border-zenta-purple/20">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t("dashboard.focusTime")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-end justify-between">
-              <div className="text-2xl font-bold">
-                {Math.floor(focusMinutes / 60)}h {focusMinutes % 60}m
-              </div>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {t("dashboard.todaysFocusedWork")}
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card className="glass-morphism border-zenta-purple/20">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t("dashboard.pomodoros")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-end justify-between">
-              <div className="text-2xl font-bold">
-                {completedPomodoros}
-              </div>
-              <Target className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {t("dashboard.completedSessions")}
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card className="glass-morphism border-zenta-purple/20">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t("dashboard.taskCompletion")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-end justify-between">
-              <div className="text-2xl font-bold">
-                {completionRate}%
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {completedTasks}/{totalTasks}
-              </div>
-            </div>
-            <Progress 
-              value={completionRate} 
-              className="h-1 mt-2" 
-            />
-          </CardContent>
-        </Card>
-      </div>
-      
       <Card className="glass-morphism border-zenta-purple/20">
         <CardHeader>
-          <CardTitle className="flex items-center">
+          <CardTitle className="text-xl flex items-center">
             <Trophy className="h-5 w-5 text-zenta-purple mr-2" />
             {t("dashboard.yourProgress")}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 bg-zenta-purple rounded-full flex items-center justify-center text-white font-bold">
+          {/* Level progress indicator */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-14 h-14 bg-zenta-purple rounded-full flex items-center justify-center text-white font-bold text-xl">
               {level}
             </div>
             <div className="flex-1">
@@ -127,45 +72,44 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
               </div>
               <Progress 
                 value={xpProgress} 
-                className="h-2 mt-1" 
+                className="h-2 mt-2" 
               />
             </div>
           </div>
           
-          <Tabs defaultValue="stats">
-            <TabsList className="w-full grid grid-cols-3">
+          {/* Tabs for different stats */}
+          <Tabs defaultValue="stats" className="w-full">
+            <TabsList className="w-full grid grid-cols-3 mb-2">
               <TabsTrigger value="stats">{t("dashboard.stats")}</TabsTrigger>
               <TabsTrigger value="streaks">{t("dashboard.streaks")}</TabsTrigger>
               <TabsTrigger value="achievements">{t("dashboard.achievements.title")}</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="stats" className="space-y-4 pt-4">
+            <TabsContent value="stats" className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">{t("dashboard.totalXP")}</div>
-                  <div className="text-lg font-bold">{totalXP} XP</div>
-                </div>
+                <StatsItem 
+                  label={t("dashboard.totalXP")}
+                  value={`${totalXP} XP`}
+                />
                 
-                <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">{t("dashboard.totalTasksCompleted")}</div>
-                  <div className="text-lg font-bold">{completedTasks}</div>
-                </div>
+                <StatsItem 
+                  label={t("dashboard.totalTasksCompleted")}
+                  value={completedTasks.toString()}
+                />
                 
-                <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">{t("dashboard.focusTime")}</div>
-                  <div className="text-lg font-bold">
-                    {Math.floor(focusMinutes / 60)}h {focusMinutes % 60}m
-                  </div>
-                </div>
+                <StatsItem 
+                  label={t("dashboard.focusTime")}
+                  value={`${Math.floor(focusMinutes / 60)}h ${focusMinutes % 60}m`}
+                />
                 
-                <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">{t("dashboard.completedPomodoros")}</div>
-                  <div className="text-lg font-bold">{completedPomodoros}</div>
-                </div>
+                <StatsItem 
+                  label={t("dashboard.completedPomodoros")}
+                  value={completedPomodoros.toString()}
+                />
               </div>
             </TabsContent>
             
-            <TabsContent value="streaks" className="pt-4">
+            <TabsContent value="streaks" className="mt-4">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <div className="text-sm text-muted-foreground">{t("dashboard.currentStreak")}</div>
@@ -184,59 +128,21 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
                 </div>
               </div>
               
-              <div className="flex justify-between space-x-1">
-                {Array.from({ length: 7 }).map((_, i) => (
-                  <div 
-                    key={i} 
-                    className={cn(
-                      "flex-1 h-2 rounded-full",
-                      i < 5 ? "bg-zenta-purple" : "bg-muted"
-                    )}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>{t("dashboard.weekdays.mon")}</span>
-                <span>{t("dashboard.weekdays.tue")}</span>
-                <span>{t("dashboard.weekdays.wed")}</span>
-                <span>{t("dashboard.weekdays.thu")}</span>
-                <span>{t("dashboard.weekdays.fri")}</span>
-                <span>{t("dashboard.weekdays.sat")}</span>
-                <span>{t("dashboard.weekdays.sun")}</span>
-              </div>
+              <WeeklyStreak activeDays={5} />
             </TabsContent>
             
-            <TabsContent value="achievements" className="pt-4">
+            <TabsContent value="achievements" className="mt-4">
               <div className="text-sm text-muted-foreground mb-4">
                 {earnedAchievements.length}/{achievements.length} {t("dashboard.achievements.unlocked")}
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {achievements.map(achievement => (
-                  <div 
+                  <Achievement 
                     key={achievement.id}
-                    className={cn(
-                      "flex items-center p-2 rounded-lg",
-                      achievement.earned ? "bg-secondary" : "bg-muted/30 opacity-50"
-                    )}
-                  >
-                    <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center mr-3 text-lg">
-                      {achievement.icon}
-                    </div>
-                    <div>
-                      <div className="font-medium flex items-center">
-                        {achievement.name}
-                        {achievement.earned && (
-                          <Badge variant="secondary" className="ml-2 bg-zenta-purple text-white">
-                            {t("dashboard.achievements.earned")}
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {achievement.description}
-                      </div>
-                    </div>
-                  </div>
+                    achievement={achievement}
+                    earnedText={t("dashboard.achievements.earned")}
+                  />
                 ))}
               </div>
             </TabsContent>
@@ -246,5 +152,93 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
     </div>
   );
 };
+
+interface StatsItemProps {
+  label: string;
+  value: string;
+}
+
+const StatsItem = ({ label, value }: StatsItemProps) => (
+  <div className="space-y-1 bg-secondary/30 p-3 rounded-lg border border-secondary/50">
+    <div className="text-sm text-muted-foreground">{label}</div>
+    <div className="text-lg font-bold">{value}</div>
+  </div>
+);
+
+interface WeeklyStreakProps {
+  activeDays: number;
+}
+
+const WeeklyStreak = ({ activeDays }: WeeklyStreakProps) => {
+  const { t } = useLanguage();
+  const weekdays = [
+    t("dashboard.weekdays.mon"),
+    t("dashboard.weekdays.tue"),
+    t("dashboard.weekdays.wed"),
+    t("dashboard.weekdays.thu"),
+    t("dashboard.weekdays.fri"),
+    t("dashboard.weekdays.sat"),
+    t("dashboard.weekdays.sun"),
+  ];
+  
+  return (
+    <div>
+      <div className="flex justify-between space-x-1">
+        {weekdays.map((day, i) => (
+          <div 
+            key={i} 
+            className={cn(
+              "flex-1 h-8 rounded-md flex items-center justify-center text-xs",
+              i < activeDays 
+                ? "bg-zenta-purple text-white" 
+                : "bg-secondary/30 text-muted-foreground border border-secondary/50"
+            )}
+          >
+            {day.charAt(0)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+interface AchievementProps {
+  achievement: {
+    id: number;
+    name: string;
+    description: string;
+    earned: boolean;
+    icon: string;
+  };
+  earnedText: string;
+}
+
+const Achievement = ({ achievement, earnedText }: AchievementProps) => (
+  <div 
+    className={cn(
+      "flex items-center p-3 rounded-lg border",
+      achievement.earned 
+        ? "bg-secondary/30 border-secondary/50" 
+        : "bg-muted/30 opacity-50 border-muted/50"
+    )}
+  >
+    <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center mr-3 text-lg">
+      {achievement.icon}
+    </div>
+    <div className="flex-1 min-w-0">
+      <div className="font-medium flex items-center">
+        {achievement.name}
+        {achievement.earned && (
+          <Badge variant="secondary" className="ml-2 bg-zenta-purple text-white text-xs">
+            {earnedText}
+          </Badge>
+        )}
+      </div>
+      <div className="text-xs text-muted-foreground truncate">
+        {achievement.description}
+      </div>
+    </div>
+  </div>
+);
 
 export default DashboardStats;

@@ -4,6 +4,7 @@ import Layout from "../components/layout/Layout";
 import PomodoroTimer from "../components/pomodoro/PomodoroTimer";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
+import { Timer } from "lucide-react";
 
 const Pomodoro = () => {
   const { t } = useLanguage();
@@ -28,10 +29,13 @@ const Pomodoro = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        <header className="space-y-2 text-center mb-8">
-          <h1 className="text-3xl font-bold">{t('pomodoro.title')}</h1>
-          <p className="text-muted-foreground">
+      <div className="space-y-6 max-w-4xl mx-auto">
+        <header className="text-center mb-8">
+          <h1 className="text-3xl font-bold flex items-center justify-center gap-2">
+            <Timer className="h-8 w-8 text-zenta-purple" />
+            {t('pomodoro.title')}
+          </h1>
+          <p className="text-muted-foreground mt-2 max-w-md mx-auto">
             {t('pomodoro.subtitle')}
           </p>
         </header>

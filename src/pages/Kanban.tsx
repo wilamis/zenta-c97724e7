@@ -3,6 +3,7 @@ import Layout from "@/components/layout/Layout";
 import KanbanBoard from "@/components/kanban/KanbanBoard";
 import { useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { LayoutGrid } from "lucide-react";
 
 const Kanban = () => {
   const { t } = useLanguage();
@@ -39,8 +40,11 @@ const Kanban = () => {
 
   return (
     <Layout>
-      <div className="container py-6 max-w-7xl">
-        <h1 className="text-3xl font-bold mb-6">{t('kanban.title')}</h1>
+      <div className="max-w-7xl mx-auto py-6">
+        <header className="flex items-center gap-2 mb-6">
+          <LayoutGrid className="h-7 w-7 text-zenta-purple" />
+          <h1 className="text-3xl font-bold">{t('kanban.title')}</h1>
+        </header>
         <KanbanBoard />
       </div>
     </Layout>

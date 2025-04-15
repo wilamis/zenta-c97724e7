@@ -4,6 +4,7 @@ import Layout from "../components/layout/Layout";
 import TaskPlanner from "../components/planner/TaskPlanner";
 import { Task } from "../components/tasks/TaskItem";
 import { useLanguage } from "@/context/LanguageContext";
+import { Calendar } from "lucide-react";
 
 const Planner = () => {
   const { t } = useLanguage();
@@ -27,7 +28,13 @@ const Planner = () => {
 
   return (
     <Layout>
-      <TaskPlanner tasks={tasks} onTaskChange={handleTasksChange} />
+      <div className="space-y-6 max-w-7xl mx-auto">
+        <header className="flex items-center gap-2 mb-6">
+          <Calendar className="h-7 w-7 text-zenta-purple" />
+          <h1 className="text-3xl font-bold">{t("planner.title")}</h1>
+        </header>
+        <TaskPlanner tasks={tasks} onTaskChange={handleTasksChange} />
+      </div>
     </Layout>
   );
 };

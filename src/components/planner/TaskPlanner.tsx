@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { format, addDays, startOfWeek, getDay } from "date-fns";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Task } from "../tasks/TaskItem";
-import { CalendarDays, ChevronLeft, ChevronRight, ListTodo, Plus } from "lucide-react";
-import TaskList from "../tasks/TaskList";
-import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { CardTitle, CardHeader, CardContent, Card } from "../ui/card";
+import TaskModal from "../tasks/TaskModal";
+import TaskItem from "../tasks/TaskItem";
+import { useLanguage } from "@/context/LanguageContext";
+import { ptBR, enUS } from "date-fns/locale";
 
 interface TaskPlannerProps {
   tasks: Task[];
@@ -13,272 +15,179 @@ interface TaskPlannerProps {
 }
 
 const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
-  const [activeTab, setActiveTab] = useState("today");
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const { t, language } = useLanguage();
+  const [startDate, setStartDate] = useState(() => {
+    const today = new Date();
+    return startOfWeek(today, { weekStartsOn: 1 }); // Week starts on Monday
+  });
   
-  // Format date as "Monday, April 13"
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  
+  const dateLocale = language === "pt-BR" ? ptBR : enUS;
+  
+  const goToPreviousWeek = () => {
+    setStartDate(prevDate => addDays(prevDate, -7));
   };
   
-  // Get day number (1-31)
-  const getDayNumber = (date: Date) => {
-    return date.getDate();
+  const goToNextWeek = () => {
+    setStartDate(prevDate => addDays(prevDate, 7));
   };
   
-  // Get day name (Mon, Tue, etc.)
-  const getDayName = (date: Date) => {
-    return date.toLocaleDateString("en-US", { weekday: "short" });
+  const goToCurrentWeek = () => {
+    const today = new Date();
+    setStartDate(startOfWeek(today, { weekStartsOn: 1 }));
   };
   
-  // Get week dates (for week view)
-  const getWeekDates = () => {
-    const dates = [];
-    
-    // Get the first day of the week (Sunday)
-    const firstDayOfWeek = new Date(currentDate);
-    const day = currentDate.getDay();
-    
-    // Set to previous Sunday
-    firstDayOfWeek.setDate(currentDate.getDate() - day);
-    
-    // Get 7 days starting from Sunday
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(firstDayOfWeek);
-      date.setDate(firstDayOfWeek.getDate() + i);
-      dates.push(date);
-    }
-    
-    return dates;
+  const getDayTasks = (date: Date) => {
+    // Get task due on this date
+    const dateString = format(date, "yyyy-MM-dd");
+    return tasks.filter(task => task.dueDate === dateString);
   };
   
-  // Navigate to previous day/week
-  const goToPrevious = () => {
-    const newDate = new Date(currentDate);
-    if (activeTab === "today") {
-      newDate.setDate(currentDate.getDate() - 1);
+  const handleAddTask = (date: Date) => {
+    setSelectedDay(date);
+    setEditingTask(null);
+    setIsModalOpen(true);
+  };
+  
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task);
+    setIsModalOpen(true);
+  };
+  
+  const handleTaskSave = (task: Task) => {
+    let updatedTasks: Task[];
+    
+    if (editingTask) {
+      // Editing existing task
+      updatedTasks = tasks.map(t => t.id === task.id ? task : t);
     } else {
-      newDate.setDate(currentDate.getDate() - 7);
-    }
-    setCurrentDate(newDate);
-  };
-  
-  // Navigate to next day/week
-  const goToNext = () => {
-    const newDate = new Date(currentDate);
-    if (activeTab === "today") {
-      newDate.setDate(currentDate.getDate() + 1);
-    } else {
-      newDate.setDate(currentDate.getDate() + 7);
-    }
-    setCurrentDate(newDate);
-  };
-  
-  // Get tasks for a specific date
-  const getTasksForDate = (date: Date) => {
-    const dateStr = date.toISOString().split("T")[0];
-    return tasks.filter(task => {
-      if (task.dueDate) {
-        return task.dueDate.startsWith(dateStr);
-      }
-      return false;
-    });
-  };
-  
-  // Get tasks for today
-  const todayTasks = tasks.filter(task => !task.completed);
-  
-  // Get tasks for backlog (tasks without due date)
-  const backlogTasks = tasks.filter(task => !task.dueDate && !task.completed);
-  
-  // Get weekly tasks
-  const weekDates = getWeekDates();
-  
-  // Calculate total estimated time
-  const calculateEstimatedTime = (taskList: Task[]) => {
-    return taskList.reduce((total, task) => total + (task.estimatedTime || 0), 0);
-  };
-  
-  // Format time as "1hr 30min"
-  const formatEstimatedTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    
-    if (hours > 0) {
-      return `${hours}hr${mins > 0 ? ` ${mins}min` : ''}`;
+      // Creating new task with selected date
+      const newTask = {
+        ...task,
+        id: Date.now().toString(),
+        dueDate: selectedDay ? format(selectedDay, "yyyy-MM-dd") : undefined
+      };
+      updatedTasks = [...tasks, newTask];
     }
     
-    return `${mins}min`;
+    onTaskChange(updatedTasks);
+    setIsModalOpen(false);
   };
   
-  // Count completed tasks
-  const countCompletedTasks = (taskList: Task[]) => {
-    return taskList.filter(task => task.completed).length;
+  const handleTaskComplete = (id: string, completed: boolean) => {
+    const updatedTasks = tasks.map(task => 
+      task.id === id ? { ...task, completed } : task
+    );
+    onTaskChange(updatedTasks);
+  };
+  
+  const handleTaskDelete = (id: string) => {
+    const updatedTasks = tasks.filter(task => task.id !== id);
+    onTaskChange(updatedTasks);
+  };
+  
+  // Generate array of dates for this week
+  const weekDays = Array.from({ length: 7 }, (_, i) => 
+    addDays(startDate, i)
+  );
+  
+  // Format weekday name based on the locale
+  const formatWeekday = (date: Date) => {
+    return format(date, "EEEE", { locale: dateLocale });
   };
 
   return (
-    <div className="space-y-8">
-      <Tabs defaultValue="today" className="w-full" onValueChange={setActiveTab}>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold">Task Planner</h1>
-            <p className="text-muted-foreground">
-              Schedule and organize your tasks efficiently
-            </p>
-          </div>
-          
-          <TabsList className="h-10">
-            <TabsTrigger value="today" className="gap-2">
-              <ListTodo className="h-4 w-4" />
-              <span className="hidden sm:inline">Today</span>
-            </TabsTrigger>
-            <TabsTrigger value="week" className="gap-2">
-              <CalendarDays className="h-4 w-4" />
-              <span className="hidden sm:inline">Week</span>
-            </TabsTrigger>
-          </TabsList>
+    <div className="space-y-6">
+      {/* Planner header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <CalendarIcon className="h-6 w-6 text-zenta-purple" />
+            {t("planner.weeklyPlanner")}
+          </h1>
+          <p className="text-muted-foreground">
+            {format(startDate, "MMMM d", { locale: dateLocale })} - {format(addDays(startDate, 6), "MMMM d, yyyy", { locale: dateLocale })}
+          </p>
         </div>
         
-        <TabsContent value="today" className="mt-0">
-          <div className="flex items-center justify-between mb-6">
-            <Button variant="ghost" size="icon" onClick={goToPrevious}>
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            
-            <h2 className="text-xl font-semibold">
-              {formatDate(currentDate)}
-            </h2>
-            
-            <Button variant="ghost" size="icon" onClick={goToNext}>
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={goToPreviousWeek}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="sm" onClick={goToCurrentWeek}>
+            {t("planner.today")}
+          </Button>
+          <Button variant="outline" size="sm" onClick={goToNextWeek}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      
+      {/* Weekly calendar */}
+      <div className="grid grid-cols-7 gap-4">
+        {weekDays.map((day, i) => {
+          const dayTasks = getDayTasks(day);
+          const isToday = format(new Date(), "yyyy-MM-dd") === format(day, "yyyy-MM-dd");
+          const dayName = formatWeekday(day);
+          const dayNumber = format(day, "d");
           
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card className="glass-morphism border-zenta-purple/20">
-              <CardContent className="pt-6">
-                <TaskList
-                  title="Backlog"
-                  tasks={backlogTasks}
-                  onTaskChange={onTaskChange}
-                  emptyStateMessage="No tasks in backlog"
-                />
+          return (
+            <Card 
+              key={i} 
+              className={`glass-morphism ${isToday ? "border-zenta-purple" : "border-zenta-purple/20"}`}
+            >
+              <CardHeader className="p-3 pb-0">
+                <div className="flex flex-col items-center">
+                  <span className="text-sm text-muted-foreground capitalize">
+                    {dayName}
+                  </span>
+                  <CardTitle className={`text-xl ${isToday ? "text-zenta-purple" : ""}`}>
+                    {dayNumber}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="p-3 h-[180px] overflow-y-auto">
+                {dayTasks.length > 0 ? (
+                  <div className="space-y-1">
+                    {dayTasks.map(task => (
+                      <div key={task.id} className="task-card text-xs p-2 my-1">
+                        <TaskItem
+                          task={task}
+                          onComplete={handleTaskComplete}
+                          onDelete={handleTaskDelete}
+                          onEdit={handleEditTask}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center">
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {t("planner.noTasks")}
+                    </p>
+                    <Button variant="ghost" size="sm" className="w-full" onClick={() => handleAddTask(day)}>
+                      <Plus className="h-3 w-3 mr-1" />
+                      {t("planner.addTask")}
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="week" className="mt-0">
-          <div className="flex items-center justify-between mb-6">
-            <Button variant="ghost" size="icon" onClick={goToPrevious}>
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            
-            <h2 className="text-xl font-semibold">
-              Week of {weekDates[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} - {weekDates[6].toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-            </h2>
-            
-            <Button variant="ghost" size="icon" onClick={goToNext}>
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-          
-          <div className="grid grid-cols-7 gap-2 mb-6">
-            {weekDates.map((date, index) => {
-              const isToday = new Date().toDateString() === date.toDateString();
-              
-              return (
-                <div 
-                  key={index} 
-                  className={cn(
-                    "text-center p-2 rounded-lg",
-                    isToday && "bg-secondary"
-                  )}
-                >
-                  <div className="text-sm text-muted-foreground">
-                    {getDayName(date)}
-                  </div>
-                  <div className={cn(
-                    "text-xl font-bold",
-                    isToday && "text-zenta-purple"
-                  )}>
-                    {getDayNumber(date)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {weekDates.map((date, index) => {
-              const dayTasks = getTasksForDate(date);
-              const isToday = new Date().toDateString() === date.toDateString();
-              
-              if (dayTasks.length === 0) return null;
-              
-              return (
-                <Card 
-                  key={index} 
-                  className={cn(
-                    "glass-morphism border-border",
-                    isToday && "border-zenta-purple/50"
-                  )}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-medium">
-                        {formatDate(date)}
-                      </h3>
-                      {dayTasks.length > 0 && (
-                        <div className="text-sm text-muted-foreground">
-                          Est: {formatEstimatedTime(calculateEstimatedTime(dayTasks))}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      {dayTasks.map(task => (
-                        <div 
-                          key={task.id}
-                          className={cn(
-                            "task-card !my-0",
-                            task.completed && "opacity-60"
-                          )}
-                        >
-                          <div className="flex items-center">
-                            <span className={`priority-dot priority-${task.priority}`} />
-                            {task.category && <span className={`priority-dot priority-${task.category}`} />}
-                            <h3 className={cn(
-                              "text-base font-medium flex-1",
-                              task.completed && "line-through text-muted-foreground"
-                            )}>
-                              {task.title}
-                            </h3>
-                            {task.estimatedTime && (
-                              <div className="text-xs text-muted-foreground">
-                                {formatEstimatedTime(task.estimatedTime)}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-            
-            <Button variant="outline" className="mt-4">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Task to Schedule
-            </Button>
-          </div>
-        </TabsContent>
-      </Tabs>
+          );
+        })}
+      </div>
+      
+      {isModalOpen && (
+        <TaskModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleTaskSave}
+          task={editingTask || undefined}
+        />
+      )}
     </div>
   );
 };
