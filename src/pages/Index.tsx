@@ -7,7 +7,7 @@ import { Task } from "../components/tasks/TaskItem";
 import TaskList from "../components/tasks/TaskList";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import { Badge } from "../components/ui/badge";
-import { Bell, Calendar, ListTodo, PlayCircle, Timer, Zap } from "lucide-react";
+import { Bell, Calendar, Clock, ListTodo, PlayCircle, Timer, Zap } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 
 const Index = () => {
