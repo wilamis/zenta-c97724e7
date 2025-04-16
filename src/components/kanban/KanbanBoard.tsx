@@ -84,17 +84,36 @@ const KanbanBoard = () => {
     setDraggedColumnId(null);
   };
 
+  // Function to open the task modal with the first column as default if no active column is set
+  const handleOpenAddTaskModal = () => {
+    if (!activeColumn && columns.length > 0) {
+      setActiveColumn(columns[0].id);
+    }
+    setEditingTask(null);
+    setIsTaskModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-medium">{t('kanban.manageColumns')}</h2>
-        <Button 
-          onClick={() => setIsAddColumnOpen(true)}
-          className="flex items-center gap-1"
-        >
-          <Plus className="h-4 w-4" />
-          <span className="tracking-normal">{t('kanban.addColumn')}</span>
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={handleOpenAddTaskModal}
+            className="flex items-center gap-1"
+            variant="default"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="tracking-normal">{t('tasks.addTask')}</span>
+          </Button>
+          <Button 
+            onClick={() => setIsAddColumnOpen(true)}
+            className="flex items-center gap-1"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="tracking-normal">{t('kanban.addColumn')}</span>
+          </Button>
+        </div>
       </div>
       
       <div className="kanban-board flex gap-6 overflow-x-auto pb-6 pt-2 min-h-[70vh]">
