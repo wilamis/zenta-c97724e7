@@ -49,30 +49,56 @@ const TaskLists = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newListTitle, setNewListTitle] = useState("");
   
-  // Load all tasks from kanban board storage to ensure sync
+  // Load all tasks from localStorage and kanban board storage to ensure sync
   useEffect(() => {
+    // First try to get all tasks from the tasks page
+    const tasksFromStorage = localStorage.getItem("zenta-tasks");
+    let allTasks: Task[] = [];
+    
+    if (tasksFromStorage) {
+      try {
+        const parsedTasks = JSON.parse(tasksFromStorage);
+        if (Array.isArray(parsedTasks)) {
+          allTasks = [...parsedTasks];
+        }
+      } catch (e) {
+        console.error("Error parsing tasks:", e);
+      }
+    }
+    
+    // Then get tasks from kanban board
     const kanbanColumns = localStorage.getItem("kanban-columns");
     if (kanbanColumns) {
       try {
         const columns = JSON.parse(kanbanColumns);
-        const allTasks: Task[] = columns.flatMap((col: any) => col.tasks || []);
-        
-        // Update lists with their associated tasks
-        if (allTasks.length > 0) {
-          const listsWithTasks = lists.map(list => {
-            // Find tasks for this list
-            const listTasks = allTasks.filter(task => task.listId === list.id);
-            return {
-              ...list,
-              tasks: listTasks
-            };
-          });
-          
-          setLists(listsWithTasks);
-        }
+        const kanbanTasks: Task[] = columns.flatMap((col: any) => col.tasks || []);
+        // Merge tasks, avoiding duplicates by ID
+        const existingIds = new Set(allTasks.map(t => t.id));
+        kanbanTasks.forEach(task => {
+          if (!existingIds.has(task.id)) {
+            allTasks.push(task);
+          }
+        });
       } catch (e) {
         console.error("Error synchronizing tasks:", e);
       }
+    }
+    
+    // Update lists with their associated tasks
+    if (allTasks.length > 0) {
+      const listsWithTasks = lists.map(list => {
+        // Find tasks for this list
+        const listTasks = allTasks.filter(task => task.listId === list.id);
+        return {
+          ...list,
+          tasks: listTasks
+        };
+      });
+      
+      setLists(listsWithTasks);
+      
+      // Also update localStorage to ensure consistency
+      localStorage.setItem("task-lists", JSON.stringify(listsWithTasks));
     }
   }, []);
   

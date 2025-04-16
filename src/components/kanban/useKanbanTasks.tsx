@@ -62,24 +62,7 @@ export function useKanbanTasks({
     // Update list data if list ID is available
     const listId = task.listId || localStorage.getItem("current-list-id");
     if (listId) {
-      const savedLists = localStorage.getItem("task-lists");
-      if (savedLists) {
-        const lists = JSON.parse(savedLists);
-        const updatedLists = lists.map((list: any) => {
-          if (list.id === listId) {
-            // Get all tasks from all columns
-            const allTasks = updatedColumns.flatMap(col => col.tasks);
-            // Filter tasks that belong to this list
-            const listTasks = allTasks.filter(t => t.listId === listId);
-            return {
-              ...list,
-              tasks: listTasks
-            };
-          }
-          return list;
-        });
-        localStorage.setItem("task-lists", JSON.stringify(updatedLists));
-      }
+      updateTasksInLists(updatedColumns, listId);
     }
     
     toast({
@@ -114,20 +97,7 @@ export function useKanbanTasks({
     
     // Update list data if needed
     if (taskToDelete?.listId) {
-      const savedLists = localStorage.getItem("task-lists");
-      if (savedLists) {
-        const lists = JSON.parse(savedLists);
-        const updatedLists = lists.map((list: any) => {
-          if (list.id === taskToDelete?.listId) {
-            return {
-              ...list,
-              tasks: list.tasks.filter((t: Task) => t.id !== taskId)
-            };
-          }
-          return list;
-        });
-        localStorage.setItem("task-lists", JSON.stringify(updatedLists));
-      }
+      updateTasksInLists(updatedColumns, taskToDelete.listId);
     }
     
     toast({
@@ -164,22 +134,55 @@ export function useKanbanTasks({
     
     // Update list data if needed
     if (taskToUpdate?.listId) {
+      updateTasksInLists(updatedColumns, taskToUpdate.listId);
+    }
+  };
+
+  // Helper function to update tasks in lists
+  const updateTasksInLists = (updatedColumns: KanbanColumn[], listId: string) => {
+    try {
       const savedLists = localStorage.getItem("task-lists");
       if (savedLists) {
         const lists = JSON.parse(savedLists);
+        
+        // Get all tasks from all columns
+        const allTasks = updatedColumns.flatMap(col => col.tasks);
+        
         const updatedLists = lists.map((list: any) => {
-          if (list.id === taskToUpdate?.listId) {
+          if (list.id === listId) {
+            // Filter tasks that belong to this list
+            const listTasks = allTasks.filter(t => t.listId === listId);
             return {
               ...list,
-              tasks: list.tasks.map((t: Task) => 
-                t.id === taskId ? { ...t, completed } : t
-              )
+              tasks: listTasks
             };
           }
           return list;
         });
+        
         localStorage.setItem("task-lists", JSON.stringify(updatedLists));
+        
+        // Also update the tasks in general storage
+        const tasksFromStorage = localStorage.getItem("zenta-tasks");
+        if (tasksFromStorage) {
+          try {
+            const existingTasks = JSON.parse(tasksFromStorage);
+            
+            // Remove tasks associated with this list
+            const filteredTasks = existingTasks.filter((t: Task) => t.listId !== listId);
+            
+            // Add updated tasks for this list
+            const tasksForThisList = allTasks.filter(t => t.listId === listId);
+            const updatedTasks = [...filteredTasks, ...tasksForThisList];
+            
+            localStorage.setItem("zenta-tasks", JSON.stringify(updatedTasks));
+          } catch (e) {
+            console.error("Error updating tasks storage:", e);
+          }
+        }
       }
+    } catch (e) {
+      console.error("Error updating lists:", e);
     }
   };
 

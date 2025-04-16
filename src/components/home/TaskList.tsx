@@ -42,6 +42,8 @@ const TaskList = ({ list, onDelete, onRename }: TaskListProps) => {
   const pendingTasks = Array.isArray(list.tasks) ? list.tasks.filter(task => !task.completed) : [];
   const totalTime = pendingTasks.reduce((acc, task) => acc + (task.estimatedTime || 0), 0);
   
+  console.log("List tasks:", list.id, list.title, list.tasks?.length, pendingTasks.length);
+  
   return (
     <Card className="glass-morphism border-zenta-purple/20 hover:border-zenta-purple/50 transition-all duration-300 h-full">
       <CardContent className="p-0">
