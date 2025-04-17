@@ -49,6 +49,8 @@
   scrollbar-width: none; /* Firefox */
   max-width: 100%;
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .kanban-board-container::-webkit-scrollbar {

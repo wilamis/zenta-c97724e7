@@ -84,7 +84,7 @@ const Kanban = () => {
             </div>
           </div>
         </header>
-        <div className="flex-1 px-4 pb-4 overflow-hidden w-full max-w-full">
+        <div className="flex-1 px-4 pb-4 overflow-hidden w-full max-w-full flex justify-center">
           <KanbanBoard />
         </div>
       </div>

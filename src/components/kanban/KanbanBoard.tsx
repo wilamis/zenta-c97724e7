@@ -113,8 +113,8 @@ const KanbanBoard = () => {
         </div>
       </div>
       
-      <ScrollArea className="kanban-board-container h-[700px] w-full max-w-full">
-        <div className="flex gap-4 w-max pb-4 pr-6">
+      <ScrollArea className="kanban-board-container h-[700px] w-full max-w-full flex items-center justify-center">
+        <div className="flex gap-4 w-max pb-4 pr-6 mx-auto">
           {columns.map(column => (
             <KanbanColumn
               key={column.id}
