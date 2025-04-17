@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MoreVertical, Plus, Edit, Trash, Menu, CircleCheck } from "lucide-react";
 import { Task } from "../tasks/TaskItem";
@@ -27,7 +26,6 @@ interface KanbanColumnProps {
   onDragStart: (e: React.DragEvent, taskId: string, columnId: string) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, columnId: string) => void;
-  // New column drag props
   onColumnDragStart: (e: React.DragEvent, columnId: string) => void;
   onColumnDragOver: (e: React.DragEvent) => void;
   onColumnDrop: (e: React.DragEvent, columnId: string) => void;
@@ -51,16 +49,14 @@ const KanbanColumn = ({
   isDraggingColumn,
 }: KanbanColumnProps) => {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
+  const [isDropTarget, setIsDropTarget] = useState(false);
+  const [isColumnDropTarget, setIsColumnDropTarget] = useState(false);
   const { t } = useLanguage();
   
   const handleRename = (newTitle: string) => {
     onRename(column.id, newTitle);
     setIsRenameOpen(false);
   };
-
-  // Add highlight state for drop target indication
-  const [isDropTarget, setIsDropTarget] = useState(false);
-  const [isColumnDropTarget, setIsColumnDropTarget] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -78,7 +74,6 @@ const KanbanColumn = ({
     onDrop(e, column.id);
   };
 
-  // Column drag handlers
   const handleColumnDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     if (isDraggingColumn) {
@@ -148,10 +143,10 @@ const KanbanColumn = ({
           {column.tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-6 text-center text-muted-foreground">
               <CircleCheck 
-                className="h-12 w-12 mb-2 text-green-500 opacity-70" 
+                className="h-6 w-6 mb-2 text-green-500 opacity-70" 
                 strokeWidth={1.5} 
               />
-              <p className="text-sm font-medium text-gray-500">
+              <p className="text-xs font-bold text-gray-500">
                 Tudo certo por aqui.
               </p>
             </div>
