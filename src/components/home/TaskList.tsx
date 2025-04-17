@@ -218,7 +218,7 @@ const TasksContainer = ({ pendingTasks, t }: TasksContainerProps) => {
     <div className="px-50 py-2 space-y-2 max-h-[200px] overflow-y-auto">
       {pendingTasks.length > 0 ? (
         <>
-          <TaskList pendingTasks={pendingTasks} />
+          <TaskItemsList pendingTasks={pendingTasks} />
           {pendingTasks.length > 4 && (
             <MoreTasksIndicator count={pendingTasks.length - 4} t={t} />
           )}
@@ -230,12 +230,12 @@ const TasksContainer = ({ pendingTasks, t }: TasksContainerProps) => {
   );
 };
 
-// Extract task list to a separate component
-interface TaskListComponentProps {
+// Rename component to avoid redeclaration
+interface TaskItemsListProps {
   pendingTasks: Task[];
 }
 
-const TaskList = ({ pendingTasks }: TaskListComponentProps) => {
+const TaskItemsList = ({ pendingTasks }: TaskItemsListProps) => {
   return (
     <>
       {pendingTasks.slice(0, 4).map((task, idx) => (
