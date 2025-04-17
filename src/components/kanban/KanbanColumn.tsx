@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MoreVertical, Plus, Edit, Trash, Menu, CircleCheck } from "lucide-react";
 import { Task } from "../tasks/TaskItem";
@@ -143,8 +144,10 @@ const KanbanColumn = ({
           {column.tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-6 text-center text-muted-foreground">
               <CircleCheck 
-                className="h-6 w-6 mb-2 text-green-500 opacity-70" 
-                strokeWidth={1.5} 
+                className="h-6 w-6 mb-2" 
+                strokeWidth={1.5}
+                color="#8B5CF6" // Vivid purple color
+                opacity={0.7}
               />
               <p className="text-xs font-bold text-gray-500">
                 Tudo certo por aqui.
