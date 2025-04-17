@@ -10,7 +10,7 @@ const Index = () => {
   const [greeting, setGreeting] = useState("");
   const [userName, setUserName] = useState("Usuário");
   
-  // Get the appropriate greeting based on time of day
+  // Obtém a saudação apropriada com base na hora do dia
   useEffect(() => {
     const date = new Date();
     const hours = date.getHours();
@@ -24,32 +24,23 @@ const Index = () => {
       greetingKey = "goodEvening";
     }
     
-    // Get saved username from localStorage
+    // Obtém o nome de usuário salvo do localStorage
     const savedName = localStorage.getItem("user-name");
     if (savedName) {
       setUserName(savedName);
     }
     
-    // Update greeting based on language
-    if (language === "pt-BR") {
-      const ptBRGreetings: Record<string, string> = {
-        goodMorning: "Bom dia",
-        goodAfternoon: "Boa tarde",
-        goodEvening: "Boa noite"
-      };
-      setGreeting(ptBRGreetings[greetingKey]);
-    } else {
-      const enGreetings: Record<string, string> = {
-        goodMorning: "Good morning",
-        goodAfternoon: "Good afternoon",
-        goodEvening: "Good evening"
-      };
-      setGreeting(enGreetings[greetingKey]);
-    }
+    // Saudações em português
+    const ptBRGreetings: Record<string, string> = {
+      goodMorning: "Bom dia",
+      goodAfternoon: "Boa tarde",
+      goodEvening: "Boa noite"
+    };
+    setGreeting(ptBRGreetings[greetingKey]);
   }, [language]);
   
-  // Get formatted date
-  const formattedDate = new Date().toLocaleDateString(language === "pt-BR" ? "pt-BR" : "en-US", {
+  // Obtém a data formatada sempre em Português
+  const formattedDate = new Date().toLocaleDateString("pt-BR", {
     weekday: "long",
     month: "long",
     day: "numeric",

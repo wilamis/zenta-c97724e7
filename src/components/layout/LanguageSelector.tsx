@@ -7,27 +7,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 type Language = {
-  code: "en" | "pt-BR";
+  code: "pt-BR";
   name: string;
   flag: string;
 };
 
 const languages: Language[] = [
-  { code: "en", name: "English", flag: "🇺🇸" },
   { code: "pt-BR", name: "Português (Brasil)", flag: "🇧🇷" },
 ];
 
 const LanguageSelector = () => {
-  const { language, setLanguage } = useLanguage();
+  const { language } = useLanguage();
 
-  const activeLanguage = languages.find(lang => lang.code === language) || languages[0];
-
-  const handleLanguageChange = (code: "en" | "pt-BR") => {
-    setLanguage(code);
-  };
+  const activeLanguage = languages[0];
 
   return (
     <DropdownMenu>
@@ -45,11 +39,7 @@ const LanguageSelector = () => {
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            className={cn(
-              "cursor-pointer gap-2",
-              lang.code === language && "font-medium bg-secondary"
-            )}
-            onClick={() => handleLanguageChange(lang.code)}
+            className="cursor-pointer gap-2 font-medium bg-secondary"
           >
             <span className="text-lg">{lang.flag}</span>
             <span>{lang.name}</span>

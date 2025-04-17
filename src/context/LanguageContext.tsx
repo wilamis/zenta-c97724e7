@@ -1,9 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { englishTranslations } from "../i18n/en";
 import { portugueseTranslations } from "../i18n/pt-BR";
 
-type LanguageCode = "en" | "pt-BR";
+type LanguageCode = "pt-BR";
 
 type LanguageContextType = {
   language: LanguageCode;
@@ -26,16 +25,13 @@ type LanguageProviderProps = {
 };
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
-  // Try to get the language from localStorage or default to English
-  const [language, setLanguageState] = useState<LanguageCode>(() => {
-    const savedLanguage = localStorage.getItem("zenta-language") as LanguageCode;
-    return savedLanguage || "en";
-  });
+  // Define o português como idioma padrão
+  const [language, setLanguageState] = useState<LanguageCode>("pt-BR");
 
-  // Get the translations for the current language
-  const translations = language === "pt-BR" ? portugueseTranslations : englishTranslations;
+  // Obtem as traduções para o idioma atual
+  const translations = portugueseTranslations;
 
-  // Function to get a translation by key
+  // Função para obter uma tradução por chave
   const t = (key: string): string => {
     const keys = key.split(".");
     let value: any = translations;
@@ -51,13 +47,13 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     return value;
   };
 
-  // Set language and save to localStorage
+  // Define o idioma
   const setLanguage = (code: LanguageCode) => {
     setLanguageState(code);
     localStorage.setItem("zenta-language", code);
   };
 
-  // Provide language context to the entire app
+  // Fornece o contexto de idioma para toda a aplicação
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
