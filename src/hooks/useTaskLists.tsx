@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ListData } from "@/components/home/TaskList";
+import { ListData } from "@/components/home/lists/ListData";
 import { Task } from "@/components/tasks/TaskItem";
 import { useLanguage } from "@/context/LanguageContext";
 
