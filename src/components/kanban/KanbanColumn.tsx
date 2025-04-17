@@ -1,20 +1,13 @@
-
 import { useState } from "react";
-import { MoreVertical, Plus, Edit, Trash, Menu, CircleCheck } from "lucide-react";
 import { Task } from "../tasks/TaskItem";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { KanbanColumn as KanbanColumnType } from "@/hooks/useKanbanBoard";
 import TaskItem from "../tasks/TaskItem";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import RenameColumnDialog from "./RenameColumnDialog";
-import { Card } from "@/components/ui/card";
-import { useLanguage } from "@/context/LanguageContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ColumnHeader from "./components/ColumnHeader";
+import EmptyColumnState from "./components/EmptyColumnState";
+import AddTaskButton from "./components/AddTaskButton";
 
 interface KanbanColumnProps {
   column: KanbanColumnType;
@@ -52,7 +45,6 @@ const KanbanColumn = ({
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [isColumnDropTarget, setIsColumnDropTarget] = useState(false);
-  const { t } = useLanguage();
   
   const handleRename = (newTitle: string) => {
     onRename(column.id, newTitle);
@@ -106,53 +98,17 @@ const KanbanColumn = ({
       onDragLeave={isDraggingColumn ? handleColumnDragLeave : handleDragLeave}
       onDrop={isDraggingColumn ? handleColumnDrop : handleDrop}
     >
-      <div 
-        className="flex items-center justify-between p-3 border-b cursor-grab active:cursor-grabbing"
-        draggable="true"
+      <ColumnHeader
+        title={column.title}
+        onRenameClick={() => setIsRenameOpen(true)}
+        onDeleteClick={() => onDelete(column.id)}
         onDragStart={(e) => onColumnDragStart(e, column.id)}
-      >
-        <div className="flex items-center gap-2">
-          <Menu className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-medium text-base tracking-normal truncate">{column.title}</h3>
-        </div>
-        <div className="flex items-center gap-1">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsRenameOpen(true)}>
-                <Edit className="h-4 w-4 mr-2" />
-                <span className="tracking-normal">{t('kanban.editColumn')}</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className="text-destructive focus:text-destructive" 
-                onClick={() => onDelete(column.id)}
-              >
-                <Trash className="h-4 w-4 mr-2" />
-                <span className="tracking-normal">{t('kanban.deleteColumn')}</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+      />
       
       <ScrollArea className="flex-1 p-2 h-[630px] overflow-y-auto scrollbar-hide">
         <div className="task-list space-y-2 min-h-[100px]">
           {column.tasks.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-6 text-center text-muted-foreground">
-              <CircleCheck 
-                className="h-4 w-4 mb-2" 
-                strokeWidth={1.5}
-                color="#8B5CF6"
-                opacity={0.7}
-              />
-              <p className="text-xs font-bold text-gray-500">
-                Tudo certo por aqui.
-              </p>
-            </div>
+            <EmptyColumnState />
           ) : (
             column.tasks.map(task => (
               <div 
@@ -175,14 +131,7 @@ const KanbanColumn = ({
       </ScrollArea>
       
       <div className="p-2 border-t flex justify-end">
-        <Button 
-          variant="ghost"
-          className="justify-start text-muted-foreground text-sm h-8"
-          onClick={() => onAddTask(column.id)}
-        >
-          <Plus className="h-4 w-4 mr-1" />
-          <span className="tracking-normal">{t('tasks.addTask')}</span>
-        </Button>
+        <AddTaskButton onClick={() => onAddTask(column.id)} />
       </div>
       
       {isRenameOpen && (
@@ -198,4 +147,3 @@ const KanbanColumn = ({
 };
 
 export default KanbanColumn;
-
