@@ -231,7 +231,6 @@ export const portugueseTranslations = {
     minutes: "minutos",
     focusTime: "Tempo de Foco",
     breakTime: "Tempo de Pausa",
-    cycles: "Ciclos",
     cycle: "ciclo",
     cycles: "ciclos",
     completed: "Completou",
@@ -243,7 +242,7 @@ export const portugueseTranslations = {
     soundNotifications: "Notificações de som",
     autoStartBreaks: "Iniciar pausas automaticamente",
     autoStartWorkSprints: "Iniciar sprints de trabalho automaticamente",
-    breakTime: "Pausa completada!",
+    breakTimeCompleted: "Pausa completada!",
     readyForAnotherFocus: "Pronto para outra sessão de foco?"
   },
   planner: {
