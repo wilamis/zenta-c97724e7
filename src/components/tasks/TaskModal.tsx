@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -41,6 +41,9 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
       description,
       dueDate: task?.dueDate
     });
+    
+    // Close the modal after saving
+    onClose();
   };
 
   const getCategoryColor = (code: TaskCategory) => {
@@ -60,6 +63,9 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{task ? t("taskModal.editTask") : t("taskModal.addNewTask")}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {task ? t("taskModal.editTaskDescription") : t("taskModal.addNewTaskDescription")}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">

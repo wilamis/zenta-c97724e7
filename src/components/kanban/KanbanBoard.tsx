@@ -1,3 +1,4 @@
+
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KanbanColumn from "./KanbanColumn";
@@ -86,6 +87,12 @@ const KanbanBoard = () => {
     setEditingTask(null);
     setIsTaskModalOpen(true);
   };
+  
+  const handleCloseTaskModal = () => {
+    setIsTaskModalOpen(false);
+    setActiveColumn(null);
+    setEditingTask(null);
+  };
 
   return (
     <div className="space-y-4 h-full w-full max-w-full flex flex-col items-center">
@@ -127,10 +134,7 @@ const KanbanBoard = () => {
       {isTaskModalOpen && (
         <TaskModal
           isOpen={isTaskModalOpen}
-          onClose={() => {
-            setIsTaskModalOpen(false);
-            setActiveColumn(null);
-          }}
+          onClose={handleCloseTaskModal}
           onSave={handleTaskSave}
           task={editingTask || undefined}
         />
