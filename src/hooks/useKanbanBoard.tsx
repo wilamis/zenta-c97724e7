@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Task } from "@/components/tasks/TaskItem";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "react-router-dom";
 
 export interface KanbanColumn {
   id: string;
@@ -18,10 +19,18 @@ export function useKanbanBoard() {
   const [draggedTaskInfo, setDraggedTaskInfo] = useState<{taskId: string, sourceColumnId: string} | null>(null);
   const [draggedColumnId, setDraggedColumnId] = useState<string | null>(null);
   const { toast } = useToast();
+  const location = useLocation();
 
-  // Initialize with default columns if none exist
+  // Get the list ID from URL query parameters
   useEffect(() => {
-    const savedColumns = localStorage.getItem("kanban-columns");
+    const searchParams = new URLSearchParams(location.search);
+    const listId = searchParams.get('list') || localStorage.getItem("current-list-id") || "default";
+    
+    // Store the current list ID
+    localStorage.setItem("current-list-id", listId);
+    
+    // Load columns for this specific list
+    const savedColumns = localStorage.getItem(`kanban-columns-${listId}`);
     if (savedColumns) {
       setColumns(JSON.parse(savedColumns));
     } else {
@@ -32,14 +41,15 @@ export function useKanbanBoard() {
         { id: "done", title: "Concluído", tasks: [] },
       ];
       setColumns(defaultColumns);
-      localStorage.setItem("kanban-columns", JSON.stringify(defaultColumns));
+      localStorage.setItem(`kanban-columns-${listId}`, JSON.stringify(defaultColumns));
     }
-  }, []);
+  }, [location.search]);
 
   // Save columns to localStorage whenever they change
   useEffect(() => {
     if (columns.length > 0) {
-      localStorage.setItem("kanban-columns", JSON.stringify(columns));
+      const listId = localStorage.getItem("current-list-id") || "default";
+      localStorage.setItem(`kanban-columns-${listId}`, JSON.stringify(columns));
     }
   }, [columns]);
 

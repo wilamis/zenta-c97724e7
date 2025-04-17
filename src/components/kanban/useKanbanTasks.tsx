@@ -43,15 +43,23 @@ export function useKanbanTasks({
     
     if (columnIndex === -1) return;
     
+    const currentListId = localStorage.getItem("current-list-id") || "default";
+    
+    // Add listId to task if not present
+    const taskWithListId = {
+      ...task,
+      listId: task.listId || currentListId
+    };
+    
     if (editingTask) {
       // Edit existing task
       updatedColumns[columnIndex].tasks = updatedColumns[columnIndex].tasks.map(t => 
-        t.id === task.id ? task : t
+        t.id === taskWithListId.id ? taskWithListId : t
       );
     } else {
       // Add new task with generated ID
       const newTask = {
-        ...task,
+        ...taskWithListId,
         id: Date.now().toString()
       };
       updatedColumns[columnIndex].tasks = [...updatedColumns[columnIndex].tasks, newTask];
@@ -59,11 +67,8 @@ export function useKanbanTasks({
     
     setColumns(updatedColumns);
     
-    // Update list data if list ID is available
-    const listId = task.listId || localStorage.getItem("current-list-id");
-    if (listId) {
-      updateTasksInLists(updatedColumns, listId);
-    }
+    // Update list data
+    updateTasksInLists(updatedColumns, taskWithListId.listId);
     
     toast({
       title: editingTask ? "Task updated" : "Task added",
