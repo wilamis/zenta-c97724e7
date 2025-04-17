@@ -2,7 +2,7 @@ import Layout from "@/components/layout/Layout";
 import KanbanBoard from "@/components/kanban/KanbanBoard";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { LayoutGrid, ArrowLeft, Plus } from "lucide-react";
+import { LayoutGrid, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 
@@ -10,7 +10,6 @@ const Kanban = () => {
   const { t } = useLanguage();
   const location = useLocation();
   const [listTitle, setListTitle] = useState<string | null>(null);
-  const [isAddColumnOpen, setIsAddColumnOpen] = useState(false);
   
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -76,15 +75,6 @@ const Kanban = () => {
               )}
             </div>
           </div>
-          <Button 
-            onClick={() => setIsAddColumnOpen(true)}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-1"
-          >
-            <Plus className="h-4 w-4" />
-            <span>{t('kanban.addColumn')}</span>
-          </Button>
         </header>
         <div className="flex-1 px-4 pb-4 overflow-hidden w-full max-w-full flex justify-center">
           <KanbanBoard />

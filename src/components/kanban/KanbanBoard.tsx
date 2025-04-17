@@ -92,11 +92,11 @@ const KanbanBoard = () => {
       <div className="flex justify-end items-center mb-4 w-full">
         <Button 
           onClick={handleOpenAddTaskModal}
-          className="flex items-center gap-2 bg-[#9b87f5] hover:bg-[#8B5CF6] transition-colors"
+          className="flex items-center gap-2 bg-[#9b87f5] hover:bg-[#8B5CF6] rounded-full px-6 py-3 text-white transition-colors shadow-md hover:shadow-lg"
           size="default"
         >
           <Plus className="h-5 w-5" />
-          <span className="font-medium">{t('tasks.addTask')}</span>
+          <span className="font-medium text-base tracking-normal">{t('tasks.addTask')}</span>
         </Button>
       </div>
       
@@ -123,14 +123,6 @@ const KanbanBoard = () => {
           ))}
         </div>
       </ScrollArea>
-      
-      {isAddColumnOpen && (
-        <AddColumnDialog
-          isOpen={isAddColumnOpen}
-          onClose={() => setIsAddColumnOpen(false)}
-          onAddColumn={handleAddColumn}
-        />
-      )}
       
       {isTaskModalOpen && (
         <TaskModal
