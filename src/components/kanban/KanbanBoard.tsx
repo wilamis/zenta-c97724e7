@@ -112,8 +112,8 @@ const KanbanBoard = () => {
         </div>
       </div>
       
-      <div className="kanban-board-container h-[500px] overflow-x-auto overflow-y-hidden pb-4">
-        <div className="flex gap-4 pb-4 min-w-fit">
+      <div className="kanban-board-container h-[700px] overflow-x-auto">
+        <div className="flex gap-4 min-w-fit">
           {columns.map(column => (
             <KanbanColumn
               key={column.id}

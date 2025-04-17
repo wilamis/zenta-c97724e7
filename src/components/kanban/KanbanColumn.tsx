@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import RenameColumnDialog from "./RenameColumnDialog";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface KanbanColumnProps {
@@ -101,7 +100,7 @@ const KanbanColumn = ({
 
   return (
     <Card 
-      className={`kanban-column w-[350px] flex-shrink-0 flex flex-col ${
+      className={`kanban-column w-[320px] flex-shrink-0 flex flex-col ${
         isDropTarget ? 'bg-secondary/50 border-primary/40' : 
         isColumnDropTarget ? 'bg-primary/20 border-primary/40' : 
         'bg-card'
@@ -143,7 +142,7 @@ const KanbanColumn = ({
         </div>
       </div>
       
-      <div className="flex-1 p-2 h-[450px] overflow-y-auto scrollbar-hide">
+      <div className="flex-1 p-2 h-[630px] overflow-y-auto scrollbar-hide">
         <div className="task-list space-y-2 min-h-[100px]">
           {column.tasks.length === 0 ? (
             <div className="text-center py-6 text-muted-foreground text-sm">
