@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from "react";
 import Layout from "../components/layout/Layout";
 import TaskList from "../components/tasks/TaskList";
-import { Task } from "../components/tasks/TaskItem";
+import TaskItem from "../components/tasks/TaskItem";
+import { Task } from "../components/tasks/TaskItem.d";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { CheckSquare, ListTodo, Trash2 } from "lucide-react";
@@ -26,12 +26,10 @@ const Tasks = () => {
     return [];
   });
   
-  // Save tasks to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("zenta-tasks", JSON.stringify(tasks));
   }, [tasks]);
   
-  // Save deleted tasks to localStorage
   useEffect(() => {
     localStorage.setItem("zenta-deleted-tasks", JSON.stringify(deletedTasks));
   }, [deletedTasks]);
@@ -40,11 +38,9 @@ const Tasks = () => {
     setTasks(updatedTasks);
   };
   
-  // Filter tasks
   const activeTasks = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);
   
-  // Calculate counts and stats
   const totalActiveTasks = activeTasks.length;
   const totalCompletedTasks = completedTasks.length;
   const totalTasks = tasks.length;
@@ -165,8 +161,6 @@ const Tasks = () => {
                             onComplete={() => {}}
                             onDelete={() => {}}
                             onEdit={() => {}}
-                            categories={[]}
-                            isDeleted
                           />
                         ))}
                       </div>
