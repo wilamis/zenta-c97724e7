@@ -53,6 +53,10 @@
   display: none; /* Chrome, Safari and Opera */
 }
 
+.kanban-board-container .flex {
+  padding-right: 16px; /* Ensure there's space at the end for the last column */
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
