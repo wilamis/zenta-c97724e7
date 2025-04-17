@@ -7,6 +7,9 @@ import { Checkbox } from "../ui/checkbox";
 import { Category, defaultCategories } from "./categories/types";
 import { Task, TaskCategory, TaskPriority } from "./TaskItem.d";
 
+// Re-export the types so they can be imported from this file
+export type { Task, TaskCategory, TaskPriority };
+
 interface TaskItemProps {
   task: Task;
   onComplete: (id: string, completed: boolean) => void;
