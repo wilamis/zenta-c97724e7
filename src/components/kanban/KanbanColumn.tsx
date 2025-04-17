@@ -144,9 +144,9 @@ const KanbanColumn = ({
           {column.tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-6 text-center text-muted-foreground">
               <CircleCheck 
-                className="h-6 w-6 mb-2" 
+                className="h-4 w-4 mb-2" 
                 strokeWidth={1.5}
-                color="#8B5CF6" // Vivid purple color
+                color="#8B5CF6"
                 opacity={0.7}
               />
               <p className="text-xs font-bold text-gray-500">
@@ -174,10 +174,10 @@ const KanbanColumn = ({
         </div>
       </ScrollArea>
       
-      <div className="mt-auto p-2 border-t">
+      <div className="p-2 border-t flex justify-end">
         <Button 
           variant="ghost"
-          className="w-full justify-start text-muted-foreground text-sm h-8"
+          className="justify-start text-muted-foreground text-sm h-8"
           onClick={() => onAddTask(column.id)}
         >
           <Plus className="h-4 w-4 mr-1" />
@@ -198,3 +198,4 @@ const KanbanColumn = ({
 };
 
 export default KanbanColumn;
+
