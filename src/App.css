@@ -46,8 +46,41 @@
   min-height: 400px;
 }
 
-@media (max-width: 640px) {
-  .kanban-board-container .grid {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
+/* Adjustments for the Kanban columns */
+.kanban-board-container .flex {
+  padding-bottom: 8px; /* Ensure there's space at the bottom */
+}
+
+/* Ensure the horizontal scrollbar appears when needed */
+.kanban-board-container {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* Add scrollbar styling */
+.kanban-board-container::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.kanban-board-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.kanban-board-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.kanban-board-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure the Add Task button is always visible */
+.kanban-column .border-t {
+  background-color: inherit;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
 }

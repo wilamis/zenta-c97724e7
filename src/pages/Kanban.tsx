@@ -67,8 +67,8 @@ const Kanban = () => {
 
   return (
     <Layout>
-      <div className="h-[calc(100vh-64px)] flex flex-col">
-        <header className="flex items-center justify-between gap-2 mb-4 p-4">
+      <div className="h-full flex flex-col overflow-hidden">
+        <header className="flex items-center justify-between gap-2 p-4">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" asChild>
               <Link to="/">
