@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Task } from "../tasks/TaskItem";
 import { Card } from "@/components/ui/card";
@@ -104,21 +103,23 @@ const KanbanColumn = ({
     }
   };
 
-  const handleClearColumn = () => {
+  const handleClearColumn = async () => {
     if (isClearing || column.tasks.length === 0) return;
     
     setIsClearing(true);
     
-    // Create a copy of the tasks to avoid modifying the array during iteration
-    const taskIds = [...column.tasks].map(task => task.id);
-    
-    // Delete tasks sequentially to avoid freezing the UI
-    taskIds.forEach(taskId => {
-      onDeleteTask(taskId, column.id);
-    });
-    
-    setIsClearing(false);
-    setIsClearDialogOpen(false);
+    try {
+      const tasksToClear = [...column.tasks];
+      
+      for (const task of tasksToClear) {
+        onDeleteTask(task.id, column.id);
+      }
+    } catch (error) {
+      console.error("Error clearing column:", error);
+    } finally {
+      setIsClearing(false);
+      setIsClearDialogOpen(false);
+    }
   };
 
   return (

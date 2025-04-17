@@ -1,7 +1,7 @@
 
 import { Task } from "@/components/tasks/TaskItem";
 import { KanbanColumn } from "@/hooks/useKanbanBoard";
-import { updateTasksInLists } from "@/utils/taskStorageUtils";
+import { safelyUpdateStorage, updateTasksInLists } from "@/utils/taskStorageUtils";
 
 interface UseTaskOperationsProps {
   columns: KanbanColumn[];
@@ -36,13 +36,15 @@ export function useTaskOperations({
   const handleTaskDelete = (taskId: string, columnId: string) => {
     // Find the task to add to deleted tasks
     let taskToDelete: Task | undefined;
-    let columnWithTask: KanbanColumn | undefined;
+    let taskListId: string | undefined;
     
     columns.forEach(col => {
-      const task = col.tasks.find(t => t.id === taskId);
-      if (task) {
-        taskToDelete = task;
-        columnWithTask = col;
+      if (col.id === columnId) {
+        const task = col.tasks.find(t => t.id === taskId);
+        if (task) {
+          taskToDelete = task;
+          taskListId = task.listId;
+        }
       }
     });
     
@@ -55,10 +57,13 @@ export function useTaskOperations({
         deletedAt: new Date().toISOString()
       };
       
+      // Get existing deleted tasks
       const savedDeletedTasks = localStorage.getItem("zenta-deleted-tasks") || "[]";
       const deletedTasks = JSON.parse(savedDeletedTasks);
       deletedTasks.push(deletedTask);
-      localStorage.setItem("zenta-deleted-tasks", JSON.stringify(deletedTasks));
+      
+      // Save deleted tasks to storage
+      safelyUpdateStorage("zenta-deleted-tasks", deletedTasks);
 
       // Remove task from column
       const updatedColumns = columns.map(column => {
@@ -74,8 +79,8 @@ export function useTaskOperations({
       setColumns(updatedColumns);
       
       // Update list data if needed
-      if (taskToDelete.listId) {
-        updateTasksInLists(updatedColumns, taskToDelete.listId);
+      if (taskListId) {
+        updateTasksInLists(updatedColumns, taskListId);
       }
     } catch (error) {
       console.error("Error deleting task:", error);
