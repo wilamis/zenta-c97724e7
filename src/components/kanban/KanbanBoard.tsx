@@ -1,4 +1,3 @@
-
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KanbanColumn from "./KanbanColumn";
@@ -141,4 +140,3 @@ const KanbanBoard = () => {
 };
 
 export default KanbanBoard;
-
