@@ -44,9 +44,9 @@ export const updateTasksInLists = (updatedColumns: KanbanColumn[], listId: strin
  * @param listId - The list ID to update
  */
 const updateTasksInGeneralStorage = (allTasks: Task[], listId: string) => {
-  const tasksFromStorage = localStorage.getItem("zenta-tasks");
-  if (tasksFromStorage) {
-    try {
+  try {
+    const tasksFromStorage = localStorage.getItem("zenta-tasks");
+    if (tasksFromStorage) {
       const existingTasks = JSON.parse(tasksFromStorage);
       
       // Remove tasks associated with this list
@@ -57,8 +57,23 @@ const updateTasksInGeneralStorage = (allTasks: Task[], listId: string) => {
       const updatedTasks = [...filteredTasks, ...tasksForThisList];
       
       localStorage.setItem("zenta-tasks", JSON.stringify(updatedTasks));
-    } catch (e) {
-      console.error("Error updating tasks storage:", e);
     }
+  } catch (e) {
+    console.error("Error updating tasks storage:", e);
+  }
+};
+
+/**
+ * Safely updates localStorage with error handling
+ * @param key - The localStorage key
+ * @param data - The data to store
+ */
+export const safelyUpdateStorage = (key: string, data: any) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+    return true;
+  } catch (error) {
+    console.error(`Error updating ${key} in localStorage:`, error);
+    return false;
   }
 };

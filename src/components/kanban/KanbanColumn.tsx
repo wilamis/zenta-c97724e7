@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Task } from "../tasks/TaskItem";
 import { Card } from "@/components/ui/card";
@@ -59,6 +60,7 @@ const KanbanColumn = ({
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [isColumnDropTarget, setIsColumnDropTarget] = useState(false);
   const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const { t } = useLanguage();
   
   const handleRename = (newTitle: string) => {
@@ -103,9 +105,19 @@ const KanbanColumn = ({
   };
 
   const handleClearColumn = () => {
-    column.tasks.forEach(task => {
-      onDeleteTask(task.id, column.id);
+    if (isClearing || column.tasks.length === 0) return;
+    
+    setIsClearing(true);
+    
+    // Create a copy of the tasks to avoid modifying the array during iteration
+    const taskIds = [...column.tasks].map(task => task.id);
+    
+    // Delete tasks sequentially to avoid freezing the UI
+    taskIds.forEach(taskId => {
+      onDeleteTask(taskId, column.id);
     });
+    
+    setIsClearing(false);
     setIsClearDialogOpen(false);
   };
 
@@ -161,6 +173,7 @@ const KanbanColumn = ({
               size="icon"
               className="h-8 w-8 text-muted-foreground hover:text-destructive"
               onClick={() => setIsClearDialogOpen(true)}
+              disabled={isClearing}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -191,6 +204,7 @@ const KanbanColumn = ({
             <AlertDialogAction
               onClick={handleClearColumn}
               className="bg-destructive hover:bg-destructive/90"
+              disabled={isClearing}
             >
               {t('kanban.clearColumnAction')}
             </AlertDialogAction>

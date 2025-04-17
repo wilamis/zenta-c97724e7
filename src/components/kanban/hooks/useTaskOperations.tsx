@@ -36,16 +36,19 @@ export function useTaskOperations({
   const handleTaskDelete = (taskId: string, columnId: string) => {
     // Find the task to add to deleted tasks
     let taskToDelete: Task | undefined;
-    columns.find(col => {
+    let columnWithTask: KanbanColumn | undefined;
+    
+    columns.forEach(col => {
       const task = col.tasks.find(t => t.id === taskId);
       if (task) {
         taskToDelete = task;
-        return true;
+        columnWithTask = col;
       }
-      return false;
     });
     
-    if (taskToDelete) {
+    if (!taskToDelete) return;
+    
+    try {
       // Add task to deleted tasks storage with deletion date
       const deletedTask = {
         ...taskToDelete,
@@ -56,29 +59,32 @@ export function useTaskOperations({
       const deletedTasks = JSON.parse(savedDeletedTasks);
       deletedTasks.push(deletedTask);
       localStorage.setItem("zenta-deleted-tasks", JSON.stringify(deletedTasks));
-    }
 
-    const updatedColumns = columns.map(column => {
-      if (column.id === columnId) {
-        return {
-          ...column,
-          tasks: column.tasks.filter(task => task.id !== taskId)
-        };
+      // Remove task from column
+      const updatedColumns = columns.map(column => {
+        if (column.id === columnId) {
+          return {
+            ...column,
+            tasks: column.tasks.filter(task => task.id !== taskId)
+          };
+        }
+        return column;
+      });
+      
+      setColumns(updatedColumns);
+      
+      // Update list data if needed
+      if (taskToDelete.listId) {
+        updateTasksInLists(updatedColumns, taskToDelete.listId);
       }
-      return column;
-    });
-    
-    setColumns(updatedColumns);
-    
-    // Update list data if needed
-    if (taskToDelete?.listId) {
-      updateTasksInLists(updatedColumns, taskToDelete.listId);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      toast({
+        title: "Erro ao excluir tarefa",
+        description: "Ocorreu um erro ao mover a tarefa para a lixeira",
+        variant: "destructive",
+      });
     }
-    
-    toast({
-      title: "Tarefa movida para a lixeira",
-      description: "A tarefa será permanentemente excluída após 30 dias",
-    });
   };
 
   const handleTaskComplete = (taskId: string, completed: boolean, columnId: string) => {
