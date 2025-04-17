@@ -6,6 +6,7 @@ import { SidebarMobileOverlay } from "./SidebarMobileOverlay";
 import { SidebarHeader } from "./SidebarHeader";
 import { SidebarNavigation } from "./SidebarNavigation";
 import { SidebarFooter } from "./SidebarFooter";
+import { X } from "lucide-react";
 
 const Sidebar = () => {
   const { isOpen, isCollapsed, toggleSidebar, toggleCollapse } = useSidebarState();
