@@ -46,22 +46,23 @@
   min-height: 400px;
 }
 
-/* Custom scrollbar for horizontal scroll */
+/* Hide scrollbars while maintaining scroll functionality */
+.kanban-board-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .kanban-board-container::-webkit-scrollbar {
-  height: 8px;
+  display: none; /* Chrome, Safari and Opera */
 }
 
-.kanban-board-container::-webkit-scrollbar-track {
-  background: transparent;
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
-.kanban-board-container::-webkit-scrollbar-thumb {
-  background: rgba(155, 135, 245, 0.3);
-  border-radius: 10px;
-}
-
-.kanban-board-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(155, 135, 245, 0.5);
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 /* Ensure kanban column has a hover effect with the zenta-purple color */

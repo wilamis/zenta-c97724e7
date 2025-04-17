@@ -1,3 +1,4 @@
+
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KanbanColumn from "./KanbanColumn";
@@ -8,7 +9,6 @@ import { useKanbanColumns } from "./useKanbanColumns";
 import { useKanbanTasks } from "./useKanbanTasks";
 import { useKanbanDragDrop } from "./useKanbanDragDrop";
 import { useLanguage } from "@/context/LanguageContext";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const KanbanBoard = () => {
   const { t } = useLanguage();
@@ -112,7 +112,7 @@ const KanbanBoard = () => {
         </div>
       </div>
       
-      <ScrollArea className="kanban-board-container h-[calc(100vh-180px)]">
+      <div className="kanban-board-container h-[500px] overflow-x-auto overflow-y-hidden pb-4">
         <div className="flex gap-4 pb-4 min-w-fit">
           {columns.map(column => (
             <KanbanColumn
@@ -134,7 +134,7 @@ const KanbanBoard = () => {
             />
           ))}
         </div>
-      </ScrollArea>
+      </div>
       
       {isAddColumnOpen && (
         <AddColumnDialog
