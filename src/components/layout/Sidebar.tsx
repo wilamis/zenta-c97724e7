@@ -1,23 +1,18 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
-  Calendar, 
+  Home, 
   CheckSquare, 
   Clock, 
-  Home, 
   ListTodo, 
   Menu, 
   Settings, 
   Timer,
-  LayoutGrid,
-  X,
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/context/LanguageContext";
 
 type NavItem = {
@@ -38,11 +33,6 @@ const navItems: NavItem[] = [
     path: "/tasks"
   },
   {
-    titleKey: "sidebar.kanban",
-    icon: LayoutGrid,
-    path: "/kanban"
-  },
-  {
     titleKey: "sidebar.focus",
     icon: Clock,
     path: "/focus"
@@ -54,7 +44,7 @@ const navItems: NavItem[] = [
   },
   {
     titleKey: "sidebar.planner",
-    icon: Calendar,
+    icon: CheckSquare,
     path: "/planner"
   },
   {
@@ -81,7 +71,6 @@ const Sidebar = () => {
     localStorage.setItem("sidebar-collapsed", String(newState));
   };
   
-  // Fechar o sidebar móvel quando a rota muda
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
@@ -168,8 +157,6 @@ const Sidebar = () => {
           </nav>
 
           <div className="space-y-4 mt-auto">
-            {!isCollapsed && <LanguageSelector />}
-            
             {!isCollapsed && (
               <div className="rounded-lg bg-secondary p-4">
                 <div className="flex items-center space-x-2">
