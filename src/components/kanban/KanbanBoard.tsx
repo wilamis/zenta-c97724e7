@@ -1,4 +1,3 @@
-
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KanbanColumn from "./KanbanColumn";
@@ -90,27 +89,15 @@ const KanbanBoard = () => {
 
   return (
     <div className="space-y-4 h-full w-full max-w-full flex flex-col items-center">
-      <div className="flex justify-between items-center mb-4 w-full">
-        <h2 className="text-xl font-medium">{t('kanban.manageColumns')}</h2>
-        <div className="flex gap-2">
-          <Button 
-            onClick={handleOpenAddTaskModal}
-            className="flex items-center gap-1"
-            variant="default"
-            size="sm"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="tracking-normal">{t('tasks.addTask')}</span>
-          </Button>
-          <Button 
-            onClick={() => setIsAddColumnOpen(true)}
-            className="flex items-center gap-1"
-            size="sm"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="tracking-normal">{t('kanban.addColumn')}</span>
-          </Button>
-        </div>
+      <div className="flex justify-end items-center mb-4 w-full">
+        <Button 
+          onClick={handleOpenAddTaskModal}
+          className="flex items-center gap-2 bg-[#9b87f5] hover:bg-[#8B5CF6] transition-colors"
+          size="default"
+        >
+          <Plus className="h-5 w-5" />
+          <span className="font-medium">{t('tasks.addTask')}</span>
+        </Button>
       </div>
       
       <ScrollArea className="kanban-board-container h-[700px] w-full max-w-full flex items-center justify-center">
