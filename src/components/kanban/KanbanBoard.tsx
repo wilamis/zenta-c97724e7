@@ -1,4 +1,3 @@
-
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KanbanColumn from "./KanbanColumn";
@@ -32,7 +31,6 @@ const KanbanBoard = () => {
     toast
   } = useKanbanBoard();
 
-  // Initialize column operations
   const {
     handleAddColumn,
     handleDeleteColumn,
@@ -42,7 +40,6 @@ const KanbanBoard = () => {
     handleColumnDrop
   } = useKanbanColumns({ columns, setColumns, toast });
 
-  // Initialize task operations
   const {
     handleAddTask,
     handleEditTask,
@@ -60,7 +57,6 @@ const KanbanBoard = () => {
     editingTask
   });
 
-  // Initialize drag and drop operations
   const {
     handleDragStart,
     handleDragOver,
@@ -73,19 +69,16 @@ const KanbanBoard = () => {
     toast
   });
 
-  // Column drag start with state update
   const onColumnDragStart = (e: React.DragEvent, columnId: string) => {
     setDraggedColumnId(columnId);
     handleColumnDragStart(e, columnId);
   };
 
-  // Column drop with draggedColumnId state clearing
   const onColumnDrop = (e: React.DragEvent, targetColumnId: string) => {
     handleColumnDrop(e, targetColumnId, draggedColumnId);
     setDraggedColumnId(null);
   };
 
-  // Function to open the task modal with the first column as default if no active column is set
   const handleOpenAddTaskModal = () => {
     if (!activeColumn && columns.length > 0) {
       setActiveColumn(columns[0].id);
@@ -119,7 +112,7 @@ const KanbanBoard = () => {
         </div>
       </div>
       
-      <ScrollArea className="kanban-board-container h-[calc(100vh-180px)]" orientation="horizontal">
+      <ScrollArea className="kanban-board-container h-[calc(100vh-180px)]">
         <div className="flex gap-4 pb-4 min-w-fit">
           {columns.map(column => (
             <KanbanColumn
