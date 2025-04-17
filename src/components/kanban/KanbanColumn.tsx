@@ -101,7 +101,7 @@ const KanbanColumn = ({
 
   return (
     <Card 
-      className={`kanban-column flex-shrink-0 w-[300px] min-h-full flex flex-col ${
+      className={`kanban-column h-full flex flex-col ${
         isDropTarget ? 'bg-secondary/50 border-primary/40' : 
         isColumnDropTarget ? 'bg-primary/20 border-primary/40' : 
         'bg-card'
@@ -117,7 +117,7 @@ const KanbanColumn = ({
       >
         <div className="flex items-center gap-2">
           <Menu className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-medium text-base tracking-normal truncate max-w-[200px]">{column.title}</h3>
+          <h3 className="font-medium text-base tracking-normal truncate">{column.title}</h3>
         </div>
         <div className="flex items-center gap-1">
           <DropdownMenu>
@@ -143,10 +143,10 @@ const KanbanColumn = ({
         </div>
       </div>
       
-      <ScrollArea className="flex-1 px-2 pt-2">
-        <div className="task-list space-y-2 min-h-[100px]">
+      <ScrollArea className="flex-1 p-2">
+        <div className="task-list space-y-2 min-h-[200px]">
           {column.tasks.length === 0 ? (
-            <div className="text-center py-4 text-muted-foreground text-sm">
+            <div className="text-center py-6 text-muted-foreground text-sm">
               {t('kanban.noTasks')}
             </div>
           ) : (
@@ -170,7 +170,7 @@ const KanbanColumn = ({
         </div>
       </ScrollArea>
       
-      <div className="p-2 border-t mt-auto">
+      <div className="mt-auto p-2 border-t">
         <Button 
           variant="ghost"
           className="w-full justify-start text-muted-foreground text-sm h-8"
