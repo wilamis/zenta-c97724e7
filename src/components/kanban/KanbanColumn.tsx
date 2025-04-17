@@ -1,26 +1,16 @@
-import { useState } from "react";
+
 import { Task } from "../tasks/TaskItem";
 import { Card } from "@/components/ui/card";
 import { KanbanColumn as KanbanColumnType } from "@/hooks/useKanbanBoard";
-import TaskItem from "../tasks/TaskItem";
-import RenameColumnDialog from "./RenameColumnDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ColumnHeader from "./components/ColumnHeader";
-import EmptyColumnState from "./components/EmptyColumnState";
 import AddTaskButton from "./components/AddTaskButton";
 import { Trash2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
+import ClearColumnDialog from "./components/ClearColumnDialog";
+import { useColumnActions } from "./hooks/useColumnActions";
+import TasksList from "./components/TasksList";
 
 interface KanbanColumnProps {
   column: KanbanColumnType;
@@ -55,82 +45,61 @@ const KanbanColumn = ({
   onColumnDrop,
   isDraggingColumn,
 }: KanbanColumnProps) => {
-  const [isRenameOpen, setIsRenameOpen] = useState(false);
-  const [isDropTarget, setIsDropTarget] = useState(false);
-  const [isColumnDropTarget, setIsColumnDropTarget] = useState(false);
-  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
-  const [isClearing, setIsClearing] = useState(false);
-  const { t } = useLanguage();
-  
-  const handleRename = (newTitle: string) => {
-    onRename(column.id, newTitle);
-    setIsRenameOpen(false);
-  };
+  const {
+    isRenameOpen,
+    setIsRenameOpen,
+    isDropTarget,
+    isColumnDropTarget,
+    isClearDialogOpen,
+    setIsClearDialogOpen,
+    isClearing,
+    handleDragOver: handleLocalDragOver,
+    handleDragLeave,
+    handleColumnDragOver: handleLocalColumnDragOver,
+    handleColumnDragLeave,
+    handleClearColumn
+  } = useColumnActions({
+    columnId: column.id,
+    tasks: column.tasks,
+    onDeleteTask
+  });
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDropTarget(true);
+  const handleDragOverWrapper = (e: React.DragEvent) => {
+    handleLocalDragOver(e);
     onDragOver(e);
-  };
-
-  const handleDragLeave = () => {
-    setIsDropTarget(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDropTarget(false);
     onDrop(e, column.id);
   };
 
-  const handleColumnDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
+  const handleColumnDragOverWrapper = (e: React.DragEvent) => {
     if (isDraggingColumn) {
-      setIsColumnDropTarget(true);
+      handleLocalColumnDragOver(e);
       onColumnDragOver(e);
     }
   };
 
-  const handleColumnDragLeave = () => {
-    setIsColumnDropTarget(false);
-  };
-
   const handleColumnDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsColumnDropTarget(false);
     if (isDraggingColumn) {
       onColumnDrop(e, column.id);
-    }
-  };
-
-  const handleClearColumn = async () => {
-    if (isClearing || column.tasks.length === 0) return;
-    
-    setIsClearing(true);
-    
-    try {
-      const tasksToClear = [...column.tasks];
-      
-      for (const task of tasksToClear) {
-        onDeleteTask(task.id, column.id);
-      }
-    } catch (error) {
-      console.error("Error clearing column:", error);
-    } finally {
-      setIsClearing(false);
-      setIsClearDialogOpen(false);
     }
   };
 
   return (
     <>
       <Card 
-        className={`kanban-column w-[320px] flex-shrink-0 flex flex-col ${
+        className={cn(
+          "kanban-column w-[320px] flex-shrink-0 flex flex-col",
           isDropTarget ? 'bg-secondary/50 border-primary/40' : 
           isColumnDropTarget ? 'bg-primary/20 border-primary/40' : 
-          'bg-card'
-        } transition-colors duration-200 hover:border-zenta-purple ${isDraggingColumn ? 'cursor-grabbing' : ''}`}
-        onDragOver={isDraggingColumn ? handleColumnDragOver : handleDragOver}
+          'bg-card',
+          "transition-colors duration-200 hover:border-zenta-purple",
+          isDraggingColumn && "cursor-grabbing"
+        )}
+        onDragOver={isDraggingColumn ? handleColumnDragOverWrapper : handleDragOverWrapper}
         onDragLeave={isDraggingColumn ? handleColumnDragLeave : handleDragLeave}
         onDrop={isDraggingColumn ? handleColumnDrop : handleDrop}
       >
@@ -143,28 +112,14 @@ const KanbanColumn = ({
         />
         
         <ScrollArea className="flex-1 p-2 h-[630px] overflow-y-auto scrollbar-hide">
-          <div className="task-list space-y-2 min-h-[100px]">
-            {column.tasks.length === 0 ? (
-              <EmptyColumnState />
-            ) : (
-              column.tasks.map(task => (
-                <div 
-                  key={task.id}
-                  id={`task-${task.id}`}
-                  draggable="true"
-                  onDragStart={(e) => onDragStart(e, task.id, column.id)}
-                  className="cursor-grab active:cursor-grabbing"
-                >
-                  <TaskItem
-                    task={task}
-                    onComplete={(id, completed) => onCompleteTask(id, completed, column.id)}
-                    onDelete={(id) => onDeleteTask(id, column.id)}
-                    onEdit={(task) => onEditTask(task, column.id)}
-                  />
-                </div>
-              ))
-            )}
-          </div>
+          <TasksList
+            tasks={column.tasks}
+            columnId={column.id}
+            onDragStart={onDragStart}
+            onEditTask={(task) => onEditTask(task, column.id)}
+            onDeleteTask={onDeleteTask}
+            onCompleteTask={onCompleteTask}
+          />
         </ScrollArea>
         
         <div className="p-2 border-t flex justify-end items-center gap-2">
@@ -181,37 +136,14 @@ const KanbanColumn = ({
           )}
           <AddTaskButton onClick={() => onAddTask(column.id)} />
         </div>
-        
-        {isRenameOpen && (
-          <RenameColumnDialog
-            isOpen={isRenameOpen}
-            onClose={() => setIsRenameOpen(false)}
-            onRename={handleRename}
-            currentTitle={column.title}
-          />
-        )}
       </Card>
 
-      <AlertDialog open={isClearDialogOpen} onOpenChange={setIsClearDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('kanban.clearColumn')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('kanban.clearColumnDescription')}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('kanban.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleClearColumn}
-              className="bg-destructive hover:bg-destructive/90"
-              disabled={isClearing}
-            >
-              {t('kanban.clearColumnAction')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ClearColumnDialog
+        isOpen={isClearDialogOpen}
+        onOpenChange={setIsClearDialogOpen}
+        onClear={handleClearColumn}
+        isClearing={isClearing}
+      />
     </>
   );
 };
