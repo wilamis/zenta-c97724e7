@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -91,7 +90,7 @@ const TaskList = ({ list, onDelete, onRename }: TaskListProps) => {
           )}
         </div>
         
-        <div className="px-4 py-2 space-y-2 max-h-[200px] overflow-y-auto">
+        <div className="px-50 py-2 space-y-2 max-h-[200px] overflow-y-auto">
           {pendingTasks.length > 0 ? (
             pendingTasks.slice(0, 4).map((task, idx) => (
               <div key={task.id} className="flex items-center gap-2 p-2 rounded-md bg-background/50">
