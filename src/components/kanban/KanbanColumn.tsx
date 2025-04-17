@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { MoreVertical, Plus, Edit, Trash, Menu } from "lucide-react";
+import { MoreVertical, Plus, Edit, Trash, Menu, CircleCheck } from "lucide-react";
 import { Task } from "../tasks/TaskItem";
 import { Button } from "@/components/ui/button";
 import { KanbanColumn as KanbanColumnType } from "@/hooks/useKanbanBoard";
@@ -146,8 +146,14 @@ const KanbanColumn = ({
       <ScrollArea className="flex-1 p-2 h-[630px] overflow-y-auto scrollbar-hide">
         <div className="task-list space-y-2 min-h-[100px]">
           {column.tasks.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground text-sm">
-              {t('kanban.noTasks')}
+            <div className="flex flex-col items-center justify-center py-6 text-center text-muted-foreground">
+              <CircleCheck 
+                className="h-12 w-12 mb-2 text-green-500 opacity-70" 
+                strokeWidth={1.5} 
+              />
+              <p className="text-sm font-medium text-gray-500">
+                Tudo certo por aqui.
+              </p>
             </div>
           ) : (
             column.tasks.map(task => (
