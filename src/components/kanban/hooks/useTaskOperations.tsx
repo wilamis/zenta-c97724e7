@@ -1,4 +1,3 @@
-
 import { Task } from "@/components/tasks/TaskItem";
 import { KanbanColumn } from "@/hooks/useKanbanBoard";
 import { updateTasksInLists } from "@/utils/taskStorageUtils";
@@ -63,8 +62,8 @@ export function useTaskOperations({
     }
     
     toast({
-      title: "Task deleted",
-      description: "The task has been removed from the board",
+      title: "Tarefa excluída",
+      description: "A tarefa foi removida do quadro",
     });
   };
 

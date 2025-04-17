@@ -55,8 +55,10 @@ export function useTaskSave({
     updateTasksInLists(updatedColumns, taskWithListId.listId);
     
     toast({
-      title: editingTask ? "Task updated" : "Task added",
-      description: editingTask ? "Your task has been updated" : "New task has been added to the board",
+      title: editingTask ? "Tarefa atualizada" : "Tarefa adicionada",
+      description: editingTask 
+        ? "Sua tarefa foi atualizada com sucesso"
+        : "Nova tarefa foi adicionada ao quadro",
     });
   };
 
