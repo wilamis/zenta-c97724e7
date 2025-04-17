@@ -8,12 +8,14 @@ import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
 import { Pause, Play, RefreshCcw, Volume2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface PomodoroTimerProps {
   onFocusSessionEnd?: () => void;
 }
 
 const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
+  const { t } = useLanguage();
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [mode, setMode] = useState<"work" | "break">("work");
@@ -63,8 +65,8 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
 
     if (mode === "work") {
       toast({
-        title: "Work session completed!",
-        description: "Time for a break.",
+        title: t("pomodoro.pomodoroCompleted"),
+        description: t("pomodoro.xpEarned"),
       });
       
       setCycles(c => c + 1);
@@ -83,8 +85,8 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
       }
     } else {
       toast({
-        title: "Break completed!",
-        description: "Ready for another focus session?",
+        title: t("pomodoro.breakTime"),
+        description: t("pomodoro.readyForAnotherFocus"),
       });
       
       setMode("work");
@@ -157,12 +159,14 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
           <CardContent className="pt-6">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-1">
-                {mode === "work" ? "Work Sprint" : "Break Time"}
+                {mode === "work" 
+                  ? t("pomodoro.focusSession") 
+                  : t("pomodoro.shortBreak")}
               </h2>
               <p className="text-muted-foreground text-sm">
                 {mode === "work" 
-                  ? "Stay focused on your task" 
-                  : "Take a moment to relax"}
+                  ? "Mantenha o foco na sua tarefa" 
+                  : "Tire um momento para relaxar"}
               </p>
             </div>
 
@@ -186,7 +190,7 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
                   variant={mode === "work" ? "default" : "outline"}
                 >
                   <Play className="w-5 h-5 mr-2" />
-                  Start
+                  {t("pomodoro.start")}
                 </Button>
               ) : (
                 <>
@@ -197,7 +201,7 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
                       className="rounded-full px-6"
                     >
                       <Play className="w-5 h-5 mr-2" />
-                      Resume
+                      {t("pomodoro.resume")}
                     </Button>
                   ) : (
                     <Button 
@@ -206,7 +210,7 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
                       className="rounded-full px-6"
                     >
                       <Pause className="w-5 h-5 mr-2" />
-                      Pause
+                      {t("pomodoro.pause")}
                     </Button>
                   )}
                 </>
@@ -223,7 +227,9 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
 
             <div className="text-center text-sm text-muted-foreground">
               {cycles > 0 && (
-                <span>Completed {cycles} {cycles === 1 ? 'cycle' : 'cycles'} today</span>
+                <span>
+                  {t("pomodoro.completed")} {cycles} {cycles === 1 ? t("pomodoro.cycle") : t("pomodoro.cycles")}
+                </span>
               )}
             </div>
           </CardContent>
@@ -234,7 +240,7 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
         <CardContent className="pt-6 space-y-6">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label>Work sprint</Label>
+              <Label>{t("pomodoro.workSprint")}</Label>
               <span className="text-sm font-medium">{workDuration} min</span>
             </div>
             <Slider
@@ -250,7 +256,7 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label>Break</Label>
+              <Label>{t("pomodoro.break")}</Label>
               <span className="text-sm font-medium">{breakDuration} min</span>
             </div>
             <Slider
@@ -268,7 +274,7 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Volume2 className="w-4 h-4 text-muted-foreground" />
-                <Label htmlFor="sound">Sound notifications</Label>
+                <Label htmlFor="sound">{t("pomodoro.soundNotifications")}</Label>
               </div>
               <Switch
                 id="sound"
@@ -278,7 +284,7 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="autoStartBreaks">Auto-start breaks</Label>
+              <Label htmlFor="autoStartBreaks">{t("pomodoro.autoStartBreaks")}</Label>
               <Switch
                 id="autoStartBreaks"
                 checked={autoStartBreaks}
@@ -287,7 +293,7 @@ const PomodoroTimer = ({ onFocusSessionEnd }: PomodoroTimerProps) => {
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="autoStartPomodoros">Auto-start work sprints</Label>
+              <Label htmlFor="autoStartPomodoros">{t("pomodoro.autoStartWorkSprints")}</Label>
               <Switch
                 id="autoStartPomodoros"
                 checked={autoStartPomodoros}

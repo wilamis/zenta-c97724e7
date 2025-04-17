@@ -222,6 +222,7 @@ export const portugueseTranslations = {
     pause: "Pausar",
     reset: "Reiniciar",
     skip: "Pular",
+    resume: "Retomar",
     focusSession: "Sessão de Foco",
     shortBreak: "Pausa Curta",
     longBreak: "Pausa Longa",
@@ -231,9 +232,19 @@ export const portugueseTranslations = {
     focusTime: "Tempo de Foco",
     breakTime: "Tempo de Pausa",
     cycles: "Ciclos",
+    cycle: "ciclo",
+    cycles: "ciclos",
+    completed: "Completou",
     auto: "Auto",
     settings: "Configurações",
-    remainingTime: "Tempo Restante"
+    remainingTime: "Tempo Restante",
+    workSprint: "Sprint de trabalho",
+    break: "Pausa",
+    soundNotifications: "Notificações de som",
+    autoStartBreaks: "Iniciar pausas automaticamente",
+    autoStartWorkSprints: "Iniciar sprints de trabalho automaticamente",
+    breakTime: "Pausa completada!",
+    readyForAnotherFocus: "Pronto para outra sessão de foco?"
   },
   planner: {
     title: "Planejador",
