@@ -14,6 +14,7 @@ import {
 import RenameColumnDialog from "./RenameColumnDialog";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/context/LanguageContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface KanbanColumnProps {
   column: KanbanColumnType;
@@ -142,7 +143,7 @@ const KanbanColumn = ({
         </div>
       </div>
       
-      <div className="flex-1 p-2 h-[630px] overflow-y-auto scrollbar-hide">
+      <ScrollArea className="flex-1 p-2 h-[630px] overflow-y-auto scrollbar-hide">
         <div className="task-list space-y-2 min-h-[100px]">
           {column.tasks.length === 0 ? (
             <div className="text-center py-6 text-muted-foreground text-sm">
@@ -167,7 +168,7 @@ const KanbanColumn = ({
             ))
           )}
         </div>
-      </div>
+      </ScrollArea>
       
       <div className="mt-auto p-2 border-t">
         <Button 

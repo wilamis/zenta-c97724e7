@@ -47,6 +47,8 @@
   overflow-y: hidden;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+  max-width: 100%;
+  width: 100%;
 }
 
 .kanban-board-container::-webkit-scrollbar {
@@ -54,7 +56,8 @@
 }
 
 .kanban-board-container .flex {
-  padding-right: 16px; /* Ensure there's space at the end for the last column */
+  padding-right: 32px; /* Ensure there's space at the end for the last column */
+  width: max-content;
 }
 
 .scrollbar-hide {

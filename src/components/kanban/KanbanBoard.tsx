@@ -9,6 +9,7 @@ import { useKanbanColumns } from "./useKanbanColumns";
 import { useKanbanTasks } from "./useKanbanTasks";
 import { useKanbanDragDrop } from "./useKanbanDragDrop";
 import { useLanguage } from "@/context/LanguageContext";
+import { ScrollArea } from "../ui/scroll-area";
 
 const KanbanBoard = () => {
   const { t } = useLanguage();
@@ -88,7 +89,7 @@ const KanbanBoard = () => {
   };
 
   return (
-    <div className="space-y-4 h-full">
+    <div className="space-y-4 h-full w-full max-w-full">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-medium">{t('kanban.manageColumns')}</h2>
         <div className="flex gap-2">
@@ -112,8 +113,8 @@ const KanbanBoard = () => {
         </div>
       </div>
       
-      <div className="kanban-board-container h-[700px] overflow-x-auto overflow-y-hidden pb-4">
-        <div className="flex gap-4 min-w-fit pr-4">
+      <ScrollArea className="kanban-board-container h-[700px] w-full max-w-full">
+        <div className="flex gap-4 w-max pb-4 pr-6">
           {columns.map(column => (
             <KanbanColumn
               key={column.id}
@@ -134,7 +135,7 @@ const KanbanBoard = () => {
             />
           ))}
         </div>
-      </div>
+      </ScrollArea>
       
       {isAddColumnOpen && (
         <AddColumnDialog
