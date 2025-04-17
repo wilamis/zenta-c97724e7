@@ -101,11 +101,11 @@ const KanbanColumn = ({
 
   return (
     <Card 
-      className={`kanban-column h-full flex flex-col ${
+      className={`kanban-column w-[280px] flex-shrink-0 flex flex-col ${
         isDropTarget ? 'bg-secondary/50 border-primary/40' : 
         isColumnDropTarget ? 'bg-primary/20 border-primary/40' : 
         'bg-card'
-      } transition-colors duration-200 ${isDraggingColumn ? 'cursor-grabbing' : ''}`}
+      } transition-colors duration-200 hover:border-zenta-purple ${isDraggingColumn ? 'cursor-grabbing' : ''}`}
       onDragOver={isDraggingColumn ? handleColumnDragOver : handleDragOver}
       onDragLeave={isDraggingColumn ? handleColumnDragLeave : handleDragLeave}
       onDrop={isDraggingColumn ? handleColumnDrop : handleDrop}
@@ -143,8 +143,8 @@ const KanbanColumn = ({
         </div>
       </div>
       
-      <ScrollArea className="flex-1 p-2">
-        <div className="task-list space-y-2 min-h-[200px]">
+      <ScrollArea className="flex-1 p-2 h-[calc(100vh-280px)]">
+        <div className="task-list space-y-2 min-h-[100px]">
           {column.tasks.length === 0 ? (
             <div className="text-center py-6 text-muted-foreground text-sm">
               {t('kanban.noTasks')}

@@ -46,8 +46,36 @@
   min-height: 400px;
 }
 
+/* Custom scrollbar for horizontal scroll */
+.kanban-board-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.kanban-board-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kanban-board-container::-webkit-scrollbar-thumb {
+  background: rgba(155, 135, 245, 0.3);
+  border-radius: 10px;
+}
+
+.kanban-board-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(155, 135, 245, 0.5);
+}
+
+/* Ensure kanban column has a hover effect with the zenta-purple color */
+.kanban-column {
+  border: 1px solid transparent;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.kanban-column:hover {
+  border-color: #9b87f5 !important;
+}
+
 @media (max-width: 640px) {
-  .kanban-board-container .grid {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
+  .kanban-board-container .flex {
+    padding-bottom: 1rem;
   }
 }

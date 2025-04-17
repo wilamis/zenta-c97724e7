@@ -10,7 +10,6 @@ import { useKanbanTasks } from "./useKanbanTasks";
 import { useKanbanDragDrop } from "./useKanbanDragDrop";
 import { useLanguage } from "@/context/LanguageContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ResizablePanelGroup } from "@/components/ui/resizable";
 
 const KanbanBoard = () => {
   const { t } = useLanguage();
@@ -120,8 +119,8 @@ const KanbanBoard = () => {
         </div>
       </div>
       
-      <div className="kanban-board-container h-[calc(100vh-180px)]">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 h-full auto-rows-fr">
+      <ScrollArea className="kanban-board-container h-[calc(100vh-180px)]" orientation="horizontal">
+        <div className="flex gap-4 pb-4 min-w-fit">
           {columns.map(column => (
             <KanbanColumn
               key={column.id}
@@ -142,7 +141,7 @@ const KanbanBoard = () => {
             />
           ))}
         </div>
-      </div>
+      </ScrollArea>
       
       {isAddColumnOpen && (
         <AddColumnDialog
