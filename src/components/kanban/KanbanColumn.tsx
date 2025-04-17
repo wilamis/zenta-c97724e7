@@ -12,6 +12,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import RenameColumnDialog from "./RenameColumnDialog";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface KanbanColumnProps {
   column: KanbanColumnType;
@@ -48,6 +51,7 @@ const KanbanColumn = ({
   isDraggingColumn,
 }: KanbanColumnProps) => {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
+  const { t } = useLanguage();
   
   const handleRename = (newTitle: string) => {
     onRename(column.id, newTitle);
@@ -96,80 +100,84 @@ const KanbanColumn = ({
   };
 
   return (
-    <div 
-      className={`kanban-column ${isDropTarget ? 'bg-secondary/50' : isColumnDropTarget ? 'bg-primary/20' : 'bg-secondary/30'} 
-        rounded-md p-4 w-80 flex-shrink-0 flex flex-col max-h-[70vh] transition-colors duration-200
-        ${isDraggingColumn ? 'cursor-grabbing' : ''}`}
+    <Card 
+      className={`kanban-column h-full flex flex-col ${
+        isDropTarget ? 'bg-secondary/50 border-primary/40' : 
+        isColumnDropTarget ? 'bg-primary/20 border-primary/40' : 
+        'bg-card'
+      } transition-colors duration-200 ${isDraggingColumn ? 'cursor-grabbing' : ''}`}
       onDragOver={isDraggingColumn ? handleColumnDragOver : handleDragOver}
       onDragLeave={isDraggingColumn ? handleColumnDragLeave : handleDragLeave}
       onDrop={isDraggingColumn ? handleColumnDrop : handleDrop}
     >
       <div 
-        className="flex items-center justify-between mb-4 cursor-grab active:cursor-grabbing"
+        className="flex items-center justify-between p-3 border-b cursor-grab active:cursor-grabbing"
         draggable="true"
         onDragStart={(e) => onColumnDragStart(e, column.id)}
       >
         <div className="flex items-center gap-2">
           <Menu className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-medium text-lg tracking-normal">{column.title}</h3>
+          <h3 className="font-medium text-base tracking-normal truncate">{column.title}</h3>
         </div>
         <div className="flex items-center gap-1">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setIsRenameOpen(true)}>
                 <Edit className="h-4 w-4 mr-2" />
-                <span className="tracking-normal">Rename</span>
+                <span className="tracking-normal">{t('kanban.editColumn')}</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
                 className="text-destructive focus:text-destructive" 
                 onClick={() => onDelete(column.id)}
               >
                 <Trash className="h-4 w-4 mr-2" />
-                <span className="tracking-normal">Delete</span>
+                <span className="tracking-normal">{t('kanban.deleteColumn')}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
       
-      <div className="task-list space-y-2 overflow-y-auto flex-1">
-        {column.tasks.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            No tasks in this column
-          </div>
-        ) : (
-          column.tasks.map(task => (
-            <div 
-              key={task.id}
-              id={`task-${task.id}`}
-              draggable="true"
-              onDragStart={(e) => onDragStart(e, task.id, column.id)}
-              className="cursor-grab active:cursor-grabbing"
-            >
-              <TaskItem
-                task={task}
-                onComplete={(id, completed) => onCompleteTask(id, completed, column.id)}
-                onDelete={(id) => onDeleteTask(id, column.id)}
-                onEdit={(task) => onEditTask(task, column.id)}
-              />
+      <ScrollArea className="flex-1 p-2">
+        <div className="task-list space-y-2 min-h-[200px]">
+          {column.tasks.length === 0 ? (
+            <div className="text-center py-6 text-muted-foreground text-sm">
+              {t('kanban.noTasks')}
             </div>
-          ))
-        )}
-      </div>
+          ) : (
+            column.tasks.map(task => (
+              <div 
+                key={task.id}
+                id={`task-${task.id}`}
+                draggable="true"
+                onDragStart={(e) => onDragStart(e, task.id, column.id)}
+                className="cursor-grab active:cursor-grabbing"
+              >
+                <TaskItem
+                  task={task}
+                  onComplete={(id, completed) => onCompleteTask(id, completed, column.id)}
+                  onDelete={(id) => onDeleteTask(id, column.id)}
+                  onEdit={(task) => onEditTask(task, column.id)}
+                />
+              </div>
+            ))
+          )}
+        </div>
+      </ScrollArea>
       
-      <div className="mt-4">
+      <div className="mt-auto p-2 border-t">
         <Button 
           variant="ghost"
-          className="w-full justify-start text-muted-foreground"
+          className="w-full justify-start text-muted-foreground text-sm h-8"
           onClick={() => onAddTask(column.id)}
         >
-          <Plus className="h-4 w-4 mr-2" />
-          <span className="tracking-normal">Add Task</span>
+          <Plus className="h-4 w-4 mr-1" />
+          <span className="tracking-normal">{t('tasks.addTask')}</span>
         </Button>
       </div>
       
@@ -181,7 +189,7 @@ const KanbanColumn = ({
           currentTitle={column.title}
         />
       )}
-    </div>
+    </Card>
   );
 };
 

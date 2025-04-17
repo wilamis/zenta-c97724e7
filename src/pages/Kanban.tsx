@@ -67,8 +67,8 @@ const Kanban = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto py-6">
-        <header className="flex items-center justify-between gap-2 mb-6">
+      <div className="h-[calc(100vh-64px)] flex flex-col">
+        <header className="flex items-center justify-between gap-2 mb-4 p-4">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" asChild>
               <Link to="/">
@@ -77,14 +77,16 @@ const Kanban = () => {
             </Button>
             <LayoutGrid className="h-7 w-7 text-zenta-purple" />
             <div>
-              <h1 className="text-3xl font-bold">{t('kanban.title')}</h1>
+              <h1 className="text-2xl font-bold">{t('kanban.title')}</h1>
               {listTitle && (
-                <p className="text-muted-foreground">{listTitle}</p>
+                <p className="text-muted-foreground text-sm">{listTitle}</p>
               )}
             </div>
           </div>
         </header>
-        <KanbanBoard />
+        <div className="flex-1 px-4 pb-4 overflow-hidden">
+          <KanbanBoard />
+        </div>
       </div>
     </Layout>
   );

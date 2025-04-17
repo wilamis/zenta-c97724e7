@@ -9,6 +9,8 @@ import { useKanbanColumns } from "./useKanbanColumns";
 import { useKanbanTasks } from "./useKanbanTasks";
 import { useKanbanDragDrop } from "./useKanbanDragDrop";
 import { useLanguage } from "@/context/LanguageContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ResizablePanelGroup } from "@/components/ui/resizable";
 
 const KanbanBoard = () => {
   const { t } = useLanguage();
@@ -94,14 +96,15 @@ const KanbanBoard = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="space-y-4 h-full">
+      <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-medium">{t('kanban.manageColumns')}</h2>
         <div className="flex gap-2">
           <Button 
             onClick={handleOpenAddTaskModal}
             className="flex items-center gap-1"
             variant="default"
+            size="sm"
           >
             <Plus className="h-4 w-4" />
             <span className="tracking-normal">{t('tasks.addTask')}</span>
@@ -109,6 +112,7 @@ const KanbanBoard = () => {
           <Button 
             onClick={() => setIsAddColumnOpen(true)}
             className="flex items-center gap-1"
+            size="sm"
           >
             <Plus className="h-4 w-4" />
             <span className="tracking-normal">{t('kanban.addColumn')}</span>
@@ -116,26 +120,28 @@ const KanbanBoard = () => {
         </div>
       </div>
       
-      <div className="kanban-board flex gap-6 overflow-x-auto pb-6 pt-2 min-h-[70vh]">
-        {columns.map(column => (
-          <KanbanColumn
-            key={column.id}
-            column={column}
-            onRename={handleRenameColumn}
-            onDelete={handleDeleteColumn}
-            onAddTask={handleAddTask}
-            onEditTask={handleEditTask}
-            onDeleteTask={handleTaskDelete}
-            onCompleteTask={handleTaskComplete}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onColumnDragStart={onColumnDragStart}
-            onColumnDragOver={handleColumnDragOver}
-            onColumnDrop={onColumnDrop}
-            isDraggingColumn={!!draggedColumnId}
-          />
-        ))}
+      <div className="kanban-board-container h-[calc(100vh-180px)]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 h-full auto-rows-fr">
+          {columns.map(column => (
+            <KanbanColumn
+              key={column.id}
+              column={column}
+              onRename={handleRenameColumn}
+              onDelete={handleDeleteColumn}
+              onAddTask={handleAddTask}
+              onEditTask={handleEditTask}
+              onDeleteTask={handleTaskDelete}
+              onCompleteTask={handleTaskComplete}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              onColumnDragStart={onColumnDragStart}
+              onColumnDragOver={handleColumnDragOver}
+              onColumnDrop={onColumnDrop}
+              isDraggingColumn={!!draggedColumnId}
+            />
+          ))}
+        </div>
       </div>
       
       {isAddColumnOpen && (
