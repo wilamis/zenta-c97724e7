@@ -58,6 +58,7 @@
 .kanban-board-container .flex {
   padding-right: 32px; /* Ensure there's space at the end for the last column */
   width: max-content;
+  margin: 0 auto; /* Center the columns container */
 }
 
 .scrollbar-hide {

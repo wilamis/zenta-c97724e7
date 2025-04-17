@@ -89,8 +89,8 @@ const KanbanBoard = () => {
   };
 
   return (
-    <div className="space-y-4 h-full w-full max-w-full">
-      <div className="flex justify-between items-center mb-4">
+    <div className="space-y-4 h-full w-full max-w-full flex flex-col items-center">
+      <div className="flex justify-between items-center mb-4 w-full">
         <h2 className="text-xl font-medium">{t('kanban.manageColumns')}</h2>
         <div className="flex gap-2">
           <Button 

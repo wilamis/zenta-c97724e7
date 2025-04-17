@@ -46,7 +46,7 @@ const Layout = ({ children }: LayoutProps) => {
         isCollapsed ? "md:pl-20" : "md:pl-64",
       )}>
         <div className={cn(
-          "mx-auto py-6 px-4 md:px-6 w-full max-w-[100%]",
+          "mx-auto py-6 px-4 md:px-6 w-full max-w-[100%] flex justify-center",
           isCollapsed && "max-w-[100%]"
         )}>
           {children}
