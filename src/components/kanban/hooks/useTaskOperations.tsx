@@ -1,3 +1,4 @@
+
 import { Task } from "@/components/tasks/TaskItem";
 import { KanbanColumn } from "@/hooks/useKanbanBoard";
 import { updateTasksInLists } from "@/utils/taskStorageUtils";
@@ -33,7 +34,7 @@ export function useTaskOperations({
   };
 
   const handleTaskDelete = (taskId: string, columnId: string) => {
-    // Find the task first to check for listId
+    // Find the task to add to deleted tasks
     let taskToDelete: Task | undefined;
     columns.find(col => {
       const task = col.tasks.find(t => t.id === taskId);
@@ -44,6 +45,19 @@ export function useTaskOperations({
       return false;
     });
     
+    if (taskToDelete) {
+      // Add task to deleted tasks storage with deletion date
+      const deletedTask = {
+        ...taskToDelete,
+        deletedAt: new Date().toISOString()
+      };
+      
+      const savedDeletedTasks = localStorage.getItem("zenta-deleted-tasks") || "[]";
+      const deletedTasks = JSON.parse(savedDeletedTasks);
+      deletedTasks.push(deletedTask);
+      localStorage.setItem("zenta-deleted-tasks", JSON.stringify(deletedTasks));
+    }
+
     const updatedColumns = columns.map(column => {
       if (column.id === columnId) {
         return {
@@ -62,8 +76,8 @@ export function useTaskOperations({
     }
     
     toast({
-      title: "Tarefa excluída",
-      description: "A tarefa foi removida do quadro",
+      title: "Tarefa movida para a lixeira",
+      description: "A tarefa será permanentemente excluída após 30 dias",
     });
   };
 

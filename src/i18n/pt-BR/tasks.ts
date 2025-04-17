@@ -1,4 +1,3 @@
-
 export const tasksTranslations = {
   title: "Tarefas",
   subtitle: "Organize, priorize e complete suas tarefas",
@@ -37,5 +36,8 @@ export const tasksTranslations = {
   listDeleted: "Lista excluída",
   listDeletedDescription: "A lista foi excluída com sucesso",
   listRenamed: "Lista renomeada",
-  listRenamedTo: "Lista renomeada para"
+  listRenamedTo: "Lista renomeada para",
+  deleted: "Excluídas",
+  noDeletedTasks: "Não há tarefas excluídas.",
+  deletedTasksDescription: "Tarefas excluídas serão permanentemente removidas após 30 dias."
 };

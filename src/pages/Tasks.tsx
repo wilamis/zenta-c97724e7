@@ -5,16 +5,23 @@ import TaskList from "../components/tasks/TaskList";
 import { Task } from "../components/tasks/TaskItem";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { CheckSquare, ListTodo } from "lucide-react";
+import { CheckSquare, ListTodo, Trash2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 const Tasks = () => {
   const { t } = useLanguage();
   const [tasks, setTasks] = useState<Task[]>(() => {
-    // Load tasks from localStorage or use sample data
     const savedTasks = localStorage.getItem("zenta-tasks");
     if (savedTasks) {
       return JSON.parse(savedTasks);
+    }
+    return [];
+  });
+  
+  const [deletedTasks, setDeletedTasks] = useState<Task[]>(() => {
+    const saved = localStorage.getItem("zenta-deleted-tasks");
+    if (saved) {
+      return JSON.parse(saved);
     }
     return [];
   });
@@ -23,6 +30,11 @@ const Tasks = () => {
   useEffect(() => {
     localStorage.setItem("zenta-tasks", JSON.stringify(tasks));
   }, [tasks]);
+  
+  // Save deleted tasks to localStorage
+  useEffect(() => {
+    localStorage.setItem("zenta-deleted-tasks", JSON.stringify(deletedTasks));
+  }, [deletedTasks]);
   
   const handleTasksChange = (updatedTasks: Task[]) => {
     setTasks(updatedTasks);
@@ -97,6 +109,10 @@ const Tasks = () => {
                 <CheckSquare className="h-4 w-4" />
                 {t("tasks.completed")}
               </TabsTrigger>
+              <TabsTrigger value="deleted" className="flex items-center gap-2">
+                <Trash2 className="h-4 w-4" />
+                {t("tasks.deleted")}
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="active" className="space-y-6 mt-6">
@@ -121,6 +137,41 @@ const Tasks = () => {
                     onTaskChange={handleTasksChange}
                     emptyStateMessage={t("tasks.noCompletedTasks")}
                   />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="deleted" className="space-y-6 mt-6">
+              <Card className="glass-morphism border-zenta-purple/20">
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl font-bold">
+                        {t("tasks.deleted")}
+                      </h2>
+                    </div>
+                    
+                    {deletedTasks.length === 0 ? (
+                      <div className="text-center py-8 space-y-2">
+                        <p className="text-muted-foreground">{t("tasks.noDeletedTasks")}</p>
+                        <p className="text-sm text-muted-foreground">{t("tasks.deletedTasksDescription")}</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {deletedTasks.map(task => (
+                          <TaskItem
+                            key={task.id}
+                            task={task}
+                            onComplete={() => {}}
+                            onDelete={() => {}}
+                            onEdit={() => {}}
+                            categories={[]}
+                            isDeleted
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

@@ -11,5 +11,6 @@ export interface Task {
   estimatedTime: number;
   description?: string;
   dueDate?: string;
-  listId?: string; // Added listId property
+  listId?: string;
+  deletedAt?: string;
 }
