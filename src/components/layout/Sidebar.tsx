@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Calendar, 
@@ -11,7 +11,9 @@ import {
   Settings, 
   Timer,
   LayoutGrid,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -64,10 +66,25 @@ const navItems: NavItem[] = [
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const savedState = localStorage.getItem("sidebar-collapsed");
+    return savedState === "true";
+  });
   const location = useLocation();
   const { t } = useLanguage();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+  
+  const toggleCollapse = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem("sidebar-collapsed", String(newState));
+  };
+  
+  // Fechar o sidebar móvel quando a rota muda
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
@@ -90,22 +107,39 @@ const Sidebar = () => {
 
       <aside 
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-64 bg-sidebar transition-transform duration-300 ease-in-out",
+          "fixed top-0 left-0 z-50 h-full transition-all duration-300 ease-in-out",
           "md:translate-x-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          isCollapsed ? "w-20" : "w-64",
+          "bg-sidebar"
         )}
       >
         <div className="flex h-full flex-col px-4 py-6">
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-bold text-zenta-purple">ZenTa</h1>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleSidebar} 
-              className="md:hidden"
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            <h1 className={cn(
+              "font-bold text-zenta-purple transition-all duration-300",
+              isCollapsed ? "text-xl" : "text-2xl"
+            )}>
+              {isCollapsed ? "Z" : "ZenTa"}
+            </h1>
+            <div className="flex items-center">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={toggleCollapse}
+                className="hidden md:flex mr-2"
+              >
+                {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleSidebar} 
+                className="md:hidden"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
 
           <nav className="flex-1 space-y-1">
@@ -121,30 +155,42 @@ const Sidebar = () => {
                 )}
               >
                 <item.icon className={cn(
-                  "mr-3 h-5 w-5",
+                  "h-5 w-5",
                   location.pathname === item.path
                     ? "text-primary"
                     : "text-muted-foreground"
                 )} />
-                <span className="tracking-normal">{t(item.titleKey)}</span>
+                {!isCollapsed && (
+                  <span className="ml-3 tracking-normal">{t(item.titleKey)}</span>
+                )}
               </Link>
             ))}
           </nav>
 
           <div className="space-y-4 mt-auto">
-            <LanguageSelector />
+            {!isCollapsed && <LanguageSelector />}
             
-            <div className="rounded-lg bg-secondary p-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-full bg-zenta-purple flex items-center justify-center">
-                  <CheckSquare className="h-4 w-4 text-white" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{t("sidebar.freePlan")}</p>
-                  <p className="text-xs text-muted-foreground">{t("sidebar.upgradeText")}</p>
+            {!isCollapsed && (
+              <div className="rounded-lg bg-secondary p-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-zenta-purple flex items-center justify-center">
+                    <CheckSquare className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{t("sidebar.freePlan")}</p>
+                    <p className="text-xs text-muted-foreground">{t("sidebar.upgradeText")}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+            
+            {isCollapsed && (
+              <div className="flex justify-center">
+                <div className="w-10 h-10 rounded-full bg-zenta-purple flex items-center justify-center">
+                  <CheckSquare className="h-5 w-5 text-white" />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </aside>
