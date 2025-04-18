@@ -4,11 +4,13 @@ import Layout from "../components/layout/Layout";
 import { useLanguage } from "../context/LanguageContext";
 import { Clock } from "lucide-react";
 import TaskLists from "../components/home/TaskLists";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const { language } = useLanguage();
   const [greeting, setGreeting] = useState("");
   const [userName, setUserName] = useState("Usuário");
+  const isMobile = useIsMobile();
   
   // Obtém a saudação apropriada com base na hora do dia
   useEffect(() => {
@@ -48,10 +50,10 @@ const Index = () => {
   
   return (
     <Layout>
-      <div className="space-y-8">
-        <header className="flex items-center justify-between">
+      <div className="space-y-8 w-full max-w-[100%]">
+        <header className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold">
+            <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>
               {greeting}, {userName}
             </h1>
             <p className="text-muted-foreground flex items-center gap-1">

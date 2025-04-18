@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { format, addDays, startOfWeek, getDay } from "date-fns";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus } from "lucide-react";
@@ -8,6 +9,7 @@ import TaskModal from "../tasks/TaskModal";
 import TaskItem from "../tasks/TaskItem";
 import { useLanguage } from "@/context/LanguageContext";
 import { ptBR, enUS } from "date-fns/locale";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TaskPlannerProps {
   tasks: Task[];
@@ -16,6 +18,7 @@ interface TaskPlannerProps {
 
 const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
   const { t, language } = useLanguage();
+  const isMobile = useIsMobile();
   const [startDate, setStartDate] = useState(() => {
     const today = new Date();
     return startOfWeek(today, { weekStartsOn: 1 }); // Week starts on Monday
@@ -96,13 +99,15 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
   
   // Format weekday name based on the locale
   const formatWeekday = (date: Date) => {
-    return format(date, "EEEE", { locale: dateLocale });
+    return isMobile 
+      ? format(date, "E", { locale: dateLocale }) // Shorter format for mobile
+      : format(date, "EEEE", { locale: dateLocale });
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-[100%]">
       {/* Planner header */}
-      <div className="flex items-center justify-between">
+      <div className={`${isMobile ? 'flex flex-col space-y-2' : 'flex items-center justify-between'}`}>
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <CalendarIcon className="h-6 w-6 text-zenta-purple" />
@@ -127,7 +132,7 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
       </div>
       
       {/* Weekly calendar */}
-      <div className="grid grid-cols-7 gap-4">
+      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-7'}`}>
         {weekDays.map((day, i) => {
           const dayTasks = getDayTasks(day);
           const isToday = format(new Date(), "yyyy-MM-dd") === format(day, "yyyy-MM-dd");

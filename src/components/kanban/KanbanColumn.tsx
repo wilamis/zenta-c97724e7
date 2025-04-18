@@ -1,3 +1,4 @@
+
 import { Task } from "../tasks/TaskItem";
 import { Card } from "@/components/ui/card";
 import { KanbanColumn as KanbanColumnType } from "@/hooks/useKanbanBoard";
@@ -10,6 +11,8 @@ import { cn } from "@/lib/utils";
 import ClearColumnDialog from "./components/ClearColumnDialog";
 import { useColumnActions } from "./hooks/useColumnActions";
 import TasksList from "./components/TasksList";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 interface KanbanColumnProps {
   column: KanbanColumnType;
   onRename: (id: string, title: string) => void;
@@ -26,6 +29,7 @@ interface KanbanColumnProps {
   onColumnDrop: (e: React.DragEvent, columnId: string) => void;
   isDraggingColumn: boolean;
 }
+
 const KanbanColumn = ({
   column,
   onRename,
@@ -42,6 +46,8 @@ const KanbanColumn = ({
   onColumnDrop,
   isDraggingColumn
 }: KanbanColumnProps) => {
+  const isMobile = useIsMobile();
+  
   const {
     isRenameOpen,
     setIsRenameOpen,
@@ -60,32 +66,66 @@ const KanbanColumn = ({
     tasks: column.tasks,
     onDeleteTask
   });
+  
   const handleDragOverWrapper = (e: React.DragEvent) => {
+    if (isMobile) return;
     handleLocalDragOver(e);
     onDragOver(e);
   };
+  
   const handleDrop = (e: React.DragEvent) => {
+    if (isMobile) return;
     e.preventDefault();
     onDrop(e, column.id);
   };
+  
   const handleColumnDragOverWrapper = (e: React.DragEvent) => {
+    if (isMobile) return;
     if (isDraggingColumn) {
       handleLocalColumnDragOver(e);
       onColumnDragOver(e);
     }
   };
+  
   const handleColumnDrop = (e: React.DragEvent) => {
+    if (isMobile) return;
     e.preventDefault();
     if (isDraggingColumn) {
       onColumnDrop(e, column.id);
     }
   };
+
   return <>
-      <Card className={cn("kanban-column w-[320px] flex-shrink-0 flex flex-col", isDropTarget ? 'bg-secondary/50 border-primary/40' : isColumnDropTarget ? 'bg-primary/20 border-primary/40' : 'bg-card', "transition-colors duration-200 hover:border-zenta-purple", isDraggingColumn && "cursor-grabbing")} onDragOver={isDraggingColumn ? handleColumnDragOverWrapper : handleDragOverWrapper} onDragLeave={isDraggingColumn ? handleColumnDragLeave : handleDragLeave} onDrop={isDraggingColumn ? handleColumnDrop : handleDrop}>
-        <ColumnHeader title={column.title} onRenameClick={() => setIsRenameOpen(true)} onDeleteClick={() => onDelete(column.id)} onClearClick={column.title === "Concluído" ? () => setIsClearDialogOpen(true) : undefined} onDragStart={e => onColumnDragStart(e, column.id)} />
+      <Card 
+        className={cn(
+          "kanban-column flex-shrink-0 flex flex-col", 
+          isMobile ? "w-[90vw] min-w-[280px]" : "w-[320px]",
+          isDropTarget ? 'bg-secondary/50 border-primary/40' : isColumnDropTarget ? 'bg-primary/20 border-primary/40' : 'bg-card', 
+          "transition-colors duration-200 hover:border-zenta-purple", 
+          isDraggingColumn && !isMobile && "cursor-grabbing"
+        )} 
+        onDragOver={isMobile ? undefined : (isDraggingColumn ? handleColumnDragOverWrapper : handleDragOverWrapper)} 
+        onDragLeave={isMobile ? undefined : (isDraggingColumn ? handleColumnDragLeave : handleDragLeave)} 
+        onDrop={isMobile ? undefined : (isDraggingColumn ? handleColumnDrop : handleDrop)}
+      >
+        <ColumnHeader 
+          title={column.title} 
+          onRenameClick={() => setIsRenameOpen(true)} 
+          onDeleteClick={() => onDelete(column.id)} 
+          onClearClick={column.title === "Concluído" ? () => setIsClearDialogOpen(true) : undefined} 
+          onDragStart={isMobile ? undefined : (e => onColumnDragStart(e, column.id))} 
+          isMobile={isMobile}
+        />
         
-        <ScrollArea className="flex-1 p-2 h-[630px] overflow-y-auto scrollbar-hide">
-          <TasksList tasks={column.tasks} columnId={column.id} onDragStart={onDragStart} onEditTask={task => onEditTask(task, column.id)} onDeleteTask={onDeleteTask} onCompleteTask={onCompleteTask} />
+        <ScrollArea className="flex-1 p-2 overflow-y-auto scrollbar-hide" style={{ height: isMobile ? "450px" : "630px" }}>
+          <TasksList 
+            tasks={column.tasks} 
+            columnId={column.id} 
+            onDragStart={onDragStart} 
+            onEditTask={task => onEditTask(task, column.id)} 
+            onDeleteTask={onDeleteTask} 
+            onCompleteTask={onCompleteTask} 
+          />
         </ScrollArea>
         
         <div className="p-2 border-t flex justify-end items-center gap-2">
@@ -99,4 +139,5 @@ const KanbanColumn = ({
       <ClearColumnDialog isOpen={isClearDialogOpen} onOpenChange={setIsClearDialogOpen} onClear={handleClearColumn} isClearing={isClearing} />
     </>;
 };
+
 export default KanbanColumn;

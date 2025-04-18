@@ -7,6 +7,7 @@ import { Plus, Tag } from "lucide-react";
 import CategoryManager from "./CategoryManager";
 import { Category, defaultCategories } from "./categories/types";
 import { useLanguage } from "@/context/LanguageContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TaskListProps {
   tasks: Task[];
@@ -26,6 +27,7 @@ const TaskList = ({
   totalCount
 }: TaskListProps) => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -80,7 +82,7 @@ const TaskList = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className={`${isMobile ? 'flex flex-col space-y-2' : 'flex items-center justify-between'}`}>
         <div>
           <h2 className="text-xl font-bold">
             {t("tasks.backlog")}
@@ -97,11 +99,11 @@ const TaskList = ({
             </div>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className={`flex gap-2 ${isMobile ? 'mt-2 w-full' : ''}`}>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="flex items-center gap-1"
+            className={`flex items-center gap-1 ${isMobile ? 'flex-1' : ''}`}
             onClick={handleManageCategories}
           >
             <Tag className="w-4 h-4" />
@@ -110,7 +112,7 @@ const TaskList = ({
           <Button 
             variant="ghost" 
             size="sm" 
-            className="flex items-center gap-1"
+            className={`flex items-center gap-1 ${isMobile ? 'flex-1' : ''}`}
             onClick={handleAddTask}
           >
             <Plus className="w-4 h-4" />

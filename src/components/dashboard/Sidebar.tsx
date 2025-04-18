@@ -5,6 +5,7 @@ import StatsCard from "./StatsCard";
 import DashboardProgress from "./DashboardProgress";
 import Reminders from "./Reminders";
 import { useLanguage } from "@/context/LanguageContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SidebarProps {
   focusMinutes: number;
@@ -15,6 +16,7 @@ interface SidebarProps {
 
 const Sidebar = ({ focusMinutes, completedPomodoros, completedTasks, totalTasks }: SidebarProps) => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   
   // Calculate completion percentage
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
@@ -22,7 +24,7 @@ const Sidebar = ({ focusMinutes, completedPomodoros, completedTasks, totalTasks 
   return (
     <div className="space-y-6">
       {/* Stats cards */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
         <StatsCard 
           title={t("dashboard.focusTime")} 
           value={`${Math.floor(focusMinutes / 60)}h ${focusMinutes % 60}m`}
@@ -42,6 +44,7 @@ const Sidebar = ({ focusMinutes, completedPomodoros, completedTasks, totalTasks 
           value={`${completedTasks}/${totalTasks}`}
           progress={completionPercentage}
           description={`${completionPercentage}%`}
+          className={isMobile ? "col-span-2" : ""}
         />
       </div>
       

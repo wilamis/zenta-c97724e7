@@ -2,6 +2,7 @@
 import { Task } from "@/components/tasks/TaskItem";
 import TaskItem from "@/components/tasks/TaskItem";
 import EmptyColumnState from "./EmptyColumnState";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TasksListProps {
   tasks: Task[];
@@ -20,6 +21,8 @@ const TasksList = ({
   onDeleteTask,
   onCompleteTask
 }: TasksListProps) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="task-list space-y-2 min-h-[100px]">
       {tasks.length === 0 ? (
@@ -29,9 +32,9 @@ const TasksList = ({
           <div 
             key={task.id}
             id={`task-${task.id}`}
-            draggable="true"
-            onDragStart={(e) => onDragStart(e, task.id, columnId)}
-            className="cursor-grab active:cursor-grabbing"
+            draggable={!isMobile ? "true" : undefined}
+            onDragStart={(e) => !isMobile && onDragStart(e, task.id, columnId)}
+            className={!isMobile ? "cursor-grab active:cursor-grabbing" : ""}
           >
             <TaskItem
               task={task}

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Layout from "../components/layout/Layout";
 import TaskList from "../components/tasks/TaskList";
@@ -7,9 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { CheckSquare, ListTodo, Trash2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Tasks = () => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
+  
   const [tasks, setTasks] = useState<Task[]>(() => {
     const savedTasks = localStorage.getItem("zenta-tasks");
     if (savedTasks) {
@@ -48,7 +52,7 @@ const Tasks = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="space-y-6 w-full max-w-[100%]">
         <header className="space-y-2">
           <h1 className="text-3xl font-bold">{t("tasks.title")}</h1>
           <p className="text-muted-foreground">
@@ -56,7 +60,7 @@ const Tasks = () => {
           </p>
         </header>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'}`}>
           <Card className="glass-morphism border-zenta-purple/20">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">{t("tasks.activeTasks")}</CardTitle>
@@ -95,8 +99,8 @@ const Tasks = () => {
         </div>
         
         <div className="space-y-6">
-          <Tabs defaultValue="active">
-            <TabsList>
+          <Tabs defaultValue="active" className="w-full">
+            <TabsList className={`${isMobile ? 'flex flex-wrap w-full' : ''}`}>
               <TabsTrigger value="active" className="flex items-center gap-2">
                 <ListTodo className="h-4 w-4" />
                 {t("tasks.active")}

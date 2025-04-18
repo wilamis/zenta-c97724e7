@@ -2,6 +2,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,6 +10,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     // Verificar o estado do sidebar no localStorage
@@ -46,10 +48,13 @@ const Layout = ({ children }: LayoutProps) => {
         isCollapsed ? "md:pl-20" : "md:pl-64",
       )}>
         <div className={cn(
-          "mx-auto py-6 px-4 md:px-6 w-full max-w-[100%] flex justify-center",
+          "w-full py-6 px-4 md:px-6 flex justify-center",
+          isMobile ? "max-w-full" : "mx-auto max-w-[100%]",
           isCollapsed && "max-w-[100%]"
         )}>
-          {children}
+          <div className={isMobile ? "w-full" : ""}>
+            {children}
+          </div>
         </div>
       </main>
     </div>

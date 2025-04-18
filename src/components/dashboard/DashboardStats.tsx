@@ -7,6 +7,7 @@ import { Clock, FlameIcon, Star, Target, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Task } from "../tasks/TaskItem";
 import { useLanguage } from "@/context/LanguageContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardStatsProps {
   tasks: Task[];
@@ -16,6 +17,7 @@ interface DashboardStatsProps {
 
 const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardStatsProps) => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   
   // Calculate task completion rate
   const completedTasks = tasks.filter(task => task.completed).length;
@@ -49,7 +51,7 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
   const earnedAchievements = achievements.filter(a => a.earned);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       <Card className="glass-morphism border-zenta-purple/20">
         <CardHeader>
           <CardTitle className="text-xl flex items-center">
@@ -59,7 +61,7 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
         </CardHeader>
         <CardContent>
           {/* Level progress indicator */}
-          <div className="flex items-center gap-4 mb-6">
+          <div className={`${isMobile ? 'flex-col space-y-2' : 'flex items-center gap-4'} mb-6`}>
             <div className="w-14 h-14 bg-zenta-purple rounded-full flex items-center justify-center text-white font-bold text-xl">
               {level}
             </div>
@@ -79,14 +81,14 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
           
           {/* Tabs for different stats */}
           <Tabs defaultValue="stats" className="w-full">
-            <TabsList className="w-full grid grid-cols-3 mb-2">
+            <TabsList className={`w-full ${isMobile ? 'grid grid-cols-1' : 'grid grid-cols-3'} mb-2`}>
               <TabsTrigger value="stats">{t("dashboard.stats")}</TabsTrigger>
               <TabsTrigger value="streaks">{t("dashboard.streaks")}</TabsTrigger>
               <TabsTrigger value="achievements">{t("dashboard.achievements.title")}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="stats" className="space-y-4 mt-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-2 gap-4'}`}>
                 <StatsItem 
                   label={t("dashboard.totalXP")}
                   value={`${totalXP} XP`}
@@ -110,7 +112,7 @@ const DashboardStats = ({ tasks, focusMinutes, completedPomodoros }: DashboardSt
             </TabsContent>
             
             <TabsContent value="streaks" className="mt-4">
-              <div className="flex items-center justify-between mb-6">
+              <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-center justify-between'} mb-6`}>
                 <div>
                   <div className="text-sm text-muted-foreground">{t("dashboard.currentStreak")}</div>
                   <div className="flex items-center">
@@ -171,6 +173,8 @@ interface WeeklyStreakProps {
 
 const WeeklyStreak = ({ activeDays }: WeeklyStreakProps) => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
+  
   const weekdays = [
     t("dashboard.weekdays.mon"),
     t("dashboard.weekdays.tue"),
@@ -188,13 +192,14 @@ const WeeklyStreak = ({ activeDays }: WeeklyStreakProps) => {
           <div 
             key={i} 
             className={cn(
-              "flex-1 h-8 rounded-md flex items-center justify-center text-xs",
+              "flex-1 h-8 rounded-md flex items-center justify-center",
+              isMobile ? "text-[10px]" : "text-xs",
               i < activeDays 
                 ? "bg-zenta-purple text-white" 
                 : "bg-secondary/30 text-muted-foreground border border-secondary/50"
             )}
           >
-            {day.charAt(0)}
+            {isMobile ? day.charAt(0) : day}
           </div>
         ))}
       </div>
@@ -213,32 +218,36 @@ interface AchievementProps {
   earnedText: string;
 }
 
-const Achievement = ({ achievement, earnedText }: AchievementProps) => (
-  <div 
-    className={cn(
-      "flex items-center p-3 rounded-lg border",
-      achievement.earned 
-        ? "bg-secondary/30 border-secondary/50" 
-        : "bg-muted/30 opacity-50 border-muted/50"
-    )}
-  >
-    <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center mr-3 text-lg">
-      {achievement.icon}
-    </div>
-    <div className="flex-1 min-w-0">
-      <div className="font-medium flex items-center">
-        {achievement.name}
-        {achievement.earned && (
-          <Badge variant="secondary" className="ml-2 bg-zenta-purple text-white text-xs">
-            {earnedText}
-          </Badge>
-        )}
+const Achievement = ({ achievement, earnedText }: AchievementProps) => {
+  const isMobile = useIsMobile();
+  
+  return (
+    <div 
+      className={cn(
+        "flex items-center p-3 rounded-lg border",
+        achievement.earned 
+          ? "bg-secondary/30 border-secondary/50" 
+          : "bg-muted/30 opacity-50 border-muted/50"
+      )}
+    >
+      <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center mr-3 text-lg">
+        {achievement.icon}
       </div>
-      <div className="text-xs text-muted-foreground truncate">
-        {achievement.description}
+      <div className="flex-1 min-w-0">
+        <div className="font-medium flex items-center">
+          <span className="truncate">{achievement.name}</span>
+          {achievement.earned && (
+            <Badge variant="secondary" className={`ml-2 bg-zenta-purple text-white ${isMobile ? 'hidden' : 'text-xs'}`}>
+              {earnedText}
+            </Badge>
+          )}
+        </div>
+        <div className="text-xs text-muted-foreground truncate">
+          {achievement.description}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default DashboardStats;

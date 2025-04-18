@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Category, defaultCategories } from "./categories/types";
 import { Task, TaskCategory, TaskPriority } from "./TaskItem.d";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Re-export the types so they can be imported from this file
 export type { Task, TaskCategory, TaskPriority };
@@ -28,6 +29,8 @@ const TaskItem = ({
   isDeleted = false
 }: TaskItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [showActions, setShowActions] = useState(false);
+  const isMobile = useIsMobile();
 
   // Format estimated time as "1hr 30min" or "30min"
   const formatTime = (minutes?: number) => {
@@ -55,6 +58,12 @@ const TaskItem = ({
     return category ? category.name : "";
   };
 
+  const toggleActions = () => {
+    if (isMobile) {
+      setShowActions(!showActions);
+    }
+  };
+
   return (
     <div 
       className={cn(
@@ -64,13 +73,21 @@ const TaskItem = ({
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={isMobile ? toggleActions : undefined}
     >
       <div className="flex items-start">
         {!isDeleted && (
           <Checkbox 
             checked={task.completed}
-            onCheckedChange={(checked) => onComplete(task.id, checked as boolean)}
+            onCheckedChange={(checked) => {
+              onComplete(task.id, checked as boolean);
+              // Prevent toggling actions when clicking checkbox on mobile
+              if (isMobile) {
+                setTimeout(() => setShowActions(false), 0);
+              }
+            }}
             className="mt-1 mr-3"
+            onClick={(e) => isMobile && e.stopPropagation()}
           />
         )}
         {isDeleted && (
@@ -115,13 +132,19 @@ const TaskItem = ({
         {!isDeleted && (
           <div className={cn(
             "flex items-center space-x-1 transition-opacity", 
-            isHovered ? "opacity-100" : "opacity-0"
+            isMobile 
+              ? showActions ? "opacity-100" : "opacity-0"
+              : isHovered ? "opacity-100" : "opacity-0"
           )}>
             <Button 
               variant="ghost" 
               size="sm" 
               className="h-8 w-8 p-0" 
-              onClick={() => onEdit(task)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(task);
+                if (isMobile) setShowActions(false);
+              }}
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -129,7 +152,11 @@ const TaskItem = ({
               variant="ghost" 
               size="sm" 
               className="h-8 w-8 p-0 text-destructive hover:text-destructive" 
-              onClick={() => onDelete(task.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(task.id);
+                if (isMobile) setShowActions(false);
+              }}
             >
               <Trash className="h-4 w-4" />
             </Button>
