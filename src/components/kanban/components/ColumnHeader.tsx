@@ -15,6 +15,7 @@ interface ColumnHeaderProps {
   onDeleteClick: () => void;
   onClearClick?: () => void;
   onDragStart: (e: React.DragEvent) => void;
+  isMobile?: boolean;
 }
 
 const ColumnHeader = ({ 
@@ -22,15 +23,16 @@ const ColumnHeader = ({
   onRenameClick, 
   onDeleteClick,
   onClearClick,
-  onDragStart 
+  onDragStart,
+  isMobile
 }: ColumnHeaderProps) => {
   const { t } = useLanguage();
 
   return (
     <div 
       className="flex items-center justify-between p-3 border-b cursor-grab active:cursor-grabbing"
-      draggable="true"
-      onDragStart={onDragStart}
+      draggable={!isMobile ? "true" : undefined}
+      onDragStart={!isMobile ? onDragStart : undefined}
     >
       <div className="flex items-center gap-2">
         <Menu className="h-4 w-4 text-muted-foreground" />

@@ -113,7 +113,7 @@ const KanbanColumn = ({
           onRenameClick={() => setIsRenameOpen(true)} 
           onDeleteClick={() => onDelete(column.id)} 
           onClearClick={column.title === "Concluído" ? () => setIsClearDialogOpen(true) : undefined} 
-          onDragStart={isMobile ? undefined : (e => onColumnDragStart(e, column.id))} 
+          onDragStart={(e) => onColumnDragStart(e, column.id)} 
           isMobile={isMobile}
         />
         

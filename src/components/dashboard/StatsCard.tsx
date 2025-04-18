@@ -1,6 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 interface StatsCardProps {
   title: string;
@@ -8,11 +9,12 @@ interface StatsCardProps {
   description?: string;
   icon?: ReactNode;
   progress?: number;
+  className?: string;
 }
 
-const StatsCard = ({ title, value, description, icon, progress }: StatsCardProps) => {
+const StatsCard = ({ title, value, description, icon, progress, className }: StatsCardProps) => {
   return (
-    <Card className="glass-morphism border-zenta-purple/20">
+    <Card className={cn("glass-morphism border-zenta-purple/20", className)}>
       <CardContent className="pt-6">
         <div className="flex justify-between items-start">
           <div>
