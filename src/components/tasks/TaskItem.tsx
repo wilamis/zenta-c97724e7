@@ -18,6 +18,7 @@ interface TaskItemProps {
   onEdit: (task: Task) => void;
   categories?: Category[];
   isDeleted?: boolean;
+  isMobile?: boolean;
 }
 
 const TaskItem = ({ 
@@ -26,11 +27,11 @@ const TaskItem = ({
   onDelete, 
   onEdit,
   categories = defaultCategories,
-  isDeleted = false
+  isDeleted = false,
+  isMobile = false
 }: TaskItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showActions, setShowActions] = useState(false);
-  const isMobile = useIsMobile();
 
   // Format estimated time as "1hr 30min" or "30min"
   const formatTime = (minutes?: number) => {
@@ -58,16 +59,37 @@ const TaskItem = ({
     return category ? category.name : "";
   };
 
-  const toggleActions = () => {
+  const toggleActions = (e: React.MouseEvent) => {
     if (isMobile) {
+      e.stopPropagation(); // Prevent event bubbling
       setShowActions(!showActions);
     }
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    onComplete(task.id, checked);
+    // Mobile: hide actions after completion
+    if (isMobile && showActions) {
+      setShowActions(false);
+    }
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit(task);
+    if (isMobile) setShowActions(false);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete(task.id);
+    if (isMobile) setShowActions(false);
   };
 
   return (
     <div 
       className={cn(
-        "task-card relative", 
+        "task-card relative p-2 border border-border rounded-md bg-card", 
         task.completed && "opacity-60",
         isDeleted && "opacity-50"
       )}
@@ -80,14 +102,14 @@ const TaskItem = ({
           <Checkbox 
             checked={task.completed}
             onCheckedChange={(checked) => {
-              onComplete(task.id, checked as boolean);
-              // Prevent toggling actions when clicking checkbox on mobile
-              if (isMobile) {
-                setTimeout(() => setShowActions(false), 0);
+              if (typeof checked === 'boolean') {
+                handleCheckboxChange(checked);
               }
             }}
             className="mt-1 mr-3"
-            onClick={(e) => isMobile && e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent bubbling to parent div
+            }}
           />
         )}
         {isDeleted && (
@@ -133,18 +155,14 @@ const TaskItem = ({
           <div className={cn(
             "flex items-center space-x-1 transition-opacity", 
             isMobile 
-              ? showActions ? "opacity-100" : "opacity-0"
-              : isHovered ? "opacity-100" : "opacity-0"
+              ? (showActions ? "opacity-100" : "opacity-0 pointer-events-none")
+              : (isHovered ? "opacity-100" : "opacity-0")
           )}>
             <Button 
               variant="ghost" 
               size="sm" 
               className="h-8 w-8 p-0" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(task);
-                if (isMobile) setShowActions(false);
-              }}
+              onClick={handleEditClick}
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -152,11 +170,7 @@ const TaskItem = ({
               variant="ghost" 
               size="sm" 
               className="h-8 w-8 p-0 text-destructive hover:text-destructive" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(task.id);
-                if (isMobile) setShowActions(false);
-              }}
+              onClick={handleDeleteClick}
             >
               <Trash className="h-4 w-4" />
             </Button>

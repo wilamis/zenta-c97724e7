@@ -14,7 +14,11 @@ const AddTaskButton = ({ onClick }: AddTaskButtonProps) => {
     <Button 
       variant="ghost"
       className="justify-start text-muted-foreground text-sm h-8 w-full"
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick(e);
+      }}
       type="button"
     >
       <Plus className="h-4 w-4 mr-1" />

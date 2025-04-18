@@ -127,9 +127,7 @@ const TasksList = ({
         });
         
         if (targetColumn) {
-          const targetColumnId = targetColumn.id || 
-                              targetColumn.getAttribute('data-column-id') || 
-                              Array.from(columns).indexOf(targetColumn).toString();
+          const targetColumnId = targetColumn.getAttribute('data-column-id') || '';
           
           // Create and dispatch a synthetic drop event
           const dropEvent = new Event('drop') as any;
@@ -230,6 +228,7 @@ const TasksList = ({
               onComplete={(id, completed) => onCompleteTask(id, completed, columnId)}
               onDelete={(id) => onDeleteTask(id, columnId)}
               onEdit={(task) => onEditTask(task)}
+              isMobile={isMobile}
             />
           </div>
         ))
