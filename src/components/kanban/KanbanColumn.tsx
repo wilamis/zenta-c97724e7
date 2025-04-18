@@ -1,4 +1,3 @@
-
 import { Task } from "../tasks/TaskItem";
 import { Card } from "@/components/ui/card";
 import { KanbanColumn as KanbanColumnType } from "@/hooks/useKanbanBoard";
@@ -93,6 +92,12 @@ const KanbanColumn = ({
     }
   };
 
+  const handleAddTaskClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onAddTask(column.id);
+  };
+
   return <>
       <Card 
         className={cn(
@@ -129,11 +134,13 @@ const KanbanColumn = ({
           />
         </ScrollArea>
         
-        <div className="p-2 border-t flex justify-end items-center gap-2">
-          {column.title === "Concluído" && <Button variant="ghost" size="icon" onClick={() => setIsClearDialogOpen(true)} disabled={isClearing} className="h-8 w-8 text-muted-foreground hover:text-destructive mx-[72px] px-[15px]">
+        <div className="p-2 border-t flex justify-between items-center gap-2">
+          {column.title === "Concluído" && <Button variant="ghost" size="icon" onClick={() => setIsClearDialogOpen(true)} disabled={isClearing} className="h-8 w-8 text-muted-foreground hover:text-destructive">
               <Trash2 className="h-4 w-4" />
             </Button>}
-          <AddTaskButton onClick={() => onAddTask(column.id)} />
+          <div className="flex-grow">
+            <AddTaskButton onClick={handleAddTaskClick} />
+          </div>
         </div>
       </Card>
 
