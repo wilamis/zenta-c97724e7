@@ -99,14 +99,15 @@ const KanbanColumn = ({
       <Card 
         className={cn(
           "kanban-column flex-shrink-0 flex flex-col", 
-          isMobile ? "w-[90vw] min-w-[280px]" : "w-[320px]",
+          isMobile ? "w-[85vw] min-w-[280px]" : "w-[320px]",
           isDropTarget ? 'bg-secondary/50 border-primary/40' : isColumnDropTarget ? 'bg-primary/20 border-primary/40' : 'bg-card', 
-          "transition-colors duration-200 hover:border-zenta-purple", 
+          "transition-all duration-200 hover:border-zenta-purple touch-pan-x touch-pan-y", 
           isDraggingColumn && !isMobile && "cursor-grabbing"
-        )} 
+        )}
         onDragOver={isMobile ? undefined : (isDraggingColumn ? handleColumnDragOverWrapper : handleDragOverWrapper)} 
         onDragLeave={isMobile ? undefined : (isDraggingColumn ? handleColumnDragLeave : handleDragLeave)} 
         onDrop={isMobile ? undefined : (isDraggingColumn ? handleColumnDrop : handleDrop)}
+        style={{ touchAction: 'pan-x pan-y' }}
       >
         <ColumnHeader 
           title={column.title} 

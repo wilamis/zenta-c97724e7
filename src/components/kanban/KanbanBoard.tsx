@@ -9,7 +9,7 @@ import { useKanbanColumns } from "./useKanbanColumns";
 import { useKanbanTasks } from "./useKanbanTasks";
 import { useKanbanDragDrop } from "./useKanbanDragDrop";
 import { useLanguage } from "@/context/LanguageContext";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 const KanbanBoard = () => {
   const { t } = useLanguage();
@@ -107,8 +107,8 @@ const KanbanBoard = () => {
         </Button>
       </div>
       
-      <ScrollArea className="kanban-board-container h-[700px] w-full max-w-full flex items-center justify-center">
-        <div className="flex gap-4 w-max pb-4 pr-6 mx-auto">
+      <ScrollArea className="kanban-board-container h-[700px] w-full max-w-full overflow-x-auto">
+        <div className="flex gap-4 min-w-max pb-4 px-4">
           {columns.map(column => (
             <KanbanColumn
               key={column.id}
@@ -129,6 +129,7 @@ const KanbanBoard = () => {
             />
           ))}
         </div>
+        <ScrollBar orientation="horizontal" />
       </ScrollArea>
       
       {isTaskModalOpen && (
