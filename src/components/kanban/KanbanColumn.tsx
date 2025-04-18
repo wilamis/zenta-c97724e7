@@ -73,8 +73,7 @@ const KanbanColumn = ({
     onDragOver(e);
   };
   
-  const handleDrop = (e: React.DragEvent) => {
-    if (isMobile) return;
+  const handleDropWrapper = (e: React.DragEvent) => {
     e.preventDefault();
     onDrop(e, column.id);
   };
@@ -87,8 +86,7 @@ const KanbanColumn = ({
     }
   };
   
-  const handleColumnDrop = (e: React.DragEvent) => {
-    if (isMobile) return;
+  const handleColumnDropWrapper = (e: React.DragEvent) => {
     e.preventDefault();
     if (isDraggingColumn) {
       onColumnDrop(e, column.id);
@@ -104,9 +102,11 @@ const KanbanColumn = ({
           "transition-all duration-200 hover:border-zenta-purple touch-pan-x touch-pan-y", 
           isDraggingColumn && !isMobile && "cursor-grabbing"
         )}
+        id={`kanban-column-${column.id}`}
+        data-column-id={column.id}
         onDragOver={isMobile ? undefined : (isDraggingColumn ? handleColumnDragOverWrapper : handleDragOverWrapper)} 
         onDragLeave={isMobile ? undefined : (isDraggingColumn ? handleColumnDragLeave : handleDragLeave)} 
-        onDrop={isMobile ? undefined : (isDraggingColumn ? handleColumnDrop : handleDrop)}
+        onDrop={isMobile ? handleDropWrapper : (isDraggingColumn ? handleColumnDropWrapper : handleDropWrapper)}
         style={{ touchAction: 'pan-x pan-y' }}
       >
         <ColumnHeader 

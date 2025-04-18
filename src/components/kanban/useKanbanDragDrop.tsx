@@ -1,3 +1,4 @@
+
 import { Task } from "@/components/tasks/TaskItem";
 import { KanbanColumn } from "@/hooks/useKanbanBoard";
 
@@ -37,15 +38,13 @@ export function useKanbanDragDrop({
   const handleDrop = (e: React.DragEvent, targetColumnId: string) => {
     e.preventDefault();
     
-    let taskId = draggedTaskInfo?.taskId;
-    let sourceColumnId = draggedTaskInfo?.sourceColumnId;
+    let taskId = e.dataTransfer?.getData ? e.dataTransfer.getData("taskId") : null;
+    let sourceColumnId = e.dataTransfer?.getData ? e.dataTransfer.getData("sourceColumnId") : null;
     
-    if (!taskId) {
-      taskId = e.dataTransfer.getData("taskId");
-    }
-    
-    if (!sourceColumnId) {
-      sourceColumnId = e.dataTransfer.getData("sourceColumnId");
+    // For mobile drag-and-drop events, get from draggedTaskInfo state
+    if ((!taskId || !sourceColumnId) && draggedTaskInfo) {
+      taskId = draggedTaskInfo.taskId;
+      sourceColumnId = draggedTaskInfo.sourceColumnId;
     }
     
     setDraggedTaskInfo(null);
