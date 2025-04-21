@@ -7,6 +7,7 @@ export const plannerTranslations = {
   addTask: "Adicionar Tarefa",
   unscheduled: "Não Agendadas",
   dragTasks: "Arraste tarefas para os dias",
+  noTasks: "Nenhuma tarefa agendada",
   noTasksScheduled: "Nenhuma tarefa agendada",
   noUnscheduledTasks: "Nenhuma tarefa não agendada",
   scheduleFor: "Agendar para",
