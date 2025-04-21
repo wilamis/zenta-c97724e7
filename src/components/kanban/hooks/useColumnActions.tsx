@@ -39,12 +39,12 @@ export function useColumnActions({ columnId, tasks, onDeleteTask }: UseColumnAct
     
     try {
       // Create a copy of all tasks to delete
-      const taskIds = tasks.map(task => task.id);
+      const tasksCopy = [...tasks];
       
-      // Delete all tasks at once
-      taskIds.forEach(taskId => {
-        onDeleteTask(taskId, columnId);
-      });
+      // Process each task sequentially to ensure all are deleted
+      for (const task of tasksCopy) {
+        onDeleteTask(task.id, columnId);
+      }
     } catch (error) {
       console.error("Error clearing column:", error);
     } finally {
