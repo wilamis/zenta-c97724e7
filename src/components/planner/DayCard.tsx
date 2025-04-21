@@ -1,8 +1,6 @@
 
 import { format, isToday } from "date-fns";
-import { Plus } from "lucide-react";
 import { Task } from "../tasks/TaskItem";
-import { Button } from "../ui/button";
 import { CardTitle, CardHeader, CardContent, Card } from "../ui/card";
 import TaskItem from "../tasks/TaskItem";
 import { ScrollArea } from "../ui/scroll-area";
@@ -48,17 +46,9 @@ const DayCard = ({
             {dayNumber}
           </CardTitle>
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 text-zenta-purple hover:bg-zenta-purple/10" 
-          onClick={() => onAddTask(day)}
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
       </CardHeader>
-      <CardContent className="p-3 flex-1 overflow-hidden flex flex-col">
-        <ScrollArea className="flex-1 pr-2">
+      <CardContent className="p-3 flex-1 overflow-hidden">
+        <ScrollArea className="h-full pr-2">
           {tasks.length > 0 ? (
             <div className="space-y-3">
               {tasks.map(task => (
@@ -72,19 +62,10 @@ const DayCard = ({
               ))}
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center p-4">
-              <p className="text-sm text-muted-foreground mb-2">
+            <div className="h-full flex items-center justify-center text-center p-4">
+              <p className="text-sm text-muted-foreground">
                 {t("planner.noTasks")}
               </p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full" 
-                onClick={() => onAddTask(day)}
-              >
-                <Plus className="h-3 w-3 mr-1" />
-                {t("planner.addTask")}
-              </Button>
             </div>
           )}
         </ScrollArea>
