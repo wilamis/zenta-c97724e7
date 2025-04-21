@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
@@ -163,8 +162,6 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
     return `${minutes}m ${secs}s`;
   };
 
-  const incompleteTasks = tasks.filter(task => !task.completed);
-
   return (
     <div className={cn(
       "relative transition-all duration-300",
@@ -297,8 +294,8 @@ const FocusMode = ({ tasks = [], onTaskComplete }: FocusModeProps) => {
                       <div className="text-sm font-medium text-muted-foreground mb-2">
                         {t('focus.availableTasks')}
                       </div>
-                      {incompleteTasks.length > 0 ? (
-                        incompleteTasks.map(task => (
+                      {tasks.length > 0 ? (
+                        tasks.map(task => (
                           <div 
                             key={task.id}
                             className="task-card cursor-pointer"

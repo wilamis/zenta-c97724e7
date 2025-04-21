@@ -5,6 +5,7 @@ import FocusMode from "../components/focus/FocusMode";
 import { Task } from "../components/tasks/TaskItem";
 import { useLanguage } from "@/context/LanguageContext";
 import { BrainCircuit } from "lucide-react";
+import { useTaskLists } from "@/hooks/useTaskLists";
 
 const Focus = () => {
   const { t } = useLanguage();
@@ -16,6 +17,17 @@ const Focus = () => {
     }
     return [];
   });
+  
+  // Get all task lists to identify active ones
+  const { lists } = useTaskLists();
+  const activeLists = lists.map(list => list.id);
+  
+  // Filter tasks to only include active tasks from active lists
+  const activeTasks = tasks.filter(task => 
+    !task.completed && 
+    (!task.listId || activeLists.includes(task.listId)) &&
+    !task.deletedAt
+  );
   
   // Save tasks to localStorage whenever they change
   useEffect(() => {
@@ -43,7 +55,7 @@ const Focus = () => {
         </header>
         
         <FocusMode 
-          tasks={tasks.filter(task => !task.completed)} 
+          tasks={activeTasks}
           onTaskComplete={handleTaskComplete}
         />
       </div>
