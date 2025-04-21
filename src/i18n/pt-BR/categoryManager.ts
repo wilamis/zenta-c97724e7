@@ -2,7 +2,7 @@
 export const categoryManagerTranslations = {
   title: "Gerenciar Categorias",
   yourCategories: "Suas Categorias",
-  defaultCategories: "Categorias Padrão",
+  defaultCategories: "Categoria Padrão",
   noCustomCategories: "Ainda não há categorias personalizadas",
   categoryName: "Nome da categoria",
   categoryColor: "Cor da categoria",
@@ -11,3 +11,4 @@ export const categoryManagerTranslations = {
   cancel: "Cancelar",
   close: "Fechar"
 };
+

@@ -9,8 +9,6 @@ export interface Category {
 }
 
 export const defaultCategories: Category[] = [
-  { id: "personal", name: "Personal", code: "p", color: "bg-zenta-purple" },
-  { id: "business", name: "Business", code: "b", color: "bg-zenta-blue" },
-  { id: "growth", name: "Growth", code: "g", color: "bg-zenta-green" },
+  { id: "personal", name: "Pessoal", code: "p", color: "bg-zenta-purple" },
 ];
 
