@@ -1,6 +1,7 @@
+
 import { useState } from "react";
 import { format, addDays, startOfWeek } from "date-fns";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Task } from "../tasks/TaskItem";
 import { Button } from "../ui/button";
 import TaskModal from "../tasks/TaskModal";
@@ -102,7 +103,7 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
 
   return (
     <div className="space-y-6 w-full max-w-[100%]">
-      <div className={`${isMobile ? 'flex flex-col space-y-2' : 'flex items-center justify-between'}`}>
+      <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-center justify-between'}`}>
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <CalendarIcon className="h-6 w-6 text-zenta-purple" />
@@ -112,6 +113,19 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
         </div>
         
         <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => {
+              setSelectedDay(new Date());
+              setEditingTask(null);
+              setIsModalOpen(true);
+            }}
+            className="mr-2 bg-zenta-purple text-white hover:bg-zenta-purple/90"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            {t("planner.addTask")}
+          </Button>
           <Button variant="outline" size="sm" onClick={goToPreviousWeek}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -124,33 +138,35 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
         </div>
       </div>
       
-      <DaysGrid
-        days={firstRowDays}
-        tasks={tasks}
-        dateLocale={dateLocale}
-        onAddTask={handleAddTask}
-        onTaskComplete={handleTaskComplete}
-        onTaskDelete={handleTaskDelete}
-        onEditTask={handleEditTask}
-        t={t}
-        formatWeekday={formatWeekday}
-        getDayTasks={getDayTasks}
-        isMobile={isMobile}
-      />
-      
-      <DaysGrid
-        days={secondRowDays}
-        tasks={tasks}
-        dateLocale={dateLocale}
-        onAddTask={handleAddTask}
-        onTaskComplete={handleTaskComplete}
-        onTaskDelete={handleTaskDelete}
-        onEditTask={handleEditTask}
-        t={t}
-        formatWeekday={formatWeekday}
-        getDayTasks={getDayTasks}
-        isMobile={isMobile}
-      />
+      <div className="space-y-8">
+        <DaysGrid
+          days={firstRowDays}
+          tasks={tasks}
+          dateLocale={dateLocale}
+          onAddTask={handleAddTask}
+          onTaskComplete={handleTaskComplete}
+          onTaskDelete={handleTaskDelete}
+          onEditTask={handleEditTask}
+          t={t}
+          formatWeekday={formatWeekday}
+          getDayTasks={getDayTasks}
+          isMobile={isMobile}
+        />
+        
+        <DaysGrid
+          days={secondRowDays}
+          tasks={tasks}
+          dateLocale={dateLocale}
+          onAddTask={handleAddTask}
+          onTaskComplete={handleTaskComplete}
+          onTaskDelete={handleTaskDelete}
+          onEditTask={handleEditTask}
+          t={t}
+          formatWeekday={formatWeekday}
+          getDayTasks={getDayTasks}
+          isMobile={isMobile}
+        />
+      </div>
       
       {isModalOpen && (
         <TaskModal

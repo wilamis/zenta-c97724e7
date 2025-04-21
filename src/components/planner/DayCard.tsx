@@ -39,7 +39,7 @@ const DayCard = ({
     <Card 
       className={`${isCurrentDay ? "border-zenta-purple/50" : "border-border/50"} bg-background/50 backdrop-blur-sm h-[400px] flex flex-col`}
     >
-      <CardHeader className="p-3 pb-0 flex-none">
+      <CardHeader className="p-3 flex-none flex flex-row justify-between items-center">
         <div className="flex flex-col items-center">
           <span className="text-sm text-muted-foreground capitalize">
             {dayName}
@@ -48,11 +48,19 @@ const DayCard = ({
             {dayNumber}
           </CardTitle>
         </div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="h-8 w-8 p-0 text-zenta-purple hover:bg-zenta-purple/10" 
+          onClick={() => onAddTask(day)}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
       </CardHeader>
-      <CardContent className="p-3 flex-1 min-h-0">
-        <ScrollArea className="h-full pr-2">
+      <CardContent className="p-3 flex-1 overflow-hidden flex flex-col">
+        <ScrollArea className="flex-1 pr-2">
           {tasks.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {tasks.map(task => (
                 <TaskItem
                   key={task.id}
