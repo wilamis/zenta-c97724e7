@@ -1,4 +1,3 @@
-
 import { Task } from "../tasks/TaskItem";
 import { Card } from "@/components/ui/card";
 import { KanbanColumn as KanbanColumnType } from "@/hooks/useKanbanBoard";
@@ -16,7 +15,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface KanbanColumnProps {
   column: KanbanColumnType;
   onRename: (id: string, title: string) => void;
-  onDelete: (id: string) => void;
   onAddTask: (columnId: string) => void;
   onEditTask: (task: Task, columnId: string) => void;
   onDeleteTask: (taskId: string, columnId: string) => void;
@@ -33,7 +31,6 @@ interface KanbanColumnProps {
 const KanbanColumn = ({
   column,
   onRename,
-  onDelete,
   onAddTask,
   onEditTask,
   onDeleteTask,
@@ -118,7 +115,6 @@ const KanbanColumn = ({
         <ColumnHeader 
           title={column.title} 
           onRenameClick={() => setIsRenameOpen(true)} 
-          onDeleteClick={() => onDelete(column.id)} 
           onClearClick={column.title === "Concluído" ? () => setIsClearDialogOpen(true) : undefined} 
           onDragStart={(e) => onColumnDragStart(e, column.id)} 
           isMobile={isMobile}

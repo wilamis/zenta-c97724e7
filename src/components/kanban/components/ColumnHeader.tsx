@@ -1,5 +1,5 @@
 
-import { MoreVertical, Menu, Edit, Trash2 } from "lucide-react";
+import { MoreVertical, Menu, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +12,6 @@ import { useLanguage } from "@/context/LanguageContext";
 interface ColumnHeaderProps {
   title: string;
   onRenameClick: () => void;
-  onDeleteClick: () => void;
   onClearClick?: () => void;
   onDragStart: (e: React.DragEvent) => void;
   isMobile?: boolean;
@@ -21,7 +20,6 @@ interface ColumnHeaderProps {
 const ColumnHeader = ({ 
   title, 
   onRenameClick, 
-  onDeleteClick,
   onClearClick,
   onDragStart,
   isMobile
@@ -33,8 +31,6 @@ const ColumnHeader = ({
     e.stopPropagation();
     onRenameClick();
   };
-
-  const showColumnOptions = title !== "Concluído" || isMobile;
 
   return (
     <div 
@@ -58,15 +54,6 @@ const ColumnHeader = ({
               <Edit className="h-4 w-4 mr-2" />
               <span className="tracking-normal">{t('kanban.editColumn')}</span>
             </DropdownMenuItem>
-            {showColumnOptions && !isMobile && (
-              <DropdownMenuItem 
-                className="text-destructive focus:text-destructive" 
-                onClick={onDeleteClick}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                <span className="tracking-normal">{t('kanban.deleteColumn')}</span>
-              </DropdownMenuItem>
-            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

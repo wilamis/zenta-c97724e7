@@ -1,4 +1,3 @@
-
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KanbanColumn from "./KanbanColumn";
@@ -34,7 +33,6 @@ const KanbanBoard = () => {
 
   const {
     handleAddColumn,
-    handleDeleteColumn,
     handleRenameColumn,
     handleColumnDragStart,
     handleColumnDragOver,
@@ -114,7 +112,6 @@ const KanbanBoard = () => {
               key={column.id}
               column={column}
               onRename={handleRenameColumn}
-              onDelete={handleDeleteColumn}
               onAddTask={handleAddTask}
               onEditTask={handleEditTask}
               onDeleteTask={handleTaskDelete}
