@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { format, addDays, startOfWeek, isToday } from "date-fns";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus } from "lucide-react";
@@ -22,7 +21,7 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
   const isMobile = useIsMobile();
   const [startDate, setStartDate] = useState(() => {
     const today = new Date();
-    return startOfWeek(today, { weekStartsOn: 1 }); // Week starts on Monday
+    return startOfWeek(today, { weekStartsOn: 1 });
   });
   
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,10 +63,8 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
     let updatedTasks: Task[];
     
     if (editingTask) {
-      // Editing existing task
       updatedTasks = tasks.map(t => t.id === task.id ? task : t);
     } else {
-      // Creating new task with selected date
       const newTask = {
         ...task,
         id: Date.now().toString(),
@@ -92,21 +89,21 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
     onTaskChange(updatedTasks);
   };
   
-  // Generate array of dates for this week
   const weekDays = Array.from({ length: 7 }, (_, i) => 
     addDays(startDate, i)
   );
   
-  // Format weekday name based on the locale
   const formatWeekday = (date: Date) => {
     return isMobile 
-      ? format(date, "E", { locale: dateLocale }) // Shorter format for mobile
+      ? format(date, "E", { locale: dateLocale })
       : format(date, "EEEE", { locale: dateLocale });
   };
 
+  const firstRowDays = weekDays.slice(0, 4);
+  const secondRowDays = weekDays.slice(4);
+
   return (
     <div className="space-y-6 w-full max-w-[100%]">
-      {/* Planner header */}
       <div className={`${isMobile ? 'flex flex-col space-y-2' : 'flex items-center justify-between'}`}>
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
@@ -129,9 +126,8 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
         </div>
       </div>
       
-      {/* Weekly calendar grid */}
-      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-7'}`}>
-        {weekDays.map((day, i) => {
+      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-4'}`}>
+        {firstRowDays.map((day, i) => {
           const dayTasks = getDayTasks(day);
           const isCurrentDay = isToday(day);
           const dayName = formatWeekday(day);
@@ -140,7 +136,66 @@ const TaskPlanner = ({ tasks, onTaskChange }: TaskPlannerProps) => {
           return (
             <Card 
               key={i} 
-              className={`${isCurrentDay ? "border-zenta-purple/50" : "border-border/50"} bg-background/50 backdrop-blur-sm`}
+              className={`${isCurrentDay ? "border-zenta-purple/50" : "border-border/50"} bg-background/50 backdrop-blur-sm min-h-[350px]`}
+            >
+              <CardHeader className="p-3 pb-0">
+                <div className="flex flex-col items-center">
+                  <span className="text-sm text-muted-foreground capitalize">
+                    {dayName}
+                  </span>
+                  <CardTitle className={`text-xl ${isCurrentDay ? "text-zenta-purple" : ""}`}>
+                    {dayNumber}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="p-3">
+                <ScrollArea className="h-[280px] pr-2">
+                  {dayTasks.length > 0 ? (
+                    <div className="space-y-2">
+                      {dayTasks.map(task => (
+                        <TaskItem
+                          key={task.id}
+                          task={task}
+                          onComplete={handleTaskComplete}
+                          onDelete={handleTaskDelete}
+                          onEdit={handleEditTask}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-center">
+                      <p className="text-xs text-muted-foreground mb-2">
+                        {t("planner.noTasks")}
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full" 
+                        onClick={() => handleAddTask(day)}
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        {t("planner.addTask")}
+                      </Button>
+                    </div>
+                  )}
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+      
+      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-4'}`}>
+        {secondRowDays.map((day, i) => {
+          const dayTasks = getDayTasks(day);
+          const isCurrentDay = isToday(day);
+          const dayName = formatWeekday(day);
+          const dayNumber = format(day, "d");
+          
+          return (
+            <Card 
+              key={i} 
+              className={`${isCurrentDay ? "border-zenta-purple/50" : "border-border/50"} bg-background/50 backdrop-blur-sm min-h-[350px]`}
             >
               <CardHeader className="p-3 pb-0">
                 <div className="flex flex-col items-center">
