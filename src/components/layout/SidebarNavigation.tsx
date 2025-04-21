@@ -41,11 +41,6 @@ export const SidebarNavigation = ({ isCollapsed }: SidebarNavigationProps) => {
       path: "/pomodoro",
     },
     {
-      titleKey: "sidebar.planner",
-      icon: CheckSquare,
-      path: "/planner",
-    },
-    {
       titleKey: "sidebar.settings",
       icon: Settings,
       path: "/settings",

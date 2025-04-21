@@ -9,7 +9,6 @@ import NotFound from "./pages/NotFound";
 import Tasks from "./pages/Tasks";
 import Focus from "./pages/Focus";
 import Pomodoro from "./pages/Pomodoro";
-import Planner from "./pages/Planner";
 import Settings from "./pages/Settings";
 import Kanban from "./pages/Kanban";
 import { LanguageProvider } from "./context/LanguageContext";
@@ -29,7 +28,6 @@ function App() {
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/focus" element={<Focus />} />
               <Route path="/pomodoro" element={<Pomodoro />} />
-              <Route path="/planner" element={<Planner />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/kanban" element={<Kanban />} />
               <Route path="*" element={<NotFound />} />

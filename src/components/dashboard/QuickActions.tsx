@@ -1,5 +1,5 @@
 
-import { Calendar, ListTodo, PlayCircle, Zap } from "lucide-react";
+import { ListTodo, PlayCircle, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/context/LanguageContext";
@@ -15,7 +15,7 @@ const QuickActions = () => {
           {t("dashboard.quickActions")}
         </CardTitle>
       </CardHeader>
-      <CardContent className="grid grid-cols-3 gap-3">
+      <CardContent className="grid grid-cols-2 gap-3">
         <Button variant="outline" className="justify-start h-12 border-zenta-purple/20 hover:border-zenta-purple/50" asChild>
           <a href="/tasks">
             <ListTodo className="h-4 w-4 mr-2" />
@@ -26,12 +26,6 @@ const QuickActions = () => {
           <a href="/focus">
             <PlayCircle className="h-4 w-4 mr-2" />
             {t("dashboard.startFocus")}
-          </a>
-        </Button>
-        <Button variant="outline" className="justify-start h-12 border-zenta-purple/20 hover:border-zenta-purple/50" asChild>
-          <a href="/planner">
-            <Calendar className="h-4 w-4 mr-2" />
-            {t("dashboard.planWeek")}
           </a>
         </Button>
       </CardContent>

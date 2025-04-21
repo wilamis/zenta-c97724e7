@@ -9,7 +9,6 @@ import { kanbanTranslations } from './kanban';
 import { focusTranslations } from './focus';
 import { focusSettingsTranslations } from './focusSettings';
 import { pomodoroTranslations } from './pomodoro';
-import { plannerTranslations } from './planner';
 
 export const ptBRTranslations = {
   sidebar: sidebarTranslations,
@@ -21,6 +20,5 @@ export const ptBRTranslations = {
   kanban: kanbanTranslations,
   focus: focusTranslations,
   focusSettings: focusSettingsTranslations,
-  pomodoro: pomodoroTranslations,
-  planner: plannerTranslations
+  pomodoro: pomodoroTranslations
 };

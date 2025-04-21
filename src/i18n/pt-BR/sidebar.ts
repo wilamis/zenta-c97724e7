@@ -5,7 +5,6 @@ export const sidebarTranslations = {
   kanban: "Kanban",
   focus: "Foco",
   pomodoro: "Pomodoro",
-  planner: "Planejador",
   settings: "Configurações",
   freePlan: "Plano Gratuito",
   upgradeText: "Atualize para mais recursos"
