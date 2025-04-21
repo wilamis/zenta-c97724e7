@@ -1,5 +1,5 @@
 
-import { MoreVertical, Menu, Edit, Trash, X } from "lucide-react";
+import { MoreVertical, Menu, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -34,6 +34,8 @@ const ColumnHeader = ({
     onRenameClick();
   };
 
+  const showColumnOptions = title !== "Concluído" || isMobile;
+
   return (
     <div 
       className="flex items-center justify-between p-3 border-b cursor-grab active:cursor-grabbing"
@@ -56,16 +58,7 @@ const ColumnHeader = ({
               <Edit className="h-4 w-4 mr-2" />
               <span className="tracking-normal">{t('kanban.editColumn')}</span>
             </DropdownMenuItem>
-            {onClearClick && (
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onClick={onClearClick}
-              >
-                <X className="h-4 w-4 mr-2" />
-                <span className="tracking-normal">{t('kanban.clearColumn')}</span>
-              </DropdownMenuItem>
-            )}
-            {!isMobile && (
+            {showColumnOptions && !isMobile && (
               <DropdownMenuItem 
                 className="text-destructive focus:text-destructive" 
                 onClick={onDeleteClick}
