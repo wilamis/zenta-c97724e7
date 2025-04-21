@@ -31,7 +31,7 @@ const DaysGrid = ({
   isMobile,
 }: DaysGridProps) => {
   return (
-    <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-4'}`}>
+    <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-4'}`}>
       {days.map((day, i) => (
         <DayCard
           key={i}
