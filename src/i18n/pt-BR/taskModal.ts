@@ -2,6 +2,8 @@
 export const taskModalTranslations = {
   addNewTask: "Adicionar Nova Tarefa",
   editTask: "Editar Tarefa",
+  addNewTaskDescription: "Adicione uma nova tarefa para ser realizada",
+  editTaskDescription: "Edite os detalhes da tarefa selecionada",
   taskName: "Nome da tarefa",
   whatNeedsToBeDone: "O que precisa ser feito?",
   description: "Descrição",

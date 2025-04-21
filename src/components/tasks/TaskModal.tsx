@@ -63,7 +63,7 @@ const TaskModal = ({ isOpen, onClose, onSave, task, categories = defaultCategori
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{task ? t("taskModal.editTask") : t("taskModal.addNewTask")}</DialogTitle>
-          <DialogDescription className="sr-only">
+          <DialogDescription>
             {task ? t("taskModal.editTaskDescription") : t("taskModal.addNewTaskDescription")}
           </DialogDescription>
         </DialogHeader>
