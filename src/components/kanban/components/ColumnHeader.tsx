@@ -1,5 +1,5 @@
 
-import { MoreVertical, Menu, Edit } from "lucide-react";
+import { MoreVertical, Menu, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -63,7 +63,7 @@ const ColumnHeader = ({
                 className="text-destructive focus:text-destructive" 
                 onClick={onDeleteClick}
               >
-                <Trash className="h-4 w-4 mr-2" />
+                <Trash2 className="h-4 w-4 mr-2" />
                 <span className="tracking-normal">{t('kanban.deleteColumn')}</span>
               </DropdownMenuItem>
             )}
