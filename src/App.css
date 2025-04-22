@@ -1,4 +1,3 @@
-
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -61,18 +60,45 @@
   padding-right: 32px; /* Ensure there's space at the end for the last column */
   width: max-content;
   margin: 0 auto; /* Center the columns container */
+  flex-wrap: nowrap;
 }
 
-.scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+@media (max-width: 900px) {
+  .kanban-board-container {
+    min-height: 250px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .kanban-board-container .flex {
+    gap: 8px !important;
+    padding: 0 8px !important;
+    width: auto !important;
+    min-width: 100vw;
+    transition: min-width 0.2s;
+  }
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+@media (max-width: 640px) {
+  .kanban-board-container {
+    min-height: 170px;
+    padding: 0;
+  }
+  .kanban-board-container .flex {
+    gap: 8px !important;
+    padding: 0 4px !important;
+    width: auto !important;
+    min-width: 100vw;
+    flex-wrap: nowrap !important;
+    transition: min-width 0.2s;
+  }
 }
 
-/* Ensure kanban column has a hover effect with the zenta-purple color */
+@media (max-width: 500px) {
+  .kanban-board-container {
+    min-height: 120px;
+  }
+}
+
 .kanban-column {
   border: 1px solid transparent;
   transition: border-color 0.2s ease-in-out;
@@ -80,10 +106,4 @@
 
 .kanban-column:hover {
   border-color: #9b87f5 !important;
-}
-
-@media (max-width: 640px) {
-  .kanban-board-container .flex {
-    padding-bottom: 1rem;
-  }
 }

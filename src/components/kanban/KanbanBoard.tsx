@@ -1,3 +1,4 @@
+
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KanbanColumn from "./KanbanColumn";
@@ -9,10 +10,12 @@ import { useKanbanTasks } from "./useKanbanTasks";
 import { useKanbanDragDrop } from "./useKanbanDragDrop";
 import { useLanguage } from "@/context/LanguageContext";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const KanbanBoard = () => {
   const { t } = useLanguage();
-  
+  const isMobile = useIsMobile();
+
   const {
     columns,
     setColumns,
@@ -93,8 +96,8 @@ const KanbanBoard = () => {
   };
 
   return (
-    <div className="space-y-4 h-full w-full max-w-full flex flex-col items-center">
-      <div className="flex justify-end items-center mb-4 w-full">
+    <div className={`space-y-4 h-full w-full max-w-full flex flex-col items-center`}>
+      <div className={`flex justify-end items-center mb-4 w-full px-4 sm:px-0`}>
         <Button 
           onClick={handleOpenAddTaskModal}
           className="flex items-center gap-2 bg-[#9b87f5] hover:bg-[#8B5CF6] transition-colors"
@@ -104,9 +107,18 @@ const KanbanBoard = () => {
           <span className="font-medium">{t('tasks.addTask')}</span>
         </Button>
       </div>
-      
-      <ScrollArea className="kanban-board-container h-[700px] w-full max-w-full overflow-x-auto">
-        <div className="flex gap-4 min-w-max pb-4 px-4">
+      <ScrollArea className={`kanban-board-container h-[70vh] md:h-[700px] w-full max-w-full overflow-x-auto`}>
+        <div
+          className={`
+            flex gap-4 min-w-max pb-4 px-2
+            ${isMobile ? "sm:px-4" : "px-4"}
+          `}
+          style={
+            isMobile
+              ? { flexWrap: "nowrap", overflowX: "scroll", WebkitOverflowScrolling: "touch" }
+              : { }
+          }
+        >
           {columns.map(column => (
             <KanbanColumn
               key={column.id}
@@ -142,3 +154,4 @@ const KanbanBoard = () => {
 };
 
 export default KanbanBoard;
+
