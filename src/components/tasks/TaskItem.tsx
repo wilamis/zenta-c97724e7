@@ -58,7 +58,8 @@ const TaskItem = ({
     return category ? category.name : "";
   };
 
-  const toggleActions = (e: React.MouseEvent) => {
+  // Fix: Create separate handlers for mouse and touch events
+  const toggleActions = (e: React.MouseEvent | React.TouchEvent) => {
     if (isMobile) {
       e.stopPropagation(); // Prevent event bubbling
       setShowActions(!showActions);
@@ -101,7 +102,7 @@ const TaskItem = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleTaskClick}
-      onTouchEnd={isMobile ? toggleActions : undefined}
+      onTouchEnd={(e) => isMobile ? toggleActions(e) : undefined}
     >
       <div className="flex items-start">
         {!isDeleted && (
