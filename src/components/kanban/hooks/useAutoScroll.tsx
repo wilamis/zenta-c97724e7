@@ -10,10 +10,17 @@ export function useAutoScroll({ draggingTask, currentTouchPosition }: UseAutoScr
   const scrollInterval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // Clean up the interval when dragging stops or component unmounts
     if (!draggingTask && scrollInterval.current) {
       clearInterval(scrollInterval.current);
       scrollInterval.current = null;
     }
+    
+    return () => {
+      if (scrollInterval.current) {
+        clearInterval(scrollInterval.current);
+      }
+    };
   }, [draggingTask]);
 
   const startAutoScroll = () => {
@@ -26,24 +33,29 @@ export function useAutoScroll({ draggingTask, currentTouchPosition }: UseAutoScr
       if (!scrollContainer) return;
       
       const containerRect = scrollContainer.getBoundingClientRect();
-      const scrollSpeed = 5;
-      const edgeThreshold = 60;
+      const scrollSpeed = 10; // Increased from 5 to 10 for more responsive scrolling
+      const edgeThreshold = 80; // Increased from 60 to 80 pixels for a wider activation area
       
+      // Calculate scroll amount based on how close to the edge
       if (currentTouchPosition.x < containerRect.left + edgeThreshold) {
-        scrollContainer.scrollLeft -= scrollSpeed;
+        // Calculate a proportional scroll speed based on how close to the edge
+        const distance = currentTouchPosition.x - containerRect.left;
+        const factor = Math.max(0, 1 - distance / edgeThreshold);
+        scrollContainer.scrollLeft -= Math.ceil(scrollSpeed * factor * 2);
       } else if (currentTouchPosition.x > containerRect.right - edgeThreshold) {
-        scrollContainer.scrollLeft += scrollSpeed;
+        const distance = containerRect.right - currentTouchPosition.x;
+        const factor = Math.max(0, 1 - distance / edgeThreshold);
+        scrollContainer.scrollLeft += Math.ceil(scrollSpeed * factor * 2);
       }
-    }, 16);
+    }, 16); // ~60fps
+  };
+  
+  const stopAutoScroll = () => {
+    if (scrollInterval.current) {
+      clearInterval(scrollInterval.current);
+      scrollInterval.current = null;
+    }
   };
 
-  useEffect(() => {
-    return () => {
-      if (scrollInterval.current) {
-        clearInterval(scrollInterval.current);
-      }
-    };
-  }, []);
-
-  return { startAutoScroll };
+  return { startAutoScroll, stopAutoScroll };
 }

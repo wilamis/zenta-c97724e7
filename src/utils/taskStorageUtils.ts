@@ -2,72 +2,7 @@
 import { Task } from "@/components/tasks/TaskItem";
 import { KanbanColumn } from "@/hooks/useKanbanBoard";
 
-/**
- * Updates tasks in lists storage based on the current kanban columns
- * @param updatedColumns - The current state of kanban columns
- * @param listId - The list ID to update
- */
-export const updateTasksInLists = (updatedColumns: KanbanColumn[], listId: string) => {
-  try {
-    const savedLists = localStorage.getItem("task-lists");
-    if (savedLists) {
-      const lists = JSON.parse(savedLists);
-      
-      // Get all tasks from all columns
-      const allTasks = updatedColumns.flatMap(col => col.tasks);
-      
-      const updatedLists = lists.map((list: any) => {
-        if (list.id === listId) {
-          // Filter tasks that belong to this list
-          const listTasks = allTasks.filter(t => t.listId === listId);
-          return {
-            ...list,
-            tasks: listTasks
-          };
-        }
-        return list;
-      });
-      
-      localStorage.setItem("task-lists", JSON.stringify(updatedLists));
-      
-      // Also update the tasks in general storage
-      updateTasksInGeneralStorage(allTasks, listId);
-    }
-  } catch (e) {
-    console.error("Error updating lists:", e);
-  }
-};
-
-/**
- * Updates the general tasks storage
- * @param allTasks - All tasks from the kanban columns
- * @param listId - The list ID to update
- */
-const updateTasksInGeneralStorage = (allTasks: Task[], listId: string) => {
-  try {
-    const tasksFromStorage = localStorage.getItem("zenta-tasks");
-    if (tasksFromStorage) {
-      const existingTasks = JSON.parse(tasksFromStorage);
-      
-      // Remove tasks associated with this list
-      const filteredTasks = existingTasks.filter((t: Task) => t.listId !== listId);
-      
-      // Add updated tasks for this list
-      const tasksForThisList = allTasks.filter(t => t.listId === listId);
-      const updatedTasks = [...filteredTasks, ...tasksForThisList];
-      
-      localStorage.setItem("zenta-tasks", JSON.stringify(updatedTasks));
-    }
-  } catch (e) {
-    console.error("Error updating tasks storage:", e);
-  }
-};
-
-/**
- * Safely updates localStorage with error handling
- * @param key - The localStorage key
- * @param data - The data to store
- */
+// Safely update localStorage with error handling
 export const safelyUpdateStorage = (key: string, data: any) => {
   try {
     localStorage.setItem(key, JSON.stringify(data));
@@ -75,5 +10,74 @@ export const safelyUpdateStorage = (key: string, data: any) => {
   } catch (error) {
     console.error(`Error updating ${key} in localStorage:`, error);
     return false;
+  }
+};
+
+// Extract all tasks from columns
+export const getAllTasksFromColumns = (columns: KanbanColumn[]): Task[] => {
+  return columns.flatMap(column => column.tasks || []);
+};
+
+// Update tasks in the lists data structure
+export const updateTasksInLists = (columns: KanbanColumn[], listId?: string) => {
+  if (!listId) return;
+  
+  try {
+    // Get all tasks from columns
+    const allTasks = getAllTasksFromColumns(columns);
+    
+    // Get existing lists
+    const listsData = localStorage.getItem("task-lists");
+    if (!listsData) return;
+    
+    const lists = JSON.parse(listsData);
+    
+    // Find the specific list and update its tasks
+    const updatedLists = lists.map((list: any) => {
+      if (list.id === listId) {
+        // Filter tasks for this list only
+        const listTasks = allTasks.filter(task => task.listId === listId);
+        return { ...list, tasks: listTasks };
+      }
+      return list;
+    });
+    
+    // Save updated lists back to storage
+    safelyUpdateStorage("task-lists", updatedLists);
+    
+  } catch (error) {
+    console.error("Error updating tasks in lists:", error);
+  }
+};
+
+// Sync tasks between kanban board and tasks page
+export const syncTasksWithTasksPage = (columns: KanbanColumn[]) => {
+  try {
+    const allTasks = getAllTasksFromColumns(columns);
+    
+    // Get existing tasks from tasks page
+    const tasksData = localStorage.getItem("zenta-tasks") || "[]";
+    const existingTasks = JSON.parse(tasksData);
+    
+    // Create a map of existing task IDs
+    const existingTaskIds = new Set(existingTasks.map((t: Task) => t.id));
+    
+    // Get new tasks from kanban
+    const newTasks = allTasks.filter(task => !existingTaskIds.has(task.id));
+    
+    // Update existing tasks
+    const updatedExistingTasks = existingTasks.map((task: Task) => {
+      const updatedTask = allTasks.find(t => t.id === task.id);
+      return updatedTask || task;
+    });
+    
+    // Combine tasks
+    const combinedTasks = [...updatedExistingTasks, ...newTasks];
+    
+    // Save back to storage
+    safelyUpdateStorage("zenta-tasks", combinedTasks);
+    
+  } catch (error) {
+    console.error("Error syncing tasks:", error);
   }
 };

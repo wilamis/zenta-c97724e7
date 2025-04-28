@@ -51,9 +51,9 @@ export const TaskItem = ({ task, idx }: TaskItemProps) => {
       <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-muted text-xs">
         {idx + 1}
       </div>
-      <span className="text-sm truncate">{task.title}</span>
+      <span className="text-sm truncate max-w-[calc(100%-50px)]">{task.title}</span>
       {task.estimatedTime > 0 && (
-        <Badge variant="outline" className="ml-auto text-xs">
+        <Badge variant="outline" className="ml-auto text-xs flex-shrink-0">
           {task.estimatedTime} min
         </Badge>
       )}

@@ -1,3 +1,4 @@
+
 import { Task } from "../tasks/TaskItem";
 import { Card } from "@/components/ui/card";
 import { KanbanColumn as KanbanColumnType } from "@/hooks/useKanbanBoard";
@@ -96,11 +97,21 @@ const KanbanColumn = ({
     onAddTask(column.id);
   };
 
+  // Calculate column width based on device
+  const columnWidth = isMobile
+    ? "w-[85vw] min-w-[250px] max-w-[300px]"  // Mobile: wider columns but not too wide
+    : "w-[300px]";                            // Desktop: fixed width
+  
+  // Calculate column height based on device
+  const columnContentHeight = isMobile
+    ? "max-h-[450px] h-[70vh]"  // Mobile: shorter and responsive
+    : "h-[630px]";              // Desktop: fixed height
+
   return <>
       <Card 
         className={cn(
           "kanban-column flex-shrink-0 flex flex-col", 
-          isMobile ? "w-[85vw] min-w-[280px]" : "w-[320px]",
+          columnWidth,
           isDropTarget ? 'bg-secondary/50 border-primary/40' : isColumnDropTarget ? 'bg-primary/20 border-primary/40' : 'bg-card', 
           "transition-all duration-200 hover:border-zenta-purple touch-pan-x touch-pan-y", 
           isDraggingColumn && !isMobile && "cursor-grabbing"
@@ -120,7 +131,7 @@ const KanbanColumn = ({
           isMobile={isMobile}
         />
         
-        <ScrollArea className="flex-1 p-2 overflow-y-auto scrollbar-hide" style={{ height: isMobile ? "450px" : "630px" }}>
+        <ScrollArea className={`flex-1 p-2 overflow-y-auto scrollbar-hide ${columnContentHeight}`}>
           <TasksList 
             tasks={column.tasks} 
             columnId={column.id} 
@@ -132,9 +143,17 @@ const KanbanColumn = ({
         </ScrollArea>
         
         <div className="p-2 border-t flex justify-between items-center gap-2">
-          {column.title === "Concluído" && <Button variant="ghost" size="icon" onClick={() => setIsClearDialogOpen(true)} disabled={isClearing} className="h-8 w-8 text-muted-foreground hover:text-destructive">
-              <Trash2 className="h-4 w-4" />
-            </Button>}
+          {column.title === "Concluído" && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setIsClearDialogOpen(true)} 
+              disabled={isClearing} 
+              className="h-10 w-10 text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 className="h-5 w-5" />
+            </Button>
+          )}
           <div className="flex-grow">
             <AddTaskButton onClick={handleAddTaskClick} />
           </div>

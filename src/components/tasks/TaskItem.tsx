@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { Clock, Trash } from "lucide-react";
 import { useState } from "react";
@@ -33,7 +34,7 @@ const TaskItem = ({
 
   // Format estimated time as "1hr 30min" or "30min"
   const formatTime = (minutes?: number) => {
-    if (!minutes) return "00:00";
+    if (!minutes) return null;
     
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -86,16 +87,21 @@ const TaskItem = ({
     if (isMobile) setShowActions(false);
   };
 
+  // Touch-friendly padding for mobile
+  const mobilePadding = isMobile ? "p-3" : "p-2";
+  
   return (
     <div 
       className={cn(
-        "task-card relative p-2 border border-border rounded-md bg-card cursor-pointer", 
+        "task-card relative border border-border rounded-md bg-card cursor-pointer", 
+        mobilePadding,
         task.completed && "opacity-60",
         isDeleted && "opacity-50"
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleTaskClick}
+      onTouchEnd={isMobile ? toggleActions : undefined}
     >
       <div className="flex items-start">
         {!isDeleted && (
@@ -106,7 +112,7 @@ const TaskItem = ({
                 handleCheckboxChange(checked);
               }
             }}
-            className="mt-1 mr-3 flex-shrink-0"
+            className="mt-1 mr-3 flex-shrink-0 h-5 w-5"
             onClick={(e) => {
               e.stopPropagation();
             }}
@@ -117,7 +123,7 @@ const TaskItem = ({
             <Trash className="h-3 w-3 text-muted-foreground" />
           </div>
         )}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 overflow-hidden">
           <div className="flex items-center gap-2">
             <span className={`priority-dot priority-${task.priority} flex-shrink-0`} />
             {task.category && (
@@ -130,14 +136,14 @@ const TaskItem = ({
               />
             )}
             <h3 className={cn(
-              "text-base font-medium truncate flex-1",
+              "text-base font-medium truncate max-w-full",
               (task.completed || isDeleted) && "line-through text-muted-foreground"
             )}>
               {task.title}
             </h3>
           </div>
           
-          {task.estimatedTime > 0 && (
+          {task.estimatedTime > 0 && formatTime(task.estimatedTime) && (
             <div className="flex items-center text-xs text-muted-foreground mt-1">
               <Clock className="h-3 w-3 mr-1 inline flex-shrink-0" />
               {formatTime(task.estimatedTime)}
@@ -145,7 +151,7 @@ const TaskItem = ({
           )}
           
           {task.deletedAt && (
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground mt-1 truncate">
               Deleted on: {new Date(task.deletedAt).toLocaleDateString()}
             </div>
           )}
@@ -161,7 +167,10 @@ const TaskItem = ({
             <Button 
               variant="ghost" 
               size="sm" 
-              className="h-8 w-8 p-0 text-destructive hover:text-destructive" 
+              className={cn(
+                "h-8 w-8 p-0 text-destructive hover:text-destructive",
+                isMobile && "h-10 w-10" // Larger touch target on mobile
+              )}
               onClick={handleDeleteClick}
             >
               <Trash className="h-4 w-4" />

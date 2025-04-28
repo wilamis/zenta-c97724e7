@@ -34,6 +34,7 @@ export function useKanbanBoard() {
     if (savedColumns) {
       setColumns(JSON.parse(savedColumns));
     } else {
+      // Default columns with translated titles based on current language
       const defaultColumns: KanbanColumn[] = [
         { id: "backlog", title: "Pendentes", tasks: [] },
         { id: "this-week", title: "Esta Semana", tasks: [] },

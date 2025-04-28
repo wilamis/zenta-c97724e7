@@ -72,11 +72,13 @@ const KanbanBoard = () => {
   });
 
   const onColumnDragStart = (e: React.DragEvent, columnId: string) => {
+    if (isMobile) return; // Disable column dragging on mobile
     setDraggedColumnId(columnId);
     handleColumnDragStart(e, columnId);
   };
 
   const onColumnDrop = (e: React.DragEvent, targetColumnId: string) => {
+    if (isMobile) return; // Disable column dragging on mobile
     handleColumnDrop(e, targetColumnId, draggedColumnId);
     setDraggedColumnId(null);
   };
@@ -96,28 +98,32 @@ const KanbanBoard = () => {
   };
 
   return (
-    <div className={`space-y-4 h-full w-full max-w-full flex flex-col items-center`}>
-      <div className={`flex justify-end items-center mb-4 w-full px-4 sm:px-0`}>
+    <div className="space-y-4 h-full w-full max-w-full flex flex-col items-center">
+      <div className="flex justify-end items-center mb-2 sm:mb-4 w-full px-2 sm:px-4">
         <Button 
           onClick={handleOpenAddTaskModal}
           className="flex items-center gap-2 bg-[#9b87f5] hover:bg-[#8B5CF6] transition-colors"
-          size="default"
+          size={isMobile ? "sm" : "default"}
         >
           <Plus className="h-5 w-5" />
           <span className="font-medium">{t('tasks.addTask')}</span>
         </Button>
       </div>
-      <ScrollArea className={`kanban-board-container h-[70vh] md:h-[700px] w-full max-w-full overflow-x-auto`}>
+      
+      <ScrollArea 
+        className="kanban-board-container h-[75vh] sm:h-[80vh] md:h-[700px] w-full max-w-full overflow-x-auto"
+        scrollHideDelay={0}
+      >
         <div
           className={`
-            flex gap-4 min-w-max pb-4 px-2
-            ${isMobile ? "sm:px-4" : "px-4"}
+            flex gap-3 sm:gap-4 pb-4 px-1 sm:px-4
+            min-w-max
           `}
-          style={
-            isMobile
-              ? { flexWrap: "nowrap", overflowX: "scroll", WebkitOverflowScrolling: "touch" }
-              : { }
-          }
+          style={{
+            flexWrap: "nowrap",
+            overflowX: "scroll",
+            WebkitOverflowScrolling: "touch"
+          }}
         >
           {columns.map(column => (
             <KanbanColumn
@@ -138,7 +144,7 @@ const KanbanBoard = () => {
             />
           ))}
         </div>
-        <ScrollBar orientation="horizontal" />
+        <ScrollBar orientation="horizontal" className={isMobile ? "h-1.5" : "h-2"} />
       </ScrollArea>
       
       {isTaskModalOpen && (
@@ -154,4 +160,3 @@ const KanbanBoard = () => {
 };
 
 export default KanbanBoard;
-

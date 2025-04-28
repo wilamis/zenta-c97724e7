@@ -4,6 +4,7 @@ import TaskItem from "@/components/tasks/TaskItem";
 import EmptyColumnState from "./EmptyColumnState";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTaskTouchInteractions } from "../hooks/useTaskTouchInteractions";
+import { useKanbanBoard } from "@/hooks/useKanbanBoard";
 
 interface TasksListProps {
   tasks: Task[];
@@ -23,6 +24,8 @@ const TasksList = ({
   onCompleteTask
 }: TasksListProps) => {
   const isMobile = useIsMobile();
+  const { setDraggedTaskInfo } = useKanbanBoard();
+  
   const { 
     handleTouchStart, 
     handleTouchEnd, 
@@ -31,7 +34,8 @@ const TasksList = ({
   } = useTaskTouchInteractions({
     isMobile,
     onDragStart,
-    columnId
+    columnId,
+    setDraggedTaskInfo
   });
   
   return (
@@ -43,12 +47,16 @@ const TasksList = ({
           <div 
             key={task.id}
             id={`task-${task.id}`}
-            draggable={!isMobile ? "true" : undefined}
+            draggable={!isMobile}
             onDragStart={(e) => !isMobile && onDragStart(e, task.id, columnId)}
             onTouchStart={(e) => handleTouchStart(e, task.id)}
             onTouchEnd={(e) => handleTouchEnd(e, task.id)}
             onTouchMove={(e) => handleTouchMove(e, task.id)}
-            className={`transition-transform ${!isMobile ? "cursor-grab active:cursor-grabbing" : ""}`}
+            className={`transition-transform ${
+              draggingTask === task.id 
+                ? "opacity-70 scale-105 z-50" 
+                : !isMobile ? "cursor-grab active:cursor-grabbing" : ""
+            }`}
           >
             <TaskItem
               task={task}

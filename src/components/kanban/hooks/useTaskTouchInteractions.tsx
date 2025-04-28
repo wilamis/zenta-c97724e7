@@ -1,24 +1,37 @@
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTouchState } from './useTouchState';
 import { useAutoScroll } from './useAutoScroll';
+import { debounce } from 'lodash';
 
 interface UseTaskTouchInteractionsProps {
   isMobile: boolean;
   onDragStart: (e: React.DragEvent, taskId: string, columnId: string) => void;
   columnId: string;
+  setDraggedTaskInfo: React.Dispatch<React.SetStateAction<{ taskId: string, sourceColumnId: string } | null>>;
 }
 
 export function useTaskTouchInteractions({ 
   isMobile, 
   onDragStart, 
-  columnId 
+  columnId,
+  setDraggedTaskInfo
 }: UseTaskTouchInteractionsProps) {
   const { touchState, updateTouchState } = useTouchState();
-  const { startAutoScroll } = useAutoScroll({
+  const { startAutoScroll, stopAutoScroll } = useAutoScroll({
     draggingTask: touchState.draggingTask,
     currentTouchPosition: touchState.currentTouchPosition
   });
+  
+  // Create a ref to store columns DOM elements
+  const columnsRef = useRef<Element[]>([]);
+  
+  // Get all column elements once
+  useEffect(() => {
+    if (isMobile && touchState.draggingTask) {
+      columnsRef.current = Array.from(document.querySelectorAll('.kanban-column'));
+    }
+  }, [isMobile, touchState.draggingTask]);
 
   const handleTouchStart = (e: React.TouchEvent, taskId: string) => {
     if (!isMobile) return;
@@ -27,21 +40,50 @@ export function useTaskTouchInteractions({
     const longPressTimer = setTimeout(() => {
       updateTouchState({ draggingTask: taskId });
       
+      // Update the task appearance to indicate it's being dragged
       const element = document.getElementById(`task-${taskId}`);
       if (element) {
         element.style.opacity = '0.7';
         element.style.transform = 'scale(1.02)';
         element.style.zIndex = '100';
+        element.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
       }
       
+      // Inform the parent component about the drag operation
+      setDraggedTaskInfo({ taskId, sourceColumnId: columnId });
+      
+      // Start the auto-scroll functionality
       startAutoScroll();
-    }, 500);
+      
+      // Provide haptic feedback if available
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+    }, 300); // Reduced from 500ms to 300ms for better responsiveness
 
     updateTouchState({
       initialTouch: { x: touch.clientX, y: touch.clientY },
-      longPressTimer
+      longPressTimer,
+      currentTouchPosition: { x: touch.clientX, y: touch.clientY }
     });
   };
+
+  // Optimized finding target column with debounce
+  const findTargetColumn = useRef(
+    debounce((position: { x: number, y: number }) => {
+      if (!columnsRef.current.length) return null;
+      
+      return columnsRef.current.find(column => {
+        const rect = column.getBoundingClientRect();
+        return (
+          position.x >= rect.left && 
+          position.x <= rect.right && 
+          position.y >= rect.top && 
+          position.y <= rect.bottom
+        );
+      }) || null;
+    }, 50)
+  ).current;
 
   const handleTouchEnd = (e: React.TouchEvent, taskId: string) => {
     if (!isMobile) return;
@@ -51,28 +93,17 @@ export function useTaskTouchInteractions({
     }
     
     if (touchState.draggingTask) {
+      // Prevent default only when actually dragging
       e.preventDefault();
       
       const dropPoint = touchState.currentTouchPosition;
       if (dropPoint) {
-        const columns = document.querySelectorAll('.kanban-column');
-        let targetColumn: Element | null = null;
-        
-        columns.forEach(column => {
-          const rect = column.getBoundingClientRect();
-          if (
-            dropPoint.x >= rect.left && 
-            dropPoint.x <= rect.right && 
-            dropPoint.y >= rect.top && 
-            dropPoint.y <= rect.bottom
-          ) {
-            targetColumn = column;
-          }
-        });
+        const targetColumn = findTargetColumn(dropPoint);
         
         if (targetColumn) {
           const targetColumnId = targetColumn.getAttribute('data-column-id') || '';
           
+          // Create a synthetic drop event
           const dropEvent = new Event('drop') as any;
           dropEvent.preventDefault = () => {};
           dropEvent.dataTransfer = {
@@ -83,15 +114,19 @@ export function useTaskTouchInteractions({
             }
           };
           
+          // Trigger the drop handler
           const dropHandler = (targetColumn as any).ondrop;
           if (dropHandler && typeof dropHandler === 'function') {
             dropHandler(dropEvent);
           }
         }
       }
+      
+      // Stop auto-scrolling
+      stopAutoScroll();
     }
     
-    // Reset state
+    // Reset the touch state
     updateTouchState({
       longPressTimer: null,
       draggingTask: null,
@@ -99,28 +134,36 @@ export function useTaskTouchInteractions({
       currentTouchPosition: null
     });
     
+    // Reset task appearance
     const element = document.getElementById(`task-${taskId}`);
     if (element) {
       element.style.opacity = '1';
       element.style.transform = 'none';
       element.style.position = 'static';
       element.style.zIndex = 'auto';
+      element.style.boxShadow = 'none';
     }
+    
+    // Clear the dragged task info in the parent component
+    setDraggedTaskInfo(null);
   };
 
   const handleTouchMove = (e: React.TouchEvent, taskId: string) => {
     if (!isMobile) return;
     
     const touch = e.touches[0];
-    updateTouchState({ 
-      currentTouchPosition: { x: touch.clientX, y: touch.clientY } 
-    });
+    const newPosition = { x: touch.clientX, y: touch.clientY };
     
+    // Update the current position
+    updateTouchState({ currentTouchPosition: newPosition });
+    
+    // If not dragging yet, check if we need to cancel the long press
     if (!touchState.draggingTask) {
       if (touchState.longPressTimer && touchState.initialTouch) {
         const deltaX = Math.abs(touch.clientX - touchState.initialTouch.x);
         const deltaY = Math.abs(touch.clientY - touchState.initialTouch.y);
         
+        // Cancel long press if moved more than threshold
         if (deltaX > 10 || deltaY > 10) {
           clearTimeout(touchState.longPressTimer);
           updateTouchState({ longPressTimer: null });
@@ -129,19 +172,35 @@ export function useTaskTouchInteractions({
       return;
     }
     
+    // Now we're actively dragging, prevent default to avoid page scrolling
     e.preventDefault();
     
+    // Move the task element with the touch
     const element = document.getElementById(`task-${taskId}`);
     if (element) {
       element.style.position = 'fixed';
       element.style.left = `${touch.clientX - element.offsetWidth / 2}px`;
       element.style.top = `${touch.clientY - element.offsetHeight / 2}px`;
       element.style.pointerEvents = 'none';
+      
+      // Highlight the column being hovered
+      const targetColumn = findTargetColumn(newPosition);
+      
+      // Remove highlight from all columns
+      columnsRef.current.forEach(col => {
+        (col as HTMLElement).style.backgroundColor = '';
+        (col as HTMLElement).style.borderColor = '';
+      });
+      
+      // Add highlight to the target column
+      if (targetColumn) {
+        (targetColumn as HTMLElement).style.backgroundColor = 'rgba(155, 135, 245, 0.1)';
+        (targetColumn as HTMLElement).style.borderColor = '#9b87f5';
+      }
     }
     
-    if (touchState.draggingTask) {
-      startAutoScroll();
-    }
+    // Continue auto-scrolling if needed
+    startAutoScroll();
   };
 
   return {

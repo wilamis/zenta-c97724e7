@@ -1,3 +1,4 @@
+
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -41,6 +42,7 @@
   color: #888;
 }
 
+/* Kanban Board Container */
 .kanban-board-container {
   min-height: 400px;
   overflow-y: hidden;
@@ -50,6 +52,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  touch-action: pan-y;
 }
 
 .kanban-board-container::-webkit-scrollbar {
@@ -57,48 +60,47 @@
 }
 
 .kanban-board-container .flex {
-  padding-right: 32px; /* Ensure there's space at the end for the last column */
   width: max-content;
   margin: 0 auto; /* Center the columns container */
   flex-wrap: nowrap;
 }
 
+/* Responsive styling for different screen sizes */
 @media (max-width: 900px) {
   .kanban-board-container {
-    min-height: 250px;
+    min-height: 70vh;
     padding-left: 0;
     padding-right: 0;
+  }
+  .kanban-board-container .flex {
+    gap: 10px !important;
+    padding: 0 10px !important;
+    width: auto !important;
+    min-width: 100vw;
+  }
+}
+
+@media (max-width: 640px) {
+  .kanban-board-container {
+    min-height: 65vh;
+    padding: 0;
   }
   .kanban-board-container .flex {
     gap: 8px !important;
     padding: 0 8px !important;
     width: auto !important;
     min-width: 100vw;
-    transition: min-width 0.2s;
-  }
-}
-
-@media (max-width: 640px) {
-  .kanban-board-container {
-    min-height: 170px;
-    padding: 0;
-  }
-  .kanban-board-container .flex {
-    gap: 8px !important;
-    padding: 0 4px !important;
-    width: auto !important;
-    min-width: 100vw;
     flex-wrap: nowrap !important;
-    transition: min-width 0.2s;
   }
 }
 
 @media (max-width: 500px) {
   .kanban-board-container {
-    min-height: 120px;
+    min-height: 60vh;
   }
 }
 
+/* Column styling */
 .kanban-column {
   border: 1px solid transparent;
   transition: border-color 0.2s ease-in-out;
@@ -108,6 +110,7 @@
   border-color: #9b87f5 !important;
 }
 
+/* Task card styling */
 .task-card {
   position: relative;
   transition: all 0.2s ease-in-out;
@@ -127,9 +130,12 @@
   max-width: 100%;
 }
 
+/* Mobile-specific task card styling */
 @media (max-width: 768px) {
   .task-card {
     padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin: 0.5rem 0;
   }
   
   .task-card h3 {
@@ -139,5 +145,25 @@
   
   .task-card .button {
     padding: 0.5rem;
+    min-height: 2.5rem;
   }
+  
+  /* Ensure touch targets are at least 44x44px for accessibility */
+  .task-card button,
+  .task-card [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Task list item styling */
+.task-list-item {
+  overflow: hidden;
+}
+
+.task-list-item .truncate {
+  max-width: 100%;
 }
