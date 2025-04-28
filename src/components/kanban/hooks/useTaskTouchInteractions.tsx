@@ -1,13 +1,7 @@
 
-import { useState, useEffect, useRef } from 'react';
-
-interface TouchState {
-  longPressTimer: NodeJS.Timeout | null;
-  draggingTask: string | null;
-  initialTouch: { x: number; y: number } | null;
-  currentTouchPosition: { x: number; y: number } | null;
-  scrollInterval: React.MutableRefObject<NodeJS.Timeout | null>;
-}
+import { useEffect } from 'react';
+import { useTouchState } from './useTouchState';
+import { useAutoScroll } from './useAutoScroll';
 
 interface UseTaskTouchInteractionsProps {
   isMobile: boolean;
@@ -20,86 +14,46 @@ export function useTaskTouchInteractions({
   onDragStart, 
   columnId 
 }: UseTaskTouchInteractionsProps) {
-  const [state, setState] = useState<TouchState>({
-    longPressTimer: null,
-    draggingTask: null,
-    initialTouch: null,
-    currentTouchPosition: null,
-    scrollInterval: useRef<NodeJS.Timeout | null>(null)
+  const { touchState, updateTouchState } = useTouchState();
+  const { startAutoScroll } = useAutoScroll({
+    draggingTask: touchState.draggingTask,
+    currentTouchPosition: touchState.currentTouchPosition
   });
-  
-  useEffect(() => {
-    return () => {
-      if (state.longPressTimer) {
-        clearTimeout(state.longPressTimer);
-      }
-      if (state.scrollInterval.current) {
-        clearInterval(state.scrollInterval.current);
-      }
-    };
-  }, [state.longPressTimer]);
-
-  useEffect(() => {
-    if (!state.draggingTask && state.scrollInterval.current) {
-      clearInterval(state.scrollInterval.current);
-      state.scrollInterval.current = null;
-    }
-  }, [state.draggingTask]);
-
-  const startAutoScroll = () => {
-    if (state.scrollInterval.current) return;
-    
-    state.scrollInterval.current = setInterval(() => {
-      if (!state.currentTouchPosition || !state.draggingTask) return;
-      
-      const scrollContainer = document.querySelector('.kanban-board-container') as HTMLElement;
-      if (!scrollContainer) return;
-      
-      const containerRect = scrollContainer.getBoundingClientRect();
-      const scrollSpeed = 5;
-      const edgeThreshold = 60;
-      
-      if (state.currentTouchPosition.x < containerRect.left + edgeThreshold) {
-        scrollContainer.scrollLeft -= scrollSpeed;
-      } else if (state.currentTouchPosition.x > containerRect.right - edgeThreshold) {
-        scrollContainer.scrollLeft += scrollSpeed;
-      }
-    }, 16);
-  };
 
   const handleTouchStart = (e: React.TouchEvent, taskId: string) => {
     if (!isMobile) return;
     
     const touch = e.touches[0];
-    setState(prev => ({
-      ...prev,
+    const longPressTimer = setTimeout(() => {
+      updateTouchState({ draggingTask: taskId });
+      
+      const element = document.getElementById(`task-${taskId}`);
+      if (element) {
+        element.style.opacity = '0.7';
+        element.style.transform = 'scale(1.02)';
+        element.style.zIndex = '100';
+      }
+      
+      startAutoScroll();
+    }, 500);
+
+    updateTouchState({
       initialTouch: { x: touch.clientX, y: touch.clientY },
-      longPressTimer: setTimeout(() => {
-        setState(prev => ({ ...prev, draggingTask: taskId }));
-        
-        const element = document.getElementById(`task-${taskId}`);
-        if (element) {
-          element.style.opacity = '0.7';
-          element.style.transform = 'scale(1.02)';
-          element.style.zIndex = '100';
-        }
-        
-        startAutoScroll();
-      }, 500)
-    }));
+      longPressTimer
+    });
   };
 
   const handleTouchEnd = (e: React.TouchEvent, taskId: string) => {
     if (!isMobile) return;
     
-    if (state.longPressTimer) {
-      clearTimeout(state.longPressTimer);
+    if (touchState.longPressTimer) {
+      clearTimeout(touchState.longPressTimer);
     }
     
-    if (state.draggingTask) {
+    if (touchState.draggingTask) {
       e.preventDefault();
       
-      const dropPoint = state.currentTouchPosition;
+      const dropPoint = touchState.currentTouchPosition;
       if (dropPoint) {
         const columns = document.querySelectorAll('.kanban-column');
         let targetColumn: Element | null = null;
@@ -138,18 +92,12 @@ export function useTaskTouchInteractions({
     }
     
     // Reset state
-    setState({
+    updateTouchState({
       longPressTimer: null,
       draggingTask: null,
       initialTouch: null,
-      currentTouchPosition: null,
-      scrollInterval: state.scrollInterval
+      currentTouchPosition: null
     });
-    
-    if (state.scrollInterval.current) {
-      clearInterval(state.scrollInterval.current);
-      state.scrollInterval.current = null;
-    }
     
     const element = document.getElementById(`task-${taskId}`);
     if (element) {
@@ -164,16 +112,18 @@ export function useTaskTouchInteractions({
     if (!isMobile) return;
     
     const touch = e.touches[0];
-    setState(prev => ({ ...prev, currentTouchPosition: { x: touch.clientX, y: touch.clientY } }));
+    updateTouchState({ 
+      currentTouchPosition: { x: touch.clientX, y: touch.clientY } 
+    });
     
-    if (!state.draggingTask) {
-      if (state.longPressTimer && state.initialTouch) {
-        const deltaX = Math.abs(touch.clientX - state.initialTouch.x);
-        const deltaY = Math.abs(touch.clientY - state.initialTouch.y);
+    if (!touchState.draggingTask) {
+      if (touchState.longPressTimer && touchState.initialTouch) {
+        const deltaX = Math.abs(touch.clientX - touchState.initialTouch.x);
+        const deltaY = Math.abs(touch.clientY - touchState.initialTouch.y);
         
         if (deltaX > 10 || deltaY > 10) {
-          clearTimeout(state.longPressTimer);
-          setState(prev => ({ ...prev, longPressTimer: null }));
+          clearTimeout(touchState.longPressTimer);
+          updateTouchState({ longPressTimer: null });
         }
       }
       return;
@@ -189,7 +139,7 @@ export function useTaskTouchInteractions({
       element.style.pointerEvents = 'none';
     }
     
-    if (state.draggingTask) {
+    if (touchState.draggingTask) {
       startAutoScroll();
     }
   };
@@ -198,6 +148,6 @@ export function useTaskTouchInteractions({
     handleTouchStart,
     handleTouchEnd,
     handleTouchMove,
-    draggingTask: state.draggingTask
+    draggingTask: touchState.draggingTask
   };
 }
