@@ -5,7 +5,6 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Category, defaultCategories } from "./categories/types";
 import { Task, TaskCategory, TaskPriority } from "./TaskItem.d";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 // Re-export the types so they can be imported from this file
 export type { Task, TaskCategory, TaskPriority };
@@ -107,31 +106,31 @@ const TaskItem = ({
                 handleCheckboxChange(checked);
               }
             }}
-            className="mt-1 mr-3"
+            className="mt-1 mr-3 flex-shrink-0"
             onClick={(e) => {
-              e.stopPropagation(); // Prevent bubbling to parent div
+              e.stopPropagation();
             }}
           />
         )}
         {isDeleted && (
-          <div className="w-5 h-5 mr-3 mt-1 flex items-center justify-center">
+          <div className="w-5 h-5 mr-3 mt-1 flex items-center justify-center flex-shrink-0">
             <Trash className="h-3 w-3 text-muted-foreground" />
           </div>
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className={`priority-dot priority-${task.priority}`} />
+            <span className={`priority-dot priority-${task.priority} flex-shrink-0`} />
             {task.category && (
               <span 
                 className={cn(
-                  "w-2 h-2 rounded-full",
+                  "w-2 h-2 rounded-full flex-shrink-0",
                   getCategoryColor(task.category)
                 )}
                 title={getCategoryName(task.category)}
               />
             )}
             <h3 className={cn(
-              "text-base font-medium flex-1 truncate max-w-[calc(100%-3rem)]",
+              "text-base font-medium truncate flex-1",
               (task.completed || isDeleted) && "line-through text-muted-foreground"
             )}>
               {task.title}
@@ -140,7 +139,7 @@ const TaskItem = ({
           
           {task.estimatedTime > 0 && (
             <div className="flex items-center text-xs text-muted-foreground mt-1">
-              <Clock className="h-3 w-3 mr-1 inline" />
+              <Clock className="h-3 w-3 mr-1 inline flex-shrink-0" />
               {formatTime(task.estimatedTime)}
             </div>
           )}
@@ -154,7 +153,7 @@ const TaskItem = ({
         
         {!isDeleted && (
           <div className={cn(
-            "flex items-center transition-opacity", 
+            "flex items-center transition-opacity flex-shrink-0", 
             isMobile 
               ? (showActions ? "opacity-100" : "opacity-0 pointer-events-none")
               : (isHovered ? "opacity-100" : "opacity-0")
