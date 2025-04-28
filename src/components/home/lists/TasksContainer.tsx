@@ -1,5 +1,6 @@
 
 import { Task } from "@/components/tasks/TaskItem";
+import { Badge } from "@/components/ui/badge";
 
 interface TasksContainerProps {
   pendingTasks: Task[];
@@ -86,5 +87,3 @@ export const EmptyTasksMessage = ({ t }: EmptyTasksMessageProps) => {
     </div>
   );
 };
-
-import { Badge } from "@/components/ui/badge";
