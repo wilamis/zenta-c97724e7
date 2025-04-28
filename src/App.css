@@ -107,3 +107,33 @@
 .kanban-column:hover {
   border-color: #9b87f5 !important;
 }
+
+.task-card {
+  position: relative;
+  transition: all 0.2s ease-in-out;
+}
+
+.task-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-card h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .task-card {
+    padding: 0.75rem;
+  }
+  
+  .task-card h3 {
+    font-size: 0.9rem;
+  }
+  
+  .task-card .button {
+    padding: 0.5rem;
+  }
+}

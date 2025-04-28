@@ -1,6 +1,5 @@
-
 import { cn } from "@/lib/utils";
-import { Clock, Edit, Trash } from "lucide-react";
+import { Clock, Trash } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
@@ -74,10 +73,12 @@ const TaskItem = ({
     }
   };
 
-  const handleEditClick = (e: React.MouseEvent) => {
+  const handleTaskClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onEdit(task);
-    if (isMobile) setShowActions(false);
+    if (isMobile && showActions) {
+      setShowActions(false);
+    }
   };
 
   const handleDeleteClick = (e: React.MouseEvent) => {
@@ -89,13 +90,13 @@ const TaskItem = ({
   return (
     <div 
       className={cn(
-        "task-card relative p-2 border border-border rounded-md bg-card", 
+        "task-card relative p-2 border border-border rounded-md bg-card cursor-pointer", 
         task.completed && "opacity-60",
         isDeleted && "opacity-50"
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={isMobile ? toggleActions : undefined}
+      onClick={handleTaskClick}
     >
       <div className="flex items-start">
         {!isDeleted && (
@@ -130,7 +131,7 @@ const TaskItem = ({
               />
             )}
             <h3 className={cn(
-              "text-base font-medium flex-1 truncate",
+              "text-base font-medium flex-1 truncate max-w-[calc(100%-3rem)]",
               (task.completed || isDeleted) && "line-through text-muted-foreground"
             )}>
               {task.title}
@@ -153,19 +154,11 @@ const TaskItem = ({
         
         {!isDeleted && (
           <div className={cn(
-            "flex items-center space-x-1 transition-opacity", 
+            "flex items-center transition-opacity", 
             isMobile 
               ? (showActions ? "opacity-100" : "opacity-0 pointer-events-none")
               : (isHovered ? "opacity-100" : "opacity-0")
           )}>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-8 w-8 p-0" 
-              onClick={handleEditClick}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
             <Button 
               variant="ghost" 
               size="sm" 
